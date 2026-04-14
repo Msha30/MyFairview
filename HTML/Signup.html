@@ -4,63 +4,38 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>MyFairview — Sign Up</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="../Layout.css" />
 </head>
 <body>
-
   <div class="loginPageBg">
     <div class="loginCard">
-
       <h1 class="loginTitle">Sign Up</h1>
-
       <div class="loginFieldGroup">
-        <div class="loginInputWrap">
-          <input id="signupInputName"     class="loginInput" type="text"     placeholder="Full Name" />
-        </div>
-        <div class="loginInputWrap">
-          <input id="signupInputEmail"    class="loginInput" type="email"    placeholder="Email" />
-        </div>
+        <div class="loginInputWrap"><input id="signupInputName"     class="loginInput" type="text"     placeholder="Full Name" /></div>
+        <div class="loginInputWrap"><input id="signupInputEmail"    class="loginInput" type="email"    placeholder="Email" /></div>
         <div class="loginInputWrap">
           <input id="signupInputPassword" class="loginInput" type="password" placeholder="Password" />
           <button id="btnSignupTogglePassword" class="loginPasswordToggleBtn" type="button">👁</button>
         </div>
-        <div class="loginInputWrap">
-          <input id="signupInputConfirm"  class="loginInput" type="password" placeholder="Confirm Password" />
-        </div>
+        <div class="loginInputWrap"><input id="signupInputConfirm"  class="loginInput" type="password" placeholder="Confirm Password" /></div>
       </div>
-
       <button id="btnSignupSubmit" class="btnLoginSubmit" type="button">Create Account</button>
-
-      <p class="loginSwitchText">
-        Already have an account?
-        <a class="loginSwitchLink" id="signupGoLogin">Sign in</a>
-      </p>
-
+      <p class="loginSwitchText">Already have an account? <a class="loginSwitchLink" id="btnSignupGoLogin">Sign in</a></p>
     </div>
   </div>
-
-  <!-- Button navigation JS -->
   <script>
-    // Toggle password visibility
     document.getElementById('btnSignupTogglePassword').addEventListener('click', function () {
       var input = document.getElementById('signupInputPassword');
-      var isHidden = input.type === 'password';
-      input.type = isHidden ? 'text' : 'password';
-      this.textContent = isHidden ? '🙈' : '👁';
+      var hidden = input.type === 'password';
+      input.type = hidden ? 'text' : 'password';
+      this.textContent = hidden ? '🙈' : '👁';
     });
-
-    // Create Account → go to MainLayout
     document.getElementById('btnSignupSubmit').addEventListener('click', function () {
       window.location.href = 'MainLayout.html';
     });
-
-    // Go to Login
-    document.getElementById('signupGoLogin').addEventListener('click', function () {
+    document.getElementById('btnSignupGoLogin').addEventListener('click', function () {
       window.location.href = 'Login.html';
     });
   </script>
-
 </body>
 </html>

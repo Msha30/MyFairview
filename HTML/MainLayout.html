@@ -4,132 +4,116 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>MyFairview</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="../Layout.css" />
 </head>
 <body>
 
   <div class="layoutShell">
+
+    <!-- SIDEBAR -->
     <aside class="layoutSidebar">
+
       <div class="sidebarLogo">MyFairview</div>
+
       <nav class="sidebarNav">
+
         <div class="sidebarNavItem" id="sidebarNavOverview" data-page="Overview">
-          <svg class="sidebarNavIcon" viewBox="0 0 24 24" fill="currentColor">
-            <rect x="3" y="3" width="8" height="8" rx="1.5"/>
-            <rect x="13" y="3" width="8" height="8" rx="1.5"/>
-            <rect x="3" y="13" width="8" height="8" rx="1.5"/>
-            <rect x="13" y="13" width="8" height="8" rx="1.5"/>
-          </svg>
+          <img src="../Icons/iconplaceholder.svg" class="sidebarNavIcon" alt="" />
           <span>Overview</span>
         </div>
+
         <div class="sidebarNavItem" id="sidebarNavAnnouncement" data-page="Announcement">
-          <svg class="sidebarNavIcon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/>
-            <path d="M13.73 21a2 2 0 0 1-3.46 0"/>
-          </svg>
+          <img src="../Icons/iconplaceholder.svg" class="sidebarNavIcon" alt="" />
           <span>Announcement</span>
         </div>
+
         <div class="sidebarNavItem" id="sidebarNavCitizens" data-page="Citizens">
-          <svg class="sidebarNavIcon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
-            <circle cx="12" cy="7" r="4"/>
-          </svg>
+          <img src="../Icons/iconplaceholder.svg" class="sidebarNavIcon" alt="" />
           <span>Citizens</span>
         </div>
+
         <div class="sidebarNavItem" id="sidebarNavVehicles" data-page="Vehicles">
-          <svg class="sidebarNavIcon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M5 17H3v-5l2-5h14l2 5v5h-2"/>
-            <circle cx="7.5" cy="17.5" r="1.5"/>
-            <circle cx="16.5" cy="17.5" r="1.5"/>
-          </svg>
+          <img src="../Icons/iconplaceholder.svg" class="sidebarNavIcon" alt="" />
           <span>Vehicles</span>
         </div>
+
         <div class="sidebarNavItem" id="sidebarNavSurveillance" data-page="Surveillance">
-          <svg class="sidebarNavIcon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <path d="m15 10 4.553-2.07A1 1 0 0 1 21 8.845v6.31a1 1 0 0 1-1.447.916L15 14"/>
-            <rect x="2" y="8" width="13" height="8" rx="2"/>
-          </svg>
+          <img src="../Icons/iconplaceholder.svg" class="sidebarNavIcon" alt="" />
           <span>Surveillance</span>
         </div>
+
         <div class="sidebarNavItem" id="sidebarNavReports" data-page="Reports">
-          <svg class="sidebarNavIcon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <path d="m3 11 18-5v12L3 14v-3z"/>
-            <path d="M11.6 16.8a3 3 0 1 1-5.8-1.6"/>
-          </svg>
+          <img src="../Icons/iconplaceholder.svg" class="sidebarNavIcon" alt="" />
           <span>Reports</span>
         </div>
+
         <div class="sidebarNavItem" id="sidebarNavWaterLevel" data-page="WaterLevel">
-          <svg class="sidebarNavIcon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <rect x="3" y="3" width="18" height="18" rx="2"/>
-            <path d="M3 14h18"/>
-            <path d="M8 14v4"/><path d="M16 14v4"/>
-          </svg>
+          <img src="../Icons/iconplaceholder.svg" class="sidebarNavIcon" alt="" />
           <span>Water Level</span>
         </div>
+
         <div class="sidebarNavItem" id="sidebarNavEvacuation" data-page="EvacuationPlan">
-          <svg class="sidebarNavIcon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/>
-            <circle cx="12" cy="10" r="3"/>
-          </svg>
+          <img src="../Icons/iconplaceholder.svg" class="sidebarNavIcon" alt="" />
           <span>Evacuation Plan</span>
         </div>
+
       </nav>
+
       <div class="sidebarSignOutWrap">
         <button class="sidebarBtnSignOut" id="sidebarBtnSignOut" type="button">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
-            <polyline points="16,17 21,12 16,7"/>
-            <line x1="21" y1="12" x2="9" y2="12"/>
-          </svg>
+          <img src="../Icons/iconplaceholder.svg" class="sidebarNavIcon" alt="" />
           <span>Sign Out</span>
         </button>
       </div>
 
     </aside>
 
+    <!-- MAIN CONTENT (iframe) -->
     <main class="layoutMain">
-      <iframe
-        class="layoutMainFrame"
-        id="layoutMainFrame"
-        src="Overview.html"
-        title="Page Content"
-      ></iframe>
+      <iframe class="layoutMainFrame" id="layoutMainFrame" src="Overview.html" title="Page Content"></iframe>
     </main>
+
   </div>
 
   <script>
     (function () {
-      'use strict';
+      var SESSION_KEY = 'mfv_currentPage';
+      var iframe      = document.getElementById('layoutMainFrame');
+      var navItems    = document.querySelectorAll('.sidebarNavItem');
+      var btnSignOut  = document.getElementById('sidebarBtnSignOut');
 
-      const SESSION_KEY    = 'mfv_currentPage';
-      const iframe         = document.getElementById('layoutMainFrame');
-      const navItems       = document.querySelectorAll('.sidebarNavItem');
-      const btnSignOut     = document.getElementById('sidebarBtnSignOut');
       function setActiveNav(pageName) {
-        navItems.forEach(item => {
+        navItems.forEach(function (item) {
           item.classList.toggle('active', item.getAttribute('data-page') === pageName);
         });
       }
+
       function navigateTo(pageName) {
         iframe.src = pageName + '.html';
         setActiveNav(pageName);
         sessionStorage.setItem(SESSION_KEY, pageName);
       }
+
+      // Expose so child pages (e.g. Citizens_InvalidUsers back btn) can call it
       window.mfvNavigateTo = navigateTo;
-      navItems.forEach(item => {
-        item.addEventListener('click', () => {
-          const page = item.getAttribute('data-page');
+
+      navItems.forEach(function (item) {
+        item.addEventListener('click', function () {
+          var page = item.getAttribute('data-page');
           if (page) navigateTo(page);
         });
       });
-      btnSignOut.addEventListener('click', () => {
+
+      btnSignOut.addEventListener('click', function () {
         sessionStorage.removeItem(SESSION_KEY);
         window.location.href = 'Login.html';
       });
-      const savedPage = sessionStorage.getItem(SESSION_KEY) || 'Overview';
+
+      // Restore last page on refresh
+      var savedPage = sessionStorage.getItem(SESSION_KEY) || 'Overview';
       navigateTo(savedPage);
     })();
   </script>
+
 </body>
 </html>
