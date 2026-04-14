@@ -4,85 +4,45 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>MyFairview — Sign In</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="../Layout.css" />
 </head>
 <body>
-
   <div class="loginPageBg">
     <div class="loginCard">
-
       <h1 class="loginTitle">Sign In</h1>
-
       <div class="loginFieldGroup">
         <div class="loginInputWrap">
-          <input
-            id="loginInputEmail"
-            class="loginInput"
-            type="email"
-            placeholder="Email"
-            autocomplete="email"
-          />
+          <input id="loginInputEmail" class="loginInput" type="email" placeholder="Email" autocomplete="email" />
         </div>
         <div class="loginInputWrap">
-          <input
-            id="loginInputPassword"
-            class="loginInput"
-            type="password"
-            placeholder="Password"
-            autocomplete="current-password"
-          />
-          <button
-            id="btnLoginTogglePassword"
-            class="loginPasswordToggleBtn"
-            type="button"
-            title="Show/hide password"
-          >👁</button>
+          <input id="loginInputPassword" class="loginInput" type="password" placeholder="Password" autocomplete="current-password" />
+          <button id="btnLoginTogglePassword" class="loginPasswordToggleBtn" type="button">👁</button>
         </div>
       </div>
-
       <button id="btnLoginSubmit" class="btnLoginSubmit" type="button">Log In</button>
-
-      <a class="loginForgotLink" id="loginForgotLink">Forgot Password</a>
-
-      <p class="loginSwitchText">
-        Don't have an account?
-        <a class="loginSwitchLink" id="loginGoSignup">Sign up</a>
-      </p>
-
+      <a class="loginForgotLink" id="btnLoginGoForgot">Forgot Password</a>
+      <p class="loginSwitchText">Don't have an account? <a class="loginSwitchLink" id="btnLoginGoSignup">Sign up</a></p>
     </div>
   </div>
-
   <script>
-    // Toggle password visibility
     document.getElementById('btnLoginTogglePassword').addEventListener('click', function () {
       var input = document.getElementById('loginInputPassword');
-      var isHidden = input.type === 'password';
-      input.type = isHidden ? 'text' : 'password';
-      this.textContent = isHidden ? '🙈' : '👁';
+      var hidden = input.type === 'password';
+      input.type = hidden ? 'text' : 'password';
+      this.textContent = hidden ? '🙈' : '👁';
     });
-
-    // Log In → go to MainLayout
     document.getElementById('btnLoginSubmit').addEventListener('click', function () {
       window.location.href = 'MainLayout.html';
     });
-
-    // Allow Enter key
     document.addEventListener('keydown', function (e) {
       if (e.key === 'Enter') document.getElementById('btnLoginSubmit').click();
     });
-
-    // Forgot Password
-    document.getElementById('loginForgotLink').addEventListener('click', function () {
+    document.getElementById('btnLoginGoForgot').addEventListener('click', function () {
       window.location.href = 'ForgotPassword.html';
     });
-
-    // Go to Sign Up
-    document.getElementById('loginGoSignup').addEventListener('click', function () {
+    document.getElementById('btnLoginGoSignup').addEventListener('click', function () {
       window.location.href = 'Signup.html';
     });
   </script>
-
 </body>
 </html>

@@ -4,8 +4,6 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Unverified Citizens</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="../Layout.css" />
 </head>
 <body>
@@ -14,31 +12,23 @@
 
     <!-- Top Bar -->
     <div class="unverifiedTopBar">
-
       <button class="btnBack" id="btnUnverifiedBack" type="button">‹</button>
-
       <h1 class="unverifiedPageTitle">Unverified Citizens</h1>
-
       <div class="searchBar" style="flex:1; max-width:480px;">
         <span class="searchBarIcon">🔍</span>
         <input class="searchBarInput" type="text" placeholder="Search" id="unverifiedSearchInput" />
       </div>
-
       <button class="btnFilterToggle" id="btnUnverifiedFilterToggle" type="button">☰</button>
-
-      <button class="btnInvalidReg" id="btnOpenInvalidRegModal" type="button">
-        ⚠ Invalid Registration
-      </button>
-
+      <button class="btnDark" id="btnOpenInvalidRegModal" type="button">⚠ Invalid Registration</button>
     </div>
 
-    <!-- Body: Table + Filter Panel -->
+    <!-- Body -->
     <div class="unverifiedBody">
 
       <!-- Table -->
       <div class="unverifiedTableArea">
         <div class="tableWrap">
-          <table class="dataTable">
+          <table class="tableDiv">
             <thead>
               <tr>
                 <th>Surname</th>
@@ -52,82 +42,33 @@
               </tr>
             </thead>
             <tbody>
-              <tr class="rowClickable" onclick="openCitizenDetail()">
-                <td>Surname</td><td>First Name</td><td>Middle Name</td><td>None</td><td>00</td><td>0995 123 4567</td><td>Document Name</td>
-                <td><button class="btnRowMenu" onclick="event.stopPropagation()">⋮</button></td>
-              </tr>
-              <tr class="rowClickable" onclick="openCitizenDetail()">
-                <td>Surname</td><td>First Name</td><td>Middle Name</td><td>None</td><td>00</td><td>0995 123 4567</td><td>Document Name</td>
-                <td><button class="btnRowMenu" onclick="event.stopPropagation()">⋮</button></td>
-              </tr>
-              <tr class="rowClickable" onclick="openCitizenDetail()">
-                <td>Surname</td><td>First Name</td><td>Middle Name</td><td>None</td><td>00</td><td>0995 123 4567</td><td>Document Name</td>
-                <td><button class="btnRowMenu" onclick="event.stopPropagation()">⋮</button></td>
-              </tr>
-              <tr class="rowClickable" onclick="openCitizenDetail()">
-                <td>Surname</td><td>First Name</td><td>Middle Name</td><td>None</td><td>00</td><td>0995 123 4567</td><td>Document Name</td>
-                <td><button class="btnRowMenu" onclick="event.stopPropagation()">⋮</button></td>
-              </tr>
-              <tr class="rowClickable" onclick="openCitizenDetail()">
-                <td>Surname</td><td>First Name</td><td>Middle Name</td><td>None</td><td>00</td><td>0995 123 4567</td><td>Document Name</td>
-                <td><button class="btnRowMenu" onclick="event.stopPropagation()">⋮</button></td>
-              </tr>
-              <tr class="rowClickable" onclick="openCitizenDetail()">
-                <td>Surname</td><td>First Name</td><td>Middle Name</td><td>None</td><td>00</td><td>0995 123 4567</td><td>Document Name</td>
-                <td><button class="btnRowMenu" onclick="event.stopPropagation()">⋮</button></td>
-              </tr>
-              <tr class="rowClickable" onclick="openCitizenDetail()">
-                <td>Surname</td><td>First Name</td><td>Middle Name</td><td>None</td><td>00</td><td>0995 123 4567</td><td>Document Name</td>
-                <td><button class="btnRowMenu" onclick="event.stopPropagation()">⋮</button></td>
-              </tr>
-              <tr class="rowClickable" onclick="openCitizenDetail()">
-                <td>Surname</td><td>First Name</td><td>Middle Name</td><td>None</td><td>00</td><td>0995 123 4567</td><td>Document Name</td>
-                <td><button class="btnRowMenu" onclick="event.stopPropagation()">⋮</button></td>
-              </tr>
-              <tr class="rowClickable" onclick="openCitizenDetail()">
-                <td>Surname</td><td>First Name</td><td>Middle Name</td><td>None</td><td>00</td><td>0995 123 4567</td><td>Document Name</td>
-                <td><button class="btnRowMenu" onclick="event.stopPropagation()">⋮</button></td>
-              </tr>
-              <tr class="rowClickable" onclick="openCitizenDetail()">
-                <td>Surname</td><td>First Name</td><td>Middle Name</td><td>None</td><td>00</td><td>0995 123 4567</td><td>Document Name</td>
-                <td><button class="btnRowMenu" onclick="event.stopPropagation()">⋮</button></td>
-              </tr>
-              <tr class="rowClickable" onclick="openCitizenDetail()">
-                <td>Surname</td><td>First Name</td><td>Middle Name</td><td>None</td><td>00</td><td>0995 123 4567</td><td>Document Name</td>
-                <td><button class="btnRowMenu" onclick="event.stopPropagation()">⋮</button></td>
-              </tr>
-              <tr class="rowClickable" onclick="openCitizenDetail()">
-                <td>Surname</td><td>First Name</td><td>Middle Name</td><td>None</td><td>00</td><td>0995 123 4567</td><td>Document Name</td>
-                <td><button class="btnRowMenu" onclick="event.stopPropagation()">⋮</button></td>
-              </tr>
-              <tr class="rowClickable" onclick="openCitizenDetail()">
-                <td>Surname</td><td>First Name</td><td>Middle Name</td><td>None</td><td>00</td><td>0995 123 4567</td><td>Document Name</td>
-                <td><button class="btnRowMenu" onclick="event.stopPropagation()">⋮</button></td>
-              </tr>
-              <tr class="rowClickable" onclick="openCitizenDetail()">
-                <td>Surname</td><td>First Name</td><td>Middle Name</td><td>None</td><td>00</td><td>0995 123 4567</td><td>Document Name</td>
-                <td><button class="btnRowMenu" onclick="event.stopPropagation()">⋮</button></td>
-              </tr>
-              <tr class="rowClickable" onclick="openCitizenDetail()">
-                <td>Surname</td><td>First Name</td><td>Middle Name</td><td>None</td><td>00</td><td>0995 123 4567</td><td>Document Name</td>
-                <td><button class="btnRowMenu" onclick="event.stopPropagation()">⋮</button></td>
-              </tr>
-              <tr class="rowClickable" onclick="openCitizenDetail()">
-                <td>Surname</td><td>First Name</td><td>Middle Name</td><td>None</td><td>00</td><td>0995 123 4567</td><td>Document Name</td>
-                <td><button class="btnRowMenu" onclick="event.stopPropagation()">⋮</button></td>
-              </tr>
+              <tr class="tableRow" onclick="openCitizenDetail()"><td>Surname</td><td>First Name</td><td>Middle Name</td><td>None</td><td>00</td><td>0995 123 4567</td><td>Document Name</td><td><button class="btnRowMenu" onclick="event.stopPropagation()">⋮</button></td></tr>
+              <tr class="tableRow" onclick="openCitizenDetail()"><td>Surname</td><td>First Name</td><td>Middle Name</td><td>None</td><td>00</td><td>0995 123 4567</td><td>Document Name</td><td><button class="btnRowMenu" onclick="event.stopPropagation()">⋮</button></td></tr>
+              <tr class="tableRow" onclick="openCitizenDetail()"><td>Surname</td><td>First Name</td><td>Middle Name</td><td>None</td><td>00</td><td>0995 123 4567</td><td>Document Name</td><td><button class="btnRowMenu" onclick="event.stopPropagation()">⋮</button></td></tr>
+              <tr class="tableRow" onclick="openCitizenDetail()"><td>Surname</td><td>First Name</td><td>Middle Name</td><td>None</td><td>00</td><td>0995 123 4567</td><td>Document Name</td><td><button class="btnRowMenu" onclick="event.stopPropagation()">⋮</button></td></tr>
+              <tr class="tableRow" onclick="openCitizenDetail()"><td>Surname</td><td>First Name</td><td>Middle Name</td><td>None</td><td>00</td><td>0995 123 4567</td><td>Document Name</td><td><button class="btnRowMenu" onclick="event.stopPropagation()">⋮</button></td></tr>
+              <tr class="tableRow" onclick="openCitizenDetail()"><td>Surname</td><td>First Name</td><td>Middle Name</td><td>None</td><td>00</td><td>0995 123 4567</td><td>Document Name</td><td><button class="btnRowMenu" onclick="event.stopPropagation()">⋮</button></td></tr>
+              <tr class="tableRow" onclick="openCitizenDetail()"><td>Surname</td><td>First Name</td><td>Middle Name</td><td>None</td><td>00</td><td>0995 123 4567</td><td>Document Name</td><td><button class="btnRowMenu" onclick="event.stopPropagation()">⋮</button></td></tr>
+              <tr class="tableRow" onclick="openCitizenDetail()"><td>Surname</td><td>First Name</td><td>Middle Name</td><td>None</td><td>00</td><td>0995 123 4567</td><td>Document Name</td><td><button class="btnRowMenu" onclick="event.stopPropagation()">⋮</button></td></tr>
+              <tr class="tableRow" onclick="openCitizenDetail()"><td>Surname</td><td>First Name</td><td>Middle Name</td><td>None</td><td>00</td><td>0995 123 4567</td><td>Document Name</td><td><button class="btnRowMenu" onclick="event.stopPropagation()">⋮</button></td></tr>
+              <tr class="tableRow" onclick="openCitizenDetail()"><td>Surname</td><td>First Name</td><td>Middle Name</td><td>None</td><td>00</td><td>0995 123 4567</td><td>Document Name</td><td><button class="btnRowMenu" onclick="event.stopPropagation()">⋮</button></td></tr>
+              <tr class="tableRow" onclick="openCitizenDetail()"><td>Surname</td><td>First Name</td><td>Middle Name</td><td>None</td><td>00</td><td>0995 123 4567</td><td>Document Name</td><td><button class="btnRowMenu" onclick="event.stopPropagation()">⋮</button></td></tr>
+              <tr class="tableRow" onclick="openCitizenDetail()"><td>Surname</td><td>First Name</td><td>Middle Name</td><td>None</td><td>00</td><td>0995 123 4567</td><td>Document Name</td><td><button class="btnRowMenu" onclick="event.stopPropagation()">⋮</button></td></tr>
+              <tr class="tableRow" onclick="openCitizenDetail()"><td>Surname</td><td>First Name</td><td>Middle Name</td><td>None</td><td>00</td><td>0995 123 4567</td><td>Document Name</td><td><button class="btnRowMenu" onclick="event.stopPropagation()">⋮</button></td></tr>
+              <tr class="tableRow" onclick="openCitizenDetail()"><td>Surname</td><td>First Name</td><td>Middle Name</td><td>None</td><td>00</td><td>0995 123 4567</td><td>Document Name</td><td><button class="btnRowMenu" onclick="event.stopPropagation()">⋮</button></td></tr>
+              <tr class="tableRow" onclick="openCitizenDetail()"><td>Surname</td><td>First Name</td><td>Middle Name</td><td>None</td><td>00</td><td>0995 123 4567</td><td>Document Name</td><td><button class="btnRowMenu" onclick="event.stopPropagation()">⋮</button></td></tr>
+              <tr class="tableRow" onclick="openCitizenDetail()"><td>Surname</td><td>First Name</td><td>Middle Name</td><td>None</td><td>00</td><td>0995 123 4567</td><td>Document Name</td><td><button class="btnRowMenu" onclick="event.stopPropagation()">⋮</button></td></tr>
             </tbody>
           </table>
         </div>
       </div>
 
-      <!-- Filter Panel (open by default to match design) -->
+      <!-- Filter Panel (open by default) -->
       <div class="filterPanel open" id="unverifiedFilterPanel">
         <div class="filterPanelHeader">
           <span class="filterPanelTitle">Filter</span>
           <button class="btnFilterClose" id="btnUnverifiedFilterClose" type="button">✕</button>
         </div>
-
         <div class="filterGroup">
           <div class="filterGroupHeader">Household Members <span>∧</span></div>
           <label class="filterOption"><input type="radio" name="uvFilterHousehold" value="1-3" /> 1 – 3</label>
@@ -140,37 +81,28 @@
             <input type="number" class="filterRangeInput" placeholder="–" min="0" />
           </div>
         </div>
-
         <div class="filterGroup">
           <div class="filterGroupHeader">Age <span>∨</span></div>
         </div>
-
         <div class="filterGroup">
           <div class="filterGroupHeader">Subdivision <span>∨</span></div>
         </div>
-
         <div class="filterGroup">
           <div class="filterGroupHeader">Proof of Residency <span>∨</span></div>
         </div>
-
         <div class="filterResults">100+ Results</div>
-
         <div class="filterPanelFooter">
-          <button class="btnPrimary" id="btnUnverifiedApplyFilter" type="button">Apply Filter</button>
-          <button class="btnExport"  id="btnUnverifiedExport"      type="button">Export</button>
+          <button class="btnOrange"  id="btnUnverifiedApplyFilter" type="button">Apply Filter</button>
+          <button class="btnOutline" id="btnUnverifiedExport"      type="button">Export</button>
         </div>
       </div>
 
     </div>
-    <!-- /unverifiedBody -->
 
   </div>
-  <!-- /unverifiedPageShell -->
 
 
-  <!-- ════════════════════════════════════════════════
-       CITIZEN DETAIL MODAL
-  ═════════════════════════════════════════════════ -->
+  <!-- CITIZEN DETAIL MODAL -->
   <div class="modalOverlay" id="citizenDetailOverlay">
     <div class="citizenDetailModalBox" id="citizenDetailModalBox">
 
@@ -178,8 +110,7 @@
         <div class="citizenInfoCard">
           <div class="citizenInfoCardHeader">
             <div class="citizenInfoCardTitle">
-              <span class="citizenInfoIconWrap orange">👤</span>
-              Personal Information
+              <span class="citizenInfoIconWrap orange">👤</span>Personal Information
             </div>
             <button class="btnEdit" type="button">✏ Edit</button>
           </div>
@@ -194,8 +125,7 @@
         <div class="citizenInfoCard">
           <div class="citizenInfoCardHeader">
             <div class="citizenInfoCardTitle">
-              <span class="citizenInfoIconWrap green">🏠</span>
-              Home Address
+              <span class="citizenInfoIconWrap green">🏠</span>Home Address
             </div>
             <button class="btnEdit" type="button">✏ Edit</button>
           </div>
@@ -212,16 +142,12 @@
           <div class="citizenRegCardRow"><div class="citizenRegCardLabel">Verified by</div>  <div class="citizenRegCardValue">Staff Name</div></div>
         </div>
         <div class="citizenAccordion">
-          <div class="citizenAccordionHeader" id="accordionHouseholdHeader">
-            Household Members <span class="citizenAccordionArrow">∨</span>
-          </div>
-          <div class="citizenAccordionBody" id="accordionHouseholdBody">No household members on record.</div>
+          <div class="citizenAccordionHeader" id="accordionHouseholdHeader">Household Members <span class="citizenAccordionArrow">∨</span></div>
+          <div class="citizenAccordionBody"   id="accordionHouseholdBody">No household members on record.</div>
         </div>
         <div class="citizenAccordion">
-          <div class="citizenAccordionHeader" id="accordionVehicleHeader">
-            Vehicle Information <span class="citizenAccordionArrow">∨</span>
-          </div>
-          <div class="citizenAccordionBody" id="accordionVehicleBody">No vehicles on record.</div>
+          <div class="citizenAccordionHeader" id="accordionVehicleHeader">Vehicle Information <span class="citizenAccordionArrow">∨</span></div>
+          <div class="citizenAccordionBody"   id="accordionVehicleBody">No vehicles on record.</div>
         </div>
       </div>
 
@@ -229,24 +155,20 @@
   </div>
 
 
-  <!-- ════════════════════════════════════════════════
-       INVALID REGISTRATION MODAL
-  ═════════════════════════════════════════════════ -->
+  <!-- INVALID REGISTRATION MODAL -->
   <div class="modalOverlay" id="invalidRegOverlay">
     <div class="invalidRegModalBox" id="invalidRegModalBox">
-
       <div class="invalidRegModalHeader">
         <span class="invalidRegModalTitle">Invalid Registration</span>
         <div class="searchBar" style="flex:1">
           <span class="searchBarIcon">🔍</span>
           <input class="searchBarInput" type="text" placeholder="Search" id="invalidRegSearchInput" />
         </div>
-        <button class="btnExport" id="btnInvalidRegExport" type="button">Export</button>
+        <button class="btnOutline" id="btnInvalidRegExport" type="button">Export</button>
         <button class="btnModalClose" id="btnCloseInvalidRegModal" type="button">✕</button>
       </div>
-
       <div class="invalidRegModalBody">
-        <table class="dataTable">
+        <table class="tableDiv">
           <thead>
             <tr>
               <th>Full Name</th>
@@ -271,16 +193,13 @@
           </tbody>
         </table>
       </div>
-
     </div>
   </div>
 
 
-  <!-- ── Button navigation JS (belongs to this page) ──────────── -->
   <script>
-    // ── Back button → go back to MainLayout with Citizens active ─
+    // Back button
     document.getElementById('btnUnverifiedBack').addEventListener('click', function () {
-      // If inside an iframe in MainLayout, navigate parent; otherwise go directly
       if (window.parent && window.parent !== window) {
         window.parent.mfvNavigateTo('Citizens');
       } else {
@@ -288,65 +207,53 @@
       }
     });
 
-    // ── Filter panel toggle ──────────────────────────────────────
-    var btnFilterToggle     = document.getElementById('btnUnverifiedFilterToggle');
-    var btnFilterClose      = document.getElementById('btnUnverifiedFilterClose');
+    // Filter panel
+    var btnFilterToggle       = document.getElementById('btnUnverifiedFilterToggle');
+    var btnFilterClose        = document.getElementById('btnUnverifiedFilterClose');
     var unverifiedFilterPanel = document.getElementById('unverifiedFilterPanel');
-
     btnFilterToggle.addEventListener('click', function () {
-      var isOpen = unverifiedFilterPanel.classList.toggle('open');
-      btnFilterToggle.classList.toggle('active', isOpen);
+      var open = unverifiedFilterPanel.classList.toggle('open');
+      btnFilterToggle.classList.toggle('active', open);
     });
-
     btnFilterClose.addEventListener('click', function () {
       unverifiedFilterPanel.classList.remove('open');
       btnFilterToggle.classList.remove('active');
     });
 
-    // ── Citizen Detail Modal ─────────────────────────────────────
+    // Citizen Detail Modal
     function openCitizenDetail() {
       document.getElementById('citizenDetailOverlay').classList.add('open');
       document.body.style.overflow = 'hidden';
     }
-
     function closeCitizenDetail() {
       document.getElementById('citizenDetailOverlay').classList.remove('open');
       document.body.style.overflow = '';
     }
-
     document.getElementById('citizenDetailOverlay').addEventListener('click', function (e) {
-      if (!document.getElementById('citizenDetailModalBox').contains(e.target)) {
-        closeCitizenDetail();
-      }
+      if (!document.getElementById('citizenDetailModalBox').contains(e.target)) closeCitizenDetail();
     });
 
-    // Accordion toggles
-    ['accordionHouseholdHeader', 'accordionVehicleHeader'].forEach(function (headerId) {
-      var header = document.getElementById(headerId);
-      header.addEventListener('click', function () {
-        var isOpen = header.classList.toggle('open');
-        document.getElementById(headerId.replace('Header', 'Body')).classList.toggle('open', isOpen);
+    // Accordions
+    ['accordionHouseholdHeader', 'accordionVehicleHeader'].forEach(function (id) {
+      document.getElementById(id).addEventListener('click', function () {
+        var open = this.classList.toggle('open');
+        document.getElementById(id.replace('Header', 'Body')).classList.toggle('open', open);
       });
     });
 
-    // ── Invalid Registration Modal ───────────────────────────────
+    // Invalid Registration Modal
     function openInvalidRegModal() {
       document.getElementById('invalidRegOverlay').classList.add('open');
       document.body.style.overflow = 'hidden';
     }
-
     function closeInvalidRegModal() {
       document.getElementById('invalidRegOverlay').classList.remove('open');
       document.body.style.overflow = '';
     }
-
     document.getElementById('btnOpenInvalidRegModal').addEventListener('click', openInvalidRegModal);
     document.getElementById('btnCloseInvalidRegModal').addEventListener('click', closeInvalidRegModal);
-
     document.getElementById('invalidRegOverlay').addEventListener('click', function (e) {
-      if (!document.getElementById('invalidRegModalBox').contains(e.target)) {
-        closeInvalidRegModal();
-      }
+      if (!document.getElementById('invalidRegModalBox').contains(e.target)) closeInvalidRegModal();
     });
   </script>
 
