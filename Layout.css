@@ -1,56 +1,47 @@
-/* ============================================================
-   MyFairview — Layout.css
-   All CSS variables and styles in one file.
-   Organized by section for easy editing.
-   ============================================================ */
 
-/* ── SECTION 1: CSS VARIABLES ────────────────────────────── */
+@font-face {
+    font-family: 'Inter';
+    src: url('Inter.ttf') format('truetype');
+}  
+
 :root {
 
-  /* --- Brand Colors --- */
-  --colorPrimary:         #E8521A;
-  --colorPrimaryHover:    #cf4615;
-  --colorPrimaryActive:   #b83d12;
-  --colorPrimaryLight:    #fde8df;
+  --colorRedDark:       #a80000;
+  --colorRed:           #ce0000;
+  --colorOrangeDark:    #d35216;
+  --colorOrange:        #ee6423;
+  --colorOrangeLight:   #fcd7c4;
+  --colorYellow:        #ffdf01;
+  --colorGreenDark:     #0d5010;
+  --colorGreenHover:    #2a7d3e;
+  --colorGreen:         #17831d;
+  --colorGreenLight:    #b6dcb9;
+  --colorBlue:          #015498;
+  
+  --colorWhite:         #ffffff;
+  --colorBg:            #f8f3f7;
+  --colorBorder:        #e2e4e8;
+  --colorBorderDark:    #c8cad0;
 
-  --colorGreen:           #1B6B2F;
-  --colorGreenHover:      #2a7d3e;
-  --colorGreenLight:      #e8f5ec;
+  --colorBlack:         #1a1a1a;
+  --colorTextLight:     #6d6d6d;
 
-  --colorBrown:           #C0521C;
+  --colorRowHover:      #f9fafb;
+  --colorRowActive:     #f1f3f5;
+  --colorInvalid:       #fff0ed;
 
-  /* --- UI Colors --- */
-  --colorWhite:           #ffffff;
-  --colorBg:              #f4f5f7;
-  --colorBorder:          #e2e4e8;
-  --colorBorderDark:      #c8cad0;
+  --fontFamily:           'Inter', sans-serif;
 
-  /* --- Text Colors --- */
-  --colorText:            #1a1a1a;
-  --colorTextMid:         #4a4a4a;
-  --colorTextLight:       #888888;
-  --colorTextInverse:     #ffffff;
+  --fontSizeSmall:         11px;
+  --fontSizeRegular:       14px;
+  --fontSizeBig:           16px;
+  --fontSizeTitle:         28px;
+  --fontSizeGiant:         38px;
 
-  /* --- State Colors --- */
-  --colorRowHover:        #f9fafb;
-  --colorRowActive:       #f1f3f5;
-  --colorInvalid:         #fff0ed;
-
-  /* --- Typography --- */
-  --fontFamily:           'DM Sans', 'Segoe UI', sans-serif;
-
-  --fontSizeXS:           11px;
-  --fontSizeSM:           13px;
-  --fontSizeMD:           14px;
-  --fontSizeLG:           16px;
-  --fontSizeXL:           20px;
-  --fontSizeXXL:          28px;
-  --fontSizeHero:         38px;
-
-  --fontWeightNormal:     400;
-  --fontWeightMedium:     500;
-  --fontWeightSemiBold:   600;
-  --fontWeightBold:       700;
+  --fontNormal:     400;
+  --fontMedium:     500;
+  --fontSemiBold:   600;
+  --fontBold:       700;
 
   /* --- Spacing --- */
   --spacingXS:            4px;
@@ -98,8 +89,8 @@
 html, body {
   height: 100%;
   font-family: var(--fontFamily);
-  font-size: var(--fontSizeMD);
-  color: var(--colorText);
+  font-size: var(--fontSizeRegular);
+  color: var(--colorBlack);
   background: var(--colorBg);
   line-height: 1.5;
   -webkit-font-smoothing: antialiased;
@@ -117,7 +108,7 @@ button {
 
 input, textarea, select {
   font-family: var(--fontFamily);
-  font-size: var(--fontSizeMD);
+  font-size: var(--fontSizeRegular);
   outline: none;
 }
 
@@ -161,9 +152,9 @@ table { border-collapse: collapse; width: 100%; }
 
 .sidebarLogo {
   padding: 0 var(--spacingXL) var(--spacingXL) var(--spacingXL);
-  font-size: var(--fontSizeXL);
-  font-weight: var(--fontWeightBold);
-  color: var(--colorPrimary);
+  font-size: var(--fontSizeBig);
+  font-weight: var(--fontBold);
+  color: var(--colorOrange);
   letter-spacing: -0.5px;
   user-select: none;
 }
@@ -183,9 +174,9 @@ table { border-collapse: collapse; width: 100%; }
   gap: var(--spacingMD);
   padding: var(--spacingSM) var(--spacingMD);
   border-radius: var(--radiusMD);
-  font-size: var(--fontSizeMD);
-  font-weight: var(--fontWeightMedium);
-  color: var(--colorTextMid);
+  font-size: var(--fontSizeRegular);
+  font-weight: var(--fontMedium);
+  color: var(--colorTextLight);
   cursor: pointer;
   transition: background var(--transitionFast), color var(--transitionFast);
   user-select: none;
@@ -194,16 +185,16 @@ table { border-collapse: collapse; width: 100%; }
 
 .sidebarNavItem:hover {
   background: var(--colorRowHover);
-  color: var(--colorText);
+  color: var(--colorBlack);
 }
 
 .sidebarNavItem.active {
-  background: var(--colorPrimary);
-  color: var(--colorTextInverse);
+  background: var(--colorOrange);
+  color: var(--colorWhite);
 }
 
 .sidebarNavItem.active:hover {
-  background: var(--colorPrimaryHover);
+  background: var(--colorOrangeDark);
 }
 
 .sidebarNavItem:active {
@@ -233,15 +224,15 @@ table { border-collapse: collapse; width: 100%; }
   padding: var(--spacingSM) var(--spacingMD);
   width: 100%;
   border-radius: var(--radiusMD);
-  color: var(--colorTextMid);
-  font-size: var(--fontSizeMD);
-  font-weight: var(--fontWeightMedium);
+  color: var(--colorTextLight);
+  font-size: var(--fontSizeRegular);
+  font-weight: var(--fontMedium);
   transition: background var(--transitionFast), color var(--transitionFast);
 }
 
 .sidebarBtnSignOut:hover {
   background: var(--colorRowHover);
-  color: var(--colorText);
+  color: var(--colorBlack);
 }
 
 .sidebarBtnSignOut:active {
@@ -268,17 +259,17 @@ table { border-collapse: collapse; width: 100%; }
   justify-content: center;
   gap: var(--spacingSM);
   padding: var(--spacingSM) var(--spacingXL);
-  background: var(--colorPrimary);
-  color: var(--colorTextInverse);
-  font-size: var(--fontSizeMD);
-  font-weight: var(--fontWeightSemiBold);
+  background: var(--colorOrange);
+  color: var(--colorWhite);
+  font-size: var(--fontSizeRegular);
+  font-weight: var(--fontSemiBold);
   border-radius: var(--radiusMD);
   cursor: pointer;
   transition: background var(--transitionFast), transform var(--transitionFast);
   white-space: nowrap;
 }
-.btnPrimary:hover  { background: var(--colorPrimaryHover); }
-.btnPrimary:active { background: var(--colorPrimaryActive); transform: scale(0.97); }
+.btnPrimary:hover  { background: var(--colorOrangeDark); }
+.btnPrimary:active { background: var(--colorOrange); transform: scale(0.97); }
 
 /* Secondary — Outlined */
 .btnSecondary {
@@ -288,9 +279,9 @@ table { border-collapse: collapse; width: 100%; }
   gap: var(--spacingSM);
   padding: var(--spacingSM) var(--spacingXL);
   background: var(--colorWhite);
-  color: var(--colorText);
-  font-size: var(--fontSizeMD);
-  font-weight: var(--fontWeightMedium);
+  color: var(--colorBlack);
+  font-size: var(--fontSizeRegular);
+  font-weight: var(--fontMedium);
   border-radius: var(--radiusMD);
   border: 1px solid var(--colorBorder);
   cursor: pointer;
@@ -308,9 +299,9 @@ table { border-collapse: collapse; width: 100%; }
   gap: var(--spacingSM);
   padding: var(--spacingSM) var(--spacingXL);
   background: var(--colorGreen);
-  color: var(--colorTextInverse);
-  font-size: var(--fontSizeMD);
-  font-weight: var(--fontWeightSemiBold);
+  color: var(--colorWhite);
+  font-size: var(--fontSizeRegular);
+  font-weight: var(--fontSemiBold);
   border-radius: var(--radiusMD);
   cursor: pointer;
   transition: background var(--transitionFast), transform var(--transitionFast);
@@ -327,9 +318,9 @@ table { border-collapse: collapse; width: 100%; }
   gap: var(--spacingSM);
   padding: var(--spacingSM) var(--spacingXL);
   background: var(--colorWhite);
-  color: var(--colorText);
-  font-size: var(--fontSizeSM);
-  font-weight: var(--fontWeightMedium);
+  color: var(--colorBlack);
+  font-size: var(--fontSizeRegular);
+  font-weight: var(--fontMedium);
   border-radius: var(--radiusMD);
   border: 1px solid var(--colorBorder);
   cursor: pointer;
@@ -346,9 +337,9 @@ table { border-collapse: collapse; width: 100%; }
   gap: var(--spacingMD);
   padding: var(--spacingSM) var(--spacingLG);
   background: var(--colorGreen);
-  color: var(--colorTextInverse);
-  font-size: var(--fontSizeSM);
-  font-weight: var(--fontWeightSemiBold);
+  color: var(--colorWhite);
+  font-size: var(--fontSizeRegular);
+  font-weight: var(--fontSemiBold);
   border-radius: var(--radiusMD);
   cursor: pointer;
   transition: background var(--transitionFast), transform var(--transitionFast);
@@ -361,8 +352,8 @@ table { border-collapse: collapse; width: 100%; }
   background: rgba(255,255,255,0.25);
   border-radius: var(--radiusFull);
   padding: 1px 8px;
-  font-size: var(--fontSizeXS);
-  font-weight: var(--fontWeightBold);
+  font-size: var(--fontSizeSmall);
+  font-weight: var(--fontBold);
 }
 
 /* Filter Toggle */
@@ -376,15 +367,15 @@ table { border-collapse: collapse; width: 100%; }
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  color: var(--colorTextMid);
+  color: var(--colorTextLight);
   flex-shrink: 0;
   transition: background var(--transitionFast), border-color var(--transitionFast);
-  font-size: var(--fontSizeXL);
+  font-size: var(--fontSizeBig);
   line-height: 1;
 }
 .btnFilterToggle:hover  { background: var(--colorBg); border-color: var(--colorBorderDark); }
 .btnFilterToggle:active { background: var(--colorRowActive); }
-.btnFilterToggle.active { background: var(--colorPrimary); border-color: var(--colorPrimary); color: white; }
+.btnFilterToggle.active { background: var(--colorOrange); border-color: var(--colorOrange); color: white; }
 
 /* Row Menu (three dots) */
 .btnRowMenu {
@@ -396,11 +387,11 @@ table { border-collapse: collapse; width: 100%; }
   justify-content: center;
   cursor: pointer;
   color: var(--colorTextLight);
-  font-size: var(--fontSizeLG);
+  font-size: var(--fontSizeBig);
   letter-spacing: 1px;
   transition: background var(--transitionFast), color var(--transitionFast);
 }
-.btnRowMenu:hover  { background: var(--colorRowHover); color: var(--colorText); }
+.btnRowMenu:hover  { background: var(--colorRowHover); color: var(--colorBlack); }
 .btnRowMenu:active { background: var(--colorRowActive); }
 
 /* Row Download */
@@ -414,8 +405,8 @@ table { border-collapse: collapse; width: 100%; }
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  color: var(--colorTextMid);
-  font-size: var(--fontSizeMD);
+  color: var(--colorTextLight);
+  font-size: var(--fontSizeRegular);
   transition: background var(--transitionFast), border-color var(--transitionFast);
 }
 .btnDownloadRow:hover  { background: var(--colorBorder); border-color: var(--colorBorderDark); }
@@ -427,8 +418,8 @@ table { border-collapse: collapse; width: 100%; }
   align-items: center;
   gap: var(--spacingXS);
   color: #1a73e8;
-  font-size: var(--fontSizeSM);
-  font-weight: var(--fontWeightMedium);
+  font-size: var(--fontSizeRegular);
+  font-weight: var(--fontMedium);
   cursor: pointer;
   transition: color var(--transitionFast);
   background: none;
@@ -444,13 +435,13 @@ table { border-collapse: collapse; width: 100%; }
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: var(--fontSizeXL);
-  color: var(--colorTextMid);
+  font-size: var(--fontSizeBig);
+  color: var(--colorTextLight);
   cursor: pointer;
   flex-shrink: 0;
   transition: background var(--transitionFast), color var(--transitionFast);
 }
-.btnModalClose:hover  { background: rgba(0,0,0,0.08); color: var(--colorText); }
+.btnModalClose:hover  { background: rgba(0,0,0,0.08); color: var(--colorBlack); }
 .btnModalClose:active { background: rgba(0,0,0,0.14); }
 
 /* Delete Media */
@@ -465,7 +456,7 @@ table { border-collapse: collapse; width: 100%; }
   justify-content: center;
   cursor: pointer;
   color: var(--colorTextLight);
-  font-size: var(--fontSizeMD);
+  font-size: var(--fontSizeRegular);
   transition: background var(--transitionFast), color var(--transitionFast), border-color var(--transitionFast);
 }
 .btnDeleteMedia:hover  { background: #fff0f0; color: #d93025; border-color: #f5b7b1; }
@@ -480,8 +471,8 @@ table { border-collapse: collapse; width: 100%; }
   background: var(--colorWhite);
   border: 1px solid var(--colorBorder);
   border-radius: var(--radiusSM);
-  font-size: var(--fontSizeSM);
-  color: var(--colorTextMid);
+  font-size: var(--fontSizeRegular);
+  color: var(--colorTextLight);
   cursor: pointer;
   transition: background var(--transitionFast), border-color var(--transitionFast);
 }
@@ -495,9 +486,9 @@ table { border-collapse: collapse; width: 100%; }
   gap: var(--spacingSM);
   padding: var(--spacingSM) var(--spacingLG);
   background: #444;
-  color: var(--colorTextInverse);
-  font-size: var(--fontSizeSM);
-  font-weight: var(--fontWeightMedium);
+  color: var(--colorWhite);
+  font-size: var(--fontSizeRegular);
+  font-weight: var(--fontMedium);
   border-radius: var(--radiusMD);
   cursor: pointer;
   transition: background var(--transitionFast);
@@ -510,7 +501,7 @@ table { border-collapse: collapse; width: 100%; }
 .btnBack {
   width: 40px;
   height: 40px;
-  background: var(--colorPrimary);
+  background: var(--colorOrange);
   border-radius: var(--radiusMD);
   display: flex;
   align-items: center;
@@ -518,12 +509,12 @@ table { border-collapse: collapse; width: 100%; }
   color: white;
   cursor: pointer;
   font-size: 22px;
-  font-weight: var(--fontWeightBold);
+  font-weight: var(--fontBold);
   flex-shrink: 0;
   transition: background var(--transitionFast);
 }
-.btnBack:hover  { background: var(--colorPrimaryHover); }
-.btnBack:active { background: var(--colorPrimaryActive); transform: scale(0.96); }
+.btnBack:hover  { background: var(--colorOrangeDark); }
+.btnBack:active { background: var(--colorOrange); transform: scale(0.96); }
 
 
 /* ── SECTION 7: SEARCH BAR ───────────────────────────────── */
@@ -538,16 +529,16 @@ table { border-collapse: collapse; width: 100%; }
   transition: border-color var(--transitionFast), box-shadow var(--transitionFast);
 }
 .searchBar:focus-within {
-  border-color: var(--colorPrimary);
+  border-color: var(--colorOrange);
   box-shadow: 0 0 0 3px rgba(232,82,26,0.10);
 }
-.searchBarIcon { color: var(--colorTextLight); font-size: var(--fontSizeMD); flex-shrink: 0; }
+.searchBarIcon { color: var(--colorTextLight); font-size: var(--fontSizeRegular); flex-shrink: 0; }
 .searchBarInput {
   flex: 1;
   border: none;
   background: none;
-  font-size: var(--fontSizeMD);
-  color: var(--colorText);
+  font-size: var(--fontSizeRegular);
+  color: var(--colorBlack);
   min-width: 0;
 }
 .searchBarInput::placeholder { color: var(--colorTextLight); }
@@ -564,9 +555,9 @@ table { border-collapse: collapse; width: 100%; }
 .dataTable thead th {
   padding: var(--spacingMD) var(--spacingLG);
   text-align: left;
-  font-size: var(--fontSizeSM);
-  font-weight: var(--fontWeightSemiBold);
-  color: var(--colorText);
+  font-size: var(--fontSizeRegular);
+  font-weight: var(--fontSemiBold);
+  color: var(--colorBlack);
   white-space: nowrap;
 }
 .dataTable tbody tr {
@@ -581,8 +572,8 @@ table { border-collapse: collapse; width: 100%; }
 
 .dataTable tbody td {
   padding: var(--spacingMD) var(--spacingLG);
-  font-size: var(--fontSizeMD);
-  color: var(--colorTextMid);
+  font-size: var(--fontSizeRegular);
+  color: var(--colorTextLight);
 }
 
 
@@ -606,8 +597,8 @@ table { border-collapse: collapse; width: 100%; }
   margin-bottom: var(--spacingXL);
 }
 .filterPanelTitle {
-  font-size: var(--fontSizeMD);
-  font-weight: var(--fontWeightSemiBold);
+  font-size: var(--fontSizeRegular);
+  font-weight: var(--fontSemiBold);
   color: var(--colorTextLight);
 }
 .btnFilterClose {
@@ -615,12 +606,12 @@ table { border-collapse: collapse; width: 100%; }
   border: none;
   color: var(--colorTextLight);
   cursor: pointer;
-  font-size: var(--fontSizeLG);
+  font-size: var(--fontSizeBig);
   line-height: 1;
   padding: 2px;
   transition: color var(--transitionFast);
 }
-.btnFilterClose:hover { color: var(--colorText); }
+.btnFilterClose:hover { color: var(--colorBlack); }
 
 .filterGroup { margin-bottom: var(--spacingXL); }
 
@@ -628,9 +619,9 @@ table { border-collapse: collapse; width: 100%; }
   display: flex;
   align-items: center;
   justify-content: space-between;
-  font-size: var(--fontSizeSM);
-  font-weight: var(--fontWeightSemiBold);
-  color: var(--colorText);
+  font-size: var(--fontSizeRegular);
+  font-weight: var(--fontSemiBold);
+  color: var(--colorBlack);
   cursor: pointer;
   padding-bottom: var(--spacingSM);
   border-bottom: 1px solid var(--colorBorder);
@@ -638,19 +629,19 @@ table { border-collapse: collapse; width: 100%; }
   transition: color var(--transitionFast);
   user-select: none;
 }
-.filterGroupHeader:hover { color: var(--colorPrimary); }
+.filterGroupHeader:hover { color: var(--colorOrange); }
 
 .filterOption {
   display: flex;
   align-items: center;
   gap: var(--spacingSM);
-  font-size: var(--fontSizeSM);
-  color: var(--colorTextMid);
+  font-size: var(--fontSizeRegular);
+  color: var(--colorTextLight);
   margin-bottom: var(--spacingSM);
   cursor: pointer;
   user-select: none;
 }
-.filterOption input[type="radio"] { accent-color: var(--colorPrimary); cursor: pointer; }
+.filterOption input[type="radio"] { accent-color: var(--colorOrange); cursor: pointer; }
 
 .filterCustomRange {
   display: flex;
@@ -663,14 +654,14 @@ table { border-collapse: collapse; width: 100%; }
   padding: var(--spacingXS) var(--spacingSM);
   border: 1px solid var(--colorBorder);
   border-radius: var(--radiusSM);
-  font-size: var(--fontSizeSM);
+  font-size: var(--fontSizeRegular);
   text-align: center;
   font-family: var(--fontFamily);
 }
-.filterRangeInput:focus { border-color: var(--colorPrimary); outline: none; }
+.filterRangeInput:focus { border-color: var(--colorOrange); outline: none; }
 
 .filterResults {
-  font-size: var(--fontSizeXS);
+  font-size: var(--fontSizeSmall);
   color: var(--colorTextLight);
   text-align: right;
   margin-top: auto;
@@ -734,9 +725,9 @@ table { border-collapse: collapse; width: 100%; }
   display: flex;
   align-items: center;
   gap: var(--spacingMD);
-  font-size: var(--fontSizeLG);
-  font-weight: var(--fontWeightSemiBold);
-  color: var(--colorText);
+  font-size: var(--fontSizeBig);
+  font-weight: var(--fontSemiBold);
+  color: var(--colorBlack);
 }
 .citizenInfoIconWrap {
   width: 36px;
@@ -745,9 +736,9 @@ table { border-collapse: collapse; width: 100%; }
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: var(--fontSizeLG);
+  font-size: var(--fontSizeBig);
 }
-.citizenInfoIconWrap.orange { background: var(--colorPrimaryLight); }
+.citizenInfoIconWrap.orange { background: var(--colorOrangeLight); }
 .citizenInfoIconWrap.green  { background: var(--colorGreenLight); }
 
 .citizenInfoRow {
@@ -760,11 +751,11 @@ table { border-collapse: collapse; width: 100%; }
 .citizenInfoLabel {
   width: 200px;
   min-width: 200px;
-  font-size: var(--fontSizeMD);
-  font-weight: var(--fontWeightMedium);
-  color: var(--colorText);
+  font-size: var(--fontSizeRegular);
+  font-weight: var(--fontMedium);
+  color: var(--colorBlack);
 }
-.citizenInfoValue { font-size: var(--fontSizeMD); color: var(--colorTextMid); }
+.citizenInfoValue { font-size: var(--fontSizeRegular); color: var(--colorTextLight); }
 
 /* Modal Side */
 .citizenDetailModalSide { display: flex; flex-direction: column; gap: var(--spacingLG); }
@@ -778,12 +769,12 @@ table { border-collapse: collapse; width: 100%; }
 .citizenRegCardRow { margin-bottom: var(--spacingMD); }
 .citizenRegCardRow:last-child { margin-bottom: 0; }
 .citizenRegCardLabel {
-  font-size: var(--fontSizeSM);
-  font-weight: var(--fontWeightSemiBold);
-  color: var(--colorText);
+  font-size: var(--fontSizeRegular);
+  font-weight: var(--fontSemiBold);
+  color: var(--colorBlack);
   margin-bottom: 2px;
 }
-.citizenRegCardValue { font-size: var(--fontSizeSM); color: var(--colorTextMid); }
+.citizenRegCardValue { font-size: var(--fontSizeRegular); color: var(--colorTextLight); }
 
 .citizenAccordion {
   background: var(--colorWhite);
@@ -796,9 +787,9 @@ table { border-collapse: collapse; width: 100%; }
   align-items: center;
   justify-content: space-between;
   padding: var(--spacingLG) var(--spacingXL);
-  font-size: var(--fontSizeMD);
-  font-weight: var(--fontWeightSemiBold);
-  color: var(--colorText);
+  font-size: var(--fontSizeRegular);
+  font-weight: var(--fontSemiBold);
+  color: var(--colorBlack);
   cursor: pointer;
   user-select: none;
   transition: background var(--transitionFast);
@@ -810,8 +801,8 @@ table { border-collapse: collapse; width: 100%; }
   display: none;
   padding: var(--spacingLG) var(--spacingXL);
   border-top: 1px solid var(--colorBorder);
-  font-size: var(--fontSizeSM);
-  color: var(--colorTextMid);
+  font-size: var(--fontSizeRegular);
+  color: var(--colorTextLight);
 }
 .citizenAccordionBody.open { display: block; }
 
@@ -844,8 +835,8 @@ table { border-collapse: collapse; width: 100%; }
   margin-bottom: var(--spacingMD);
 }
 .overviewReportCardTitle {
-  font-size: var(--fontSizeMD);
-  font-weight: var(--fontWeightSemiBold);
+  font-size: var(--fontSizeRegular);
+  font-weight: var(--fontSemiBold);
   color: rgba(255,255,255,0.9);
 }
 .overviewReportCardArrow {
@@ -861,9 +852,9 @@ table { border-collapse: collapse; width: 100%; }
   cursor: pointer;
 }
 .overviewReportCardValue {
-  font-size: var(--fontSizeHero);
-  font-weight: var(--fontWeightBold);
-  color: var(--colorTextInverse);
+  font-size: var(--fontSizeGiant);
+  font-weight: var(--fontBold);
+  color: var(--colorWhite);
   letter-spacing: -1px;
 }
 
@@ -883,8 +874,8 @@ table { border-collapse: collapse; width: 100%; }
   padding: var(--spacingXL);
 }
 .overviewWaterCardTitle {
-  font-size: var(--fontSizeMD);
-  font-weight: var(--fontWeightSemiBold);
+  font-size: var(--fontSizeRegular);
+  font-weight: var(--fontSemiBold);
   color: rgba(255,255,255,0.9);
   margin-bottom: var(--spacingLG);
 }
@@ -901,16 +892,16 @@ table { border-collapse: collapse; width: 100%; }
   box-shadow: var(--shadowSM);
 }
 .overviewVehicleStatValue {
-  font-size: var(--fontSizeXXL);
-  font-weight: var(--fontWeightBold);
-  color: var(--colorText);
+  font-size: var(--fontSizeTitle);
+  font-weight: var(--fontBold);
+  color: var(--colorBlack);
   letter-spacing: -1px;
 }
-.overviewVehicleStatLabel { font-size: var(--fontSizeSM); color: var(--colorTextLight); margin-top: var(--spacingXS); }
+.overviewVehicleStatLabel { font-size: var(--fontSizeRegular); color: var(--colorTextLight); margin-top: var(--spacingXS); }
 .overviewVehicleDivider   { border: none; border-top: 1px solid var(--colorBorder); margin: var(--spacingMD) 0; }
 
 .overviewPopCard {
-  background: var(--colorBrown);
+  background: var(--colorOrangeDark);
   border-radius: var(--radiusLG);
   padding: var(--spacingLG) var(--spacingXL);
 }
@@ -919,12 +910,12 @@ table { border-collapse: collapse; width: 100%; }
   justify-content: space-between;
   align-items: center;
   padding: var(--spacingSM) 0;
-  color: var(--colorTextInverse);
-  font-size: var(--fontSizeMD);
+  color: var(--colorWhite);
+  font-size: var(--fontSizeRegular);
 }
 .overviewPopRow + .overviewPopRow { border-top: 1px solid rgba(255,255,255,0.2); }
-.overviewPopLabel { font-weight: var(--fontWeightMedium); }
-.overviewPopValue { font-weight: var(--fontWeightBold); }
+.overviewPopLabel { font-weight: var(--fontMedium); }
+.overviewPopValue { font-weight: var(--fontBold); }
 
 /* Subdivision Table Card */
 .overviewSubdivisionCard {
@@ -953,9 +944,9 @@ table { border-collapse: collapse; width: 100%; }
   box-shadow: var(--shadowSM);
 }
 .announcementFormCardTitle {
-  font-size: var(--fontSizeLG);
-  font-weight: var(--fontWeightSemiBold);
-  color: var(--colorText);
+  font-size: var(--fontSizeBig);
+  font-weight: var(--fontSemiBold);
+  color: var(--colorBlack);
   margin-bottom: var(--spacingLG);
 }
 .announcementTextarea {
@@ -965,13 +956,13 @@ table { border-collapse: collapse; width: 100%; }
   padding: var(--spacingMD);
   border: 1px solid var(--colorBorder);
   border-radius: var(--radiusMD);
-  font-size: var(--fontSizeMD);
-  color: var(--colorText);
+  font-size: var(--fontSizeRegular);
+  color: var(--colorBlack);
   background: var(--colorWhite);
   transition: border-color var(--transitionFast);
   font-family: var(--fontFamily);
 }
-.announcementTextarea:focus   { border-color: var(--colorPrimary); }
+.announcementTextarea:focus   { border-color: var(--colorOrange); }
 .announcementTextarea::placeholder { color: var(--colorTextLight); }
 
 .announcementFormActions {
@@ -982,12 +973,12 @@ table { border-collapse: collapse; width: 100%; }
 }
 
 /* Media Section */
-.announcementMediaTitle   { font-size: var(--fontSizeLG); font-weight: var(--fontWeightSemiBold); color: var(--colorText); margin-bottom: var(--spacingXS); }
-.announcementMediaSubtext { font-size: var(--fontSizeSM); color: var(--colorTextLight); margin-bottom: var(--spacingLG); }
+.announcementMediaTitle   { font-size: var(--fontSizeBig); font-weight: var(--fontSemiBold); color: var(--colorBlack); margin-bottom: var(--spacingXS); }
+.announcementMediaSubtext { font-size: var(--fontSizeRegular); color: var(--colorTextLight); margin-bottom: var(--spacingLG); }
 
 .announcementMediaList  { display: flex; flex-direction: column; gap: var(--spacingMD); margin-bottom: var(--spacingLG); }
 .announcementMediaItem  { display: flex; align-items: center; gap: var(--spacingMD); }
-.announcementMediaDragHandle { color: var(--colorTextLight); cursor: grab; font-size: var(--fontSizeLG); }
+.announcementMediaDragHandle { color: var(--colorTextLight); cursor: grab; font-size: var(--fontSizeBig); }
 .announcementMediaThumb {
   width: 56px;
   height: 56px;
@@ -995,7 +986,7 @@ table { border-collapse: collapse; width: 100%; }
   border-radius: var(--radiusSM);
   flex-shrink: 0;
 }
-.announcementMediaFileName { flex: 1; font-size: var(--fontSizeMD); color: var(--colorTextMid); }
+.announcementMediaFileName { flex: 1; font-size: var(--fontSizeRegular); color: var(--colorTextLight); }
 
 /* Feed (right column) */
 .announcementFeedColumn { display: flex; flex-direction: column; gap: var(--spacingLG); }
@@ -1027,13 +1018,13 @@ table { border-collapse: collapse; width: 100%; }
   margin-bottom: var(--spacingSM);
 }
 .announcementFeedCardTitle {
-  font-size: var(--fontSizeMD);
-  font-weight: var(--fontWeightSemiBold);
-  color: var(--colorText);
+  font-size: var(--fontSizeRegular);
+  font-weight: var(--fontSemiBold);
+  color: var(--colorBlack);
 }
 .announcementFeedCardBody {
-  font-size: var(--fontSizeSM);
-  color: var(--colorTextMid);
+  font-size: var(--fontSizeRegular);
+  color: var(--colorTextLight);
   line-height: 1.6;
   margin-bottom: var(--spacingMD);
 }
@@ -1051,7 +1042,7 @@ table { border-collapse: collapse; width: 100%; }
 .announcementFeedCardFooter {
   display: flex;
   justify-content: space-between;
-  font-size: var(--fontSizeXS);
+  font-size: var(--fontSizeSmall);
   color: var(--colorTextLight);
 }
 .announcementFeedDivider {
@@ -1100,9 +1091,9 @@ table { border-collapse: collapse; width: 100%; }
   flex-shrink: 0;
 }
 .unverifiedPageTitle {
-  font-size: var(--fontSizeXXL);
-  font-weight: var(--fontWeightBold);
-  color: var(--colorText);
+  font-size: var(--fontSizeTitle);
+  font-weight: var(--fontBold);
+  color: var(--colorBlack);
   white-space: nowrap;
 }
 .unverifiedBody {
@@ -1139,9 +1130,9 @@ table { border-collapse: collapse; width: 100%; }
   border-radius: var(--radiusXL) var(--radiusXL) 0 0;
 }
 .invalidRegModalTitle {
-  font-size: var(--fontSizeXL);
-  font-weight: var(--fontWeightBold);
-  color: var(--colorPrimary);
+  font-size: var(--fontSizeBig);
+  font-weight: var(--fontBold);
+  color: var(--colorOrange);
   flex-shrink: 0;
   white-space: nowrap;
 }
@@ -1159,8 +1150,8 @@ table { border-collapse: collapse; width: 100%; }
   gap: var(--spacingLG);
 }
 .placeholderPageIcon  { font-size: 64px; opacity: 0.2; }
-.placeholderPageTitle { font-size: var(--fontSizeXXL); font-weight: var(--fontWeightBold); color: var(--colorBorderDark); }
-.placeholderPageSub   { font-size: var(--fontSizeMD); color: var(--colorTextLight); }
+.placeholderPageTitle { font-size: var(--fontSizeTitle); font-weight: var(--fontBold); color: var(--colorBorderDark); }
+.placeholderPageSub   { font-size: var(--fontSizeRegular); color: var(--colorTextLight); }
 
 
 /* ── SECTION 17: LOGIN / AUTH PAGES ──────────────────────── */
@@ -1181,9 +1172,9 @@ table { border-collapse: collapse; width: 100%; }
   animation: modalIn var(--transitionMid) ease;
 }
 .loginTitle {
-  font-size: var(--fontSizeXXL);
-  font-weight: var(--fontWeightBold);
-  color: var(--colorPrimary);
+  font-size: var(--fontSizeTitle);
+  font-weight: var(--fontBold);
+  color: var(--colorOrange);
   margin-bottom: var(--spacingXXL);
 }
 .loginFieldGroup {
@@ -1199,11 +1190,11 @@ table { border-collapse: collapse; width: 100%; }
   background: var(--colorBg);
   border: 1px solid transparent;
   border-radius: var(--radiusMD);
-  font-size: var(--fontSizeMD);
-  color: var(--colorText);
+  font-size: var(--fontSizeRegular);
+  color: var(--colorBlack);
   transition: border-color var(--transitionFast), box-shadow var(--transitionFast);
 }
-.loginInput:focus { border-color: var(--colorPrimary); box-shadow: 0 0 0 3px rgba(232,82,26,0.10); }
+.loginInput:focus { border-color: var(--colorOrange); box-shadow: 0 0 0 3px rgba(232,82,26,0.10); }
 .loginInput::placeholder { color: var(--colorTextLight); }
 
 .loginPasswordToggleBtn {
@@ -1215,18 +1206,18 @@ table { border-collapse: collapse; width: 100%; }
   border: none;
   cursor: pointer;
   color: var(--colorTextLight);
-  font-size: var(--fontSizeLG);
+  font-size: var(--fontSizeBig);
   transition: color var(--transitionFast);
 }
-.loginPasswordToggleBtn:hover { color: var(--colorText); }
+.loginPasswordToggleBtn:hover { color: var(--colorBlack); }
 
 .btnLoginSubmit {
   width: 100%;
   padding: var(--spacingMD);
-  background: var(--colorPrimary);
-  color: var(--colorTextInverse);
-  font-size: var(--fontSizeMD);
-  font-weight: var(--fontWeightSemiBold);
+  background: var(--colorOrange);
+  color: var(--colorWhite);
+  font-size: var(--fontSizeRegular);
+  font-weight: var(--fontSemiBold);
   border-radius: var(--radiusFull);
   cursor: pointer;
   border: none;
@@ -1234,12 +1225,12 @@ table { border-collapse: collapse; width: 100%; }
   transition: background var(--transitionFast), transform var(--transitionFast);
   margin-bottom: var(--spacingLG);
 }
-.btnLoginSubmit:hover  { background: var(--colorPrimaryHover); }
-.btnLoginSubmit:active { background: var(--colorPrimaryActive); transform: scale(0.98); }
+.btnLoginSubmit:hover  { background: var(--colorOrangeDark); }
+.btnLoginSubmit:active { background: var(--colorOrange); transform: scale(0.98); }
 
 .loginForgotLink {
   text-align: center;
-  font-size: var(--fontSizeMD);
+  font-size: var(--fontSizeRegular);
   color: var(--colorGreen);
   cursor: pointer;
   transition: color var(--transitionFast);
@@ -1250,16 +1241,16 @@ table { border-collapse: collapse; width: 100%; }
 
 .loginSwitchText {
   text-align: center;
-  font-size: var(--fontSizeSM);
-  color: var(--colorTextMid);
+  font-size: var(--fontSizeRegular);
+  color: var(--colorTextLight);
 }
 .loginSwitchLink {
-  color: var(--colorPrimary);
-  font-weight: var(--fontWeightSemiBold);
+  color: var(--colorOrange);
+  font-weight: var(--fontSemiBold);
   cursor: pointer;
   transition: color var(--transitionFast);
 }
-.loginSwitchLink:hover { color: var(--colorPrimaryHover); text-decoration: underline; }
+.loginSwitchLink:hover { color: var(--colorOrangeDark); text-decoration: underline; }
 
 
 /* ── SECTION 18: RESPONSIVE ──────────────────────────────── */
