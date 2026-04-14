@@ -12,7 +12,7 @@
     .overviewReportCards {
       display: grid;
       grid-template-columns: repeat(4, 1fr);
-      background: var(--colorGreen);
+      background: linear-gradient(to bottom, var(--colorGreen), var(--colorGreenDark));
       border-radius: var(--radiusL);
       overflow: hidden;
       margin-bottom: var(--spacingL);
@@ -65,7 +65,7 @@
 
     /* Water Level */
     .overviewWaterCard {
-      background: var(--colorGreen);
+      background: var(--colorGreenDark);
       border-radius: var(--radiusL);
       padding: var(--spacingL);
     }
@@ -97,7 +97,7 @@
     .overviewVehicleDivider   { border: none; border-top: 1px solid var(--colorBorder); margin: var(--spacingS) 0; }
 
     .overviewPopCard {
-      background: var(--colorOrangeDark);
+      background: linear-gradient(to right, #d1531a, #652000);
       border-radius: var(--radiusL);
       padding: var(--spacingM) var(--spacingL);
     }
@@ -209,6 +209,38 @@
           <div class="overviewVehicleStatValue">0,000</div>
           <div class="overviewVehicleStatLabel">Outbound Vehicles</div>
         </div>
+      </div>
+
+    </div>
+
+    <div class="overviewMidRow">
+      <!-- Subdivision Table -->
+      <div class="overviewSubdivisionCard">
+        <div class="tableWrap">
+          <table class="tableDiv">
+            <thead>
+              <tr>
+                <th>Subdivision</th>
+                <th>Population</th>
+                <th>Registered Users</th>
+                <th>Unverified User</th>
+                <th>Invalid Users</th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr><td>Subdivision</td><td>00,000</td><td>00,000</td><td>00,000</td><td>00,000</td><td><button class="btnDownloadRow">↓</button></td></tr>
+              <tr><td>Subdivision</td><td>00,000</td><td>00,000</td><td>00,000</td><td>00,000</td><td><button class="btnDownloadRow">↓</button></td></tr>
+              <tr><td>Subdivision</td><td>00,000</td><td>00,000</td><td>00,000</td><td>00,000</td><td><button class="btnDownloadRow">↓</button></td></tr>
+              <tr><td>Subdivision</td><td>00,000</td><td>00,000</td><td>00,000</td><td>00,000</td><td><button class="btnDownloadRow">↓</button></td></tr>
+              <tr><td>Subdivision</td><td>00,000</td><td>00,000</td><td>00,000</td><td>00,000</td><td><button class="btnDownloadRow">↓</button></td></tr>
+              <tr><td>No Subdivision</td><td>00,000</td><td>00,000</td><td>00,000</td><td>00,000</td><td><button class="btnDownloadRow">↓</button></td></tr>
+              <tr><td>Condo</td><td>00,000</td><td>00,000</td><td>00,000</td><td>00,000</td><td><button class="btnDownloadRow">↓</button></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+      <div class="overviewStatsColumn">
         <div class="overviewPopCard">
           <div class="overviewPopRow">
             <span class="overviewPopLabel">Population</span>
@@ -224,36 +256,7 @@
           </div>
         </div>
       </div>
-
     </div>
-
-    <!-- Subdivision Table -->
-    <div class="overviewSubdivisionCard">
-      <div class="tableWrap">
-        <table class="tableDiv">
-          <thead>
-            <tr>
-              <th>Subdivision</th>
-              <th>Population</th>
-              <th>Registered Users</th>
-              <th>Unverified User</th>
-              <th>Invalid Users</th>
-              <th></th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr><td>Subdivision</td><td>00,000</td><td>00,000</td><td>00,000</td><td>00,000</td><td><button class="btnDownloadRow">↓</button></td></tr>
-            <tr><td>Subdivision</td><td>00,000</td><td>00,000</td><td>00,000</td><td>00,000</td><td><button class="btnDownloadRow">↓</button></td></tr>
-            <tr><td>Subdivision</td><td>00,000</td><td>00,000</td><td>00,000</td><td>00,000</td><td><button class="btnDownloadRow">↓</button></td></tr>
-            <tr><td>Subdivision</td><td>00,000</td><td>00,000</td><td>00,000</td><td>00,000</td><td><button class="btnDownloadRow">↓</button></td></tr>
-            <tr><td>Subdivision</td><td>00,000</td><td>00,000</td><td>00,000</td><td>00,000</td><td><button class="btnDownloadRow">↓</button></td></tr>
-            <tr><td>No Subdivision</td><td>00,000</td><td>00,000</td><td>00,000</td><td>00,000</td><td><button class="btnDownloadRow">↓</button></td></tr>
-            <tr><td>Condo</td><td>00,000</td><td>00,000</td><td>00,000</td><td>00,000</td><td><button class="btnDownloadRow">↓</button></td></tr>
-          </tbody>
-        </table>
-      </div>
-    </div>
-
   </div>
 </body>
 </html>
