@@ -10,12 +10,12 @@
 </head>
 <body>
 
-  <div class="loginPageWrap">
+  <div class="loginPageBg">
     <div class="loginCard">
+
       <h1 class="loginTitle">Sign In</h1>
 
       <div class="loginFieldGroup">
-        <!-- Email -->
         <div class="loginInputWrap">
           <input
             id="loginInputEmail"
@@ -25,8 +25,6 @@
             autocomplete="email"
           />
         </div>
-
-        <!-- Password -->
         <div class="loginInputWrap">
           <input
             id="loginInputPassword"
@@ -36,58 +34,54 @@
             autocomplete="current-password"
           />
           <button
-            id="loginBtnTogglePassword"
-            class="loginPasswordToggle"
+            id="btnLoginTogglePassword"
+            class="loginPasswordToggleBtn"
             type="button"
             title="Show/hide password"
           >👁</button>
         </div>
       </div>
 
-      <!-- Log In -->
-      <button id="btnLogin" class="btnLogin" type="button">Log In</button>
+      <button id="btnLoginSubmit" class="btnLoginSubmit" type="button">Log In</button>
 
-      <!-- Forgot Password -->
-      <p class="loginForgot" onclick="window.location.href='ForgotPassword.html'">Forgot Password</p>
+      <a class="loginForgotLink" id="loginForgotLink">Forgot Password</a>
 
-      <!-- Switch to sign up -->
-      <p class="loginSwitchLink">
-        Don't have an account? <a onclick="window.location.href='Signup.html'">Sign up</a>
+      <p class="loginSwitchText">
+        Don't have an account?
+        <a class="loginSwitchLink" id="loginGoSignup">Sign up</a>
       </p>
+
     </div>
   </div>
 
+  <!-- Button navigation JS -->
   <script>
-    // ── Toggle password visibility ──────────────────────────
-    const loginInputPassword   = document.getElementById('loginInputPassword');
-    const loginBtnTogglePassword = document.getElementById('loginBtnTogglePassword');
-
-    loginBtnTogglePassword.addEventListener('click', () => {
-      const isHidden = loginInputPassword.type === 'password';
-      loginInputPassword.type = isHidden ? 'text' : 'password';
-      loginBtnTogglePassword.textContent = isHidden ? '🙈' : '👁';
+    // Toggle password visibility
+    document.getElementById('btnLoginTogglePassword').addEventListener('click', function () {
+      var input = document.getElementById('loginInputPassword');
+      var isHidden = input.type === 'password';
+      input.type = isHidden ? 'text' : 'password';
+      this.textContent = isHidden ? '🙈' : '👁';
     });
 
-    // ── Login button → navigate to main app ────────────────
-    document.getElementById('btnLogin').addEventListener('click', () => {
-      const email    = document.getElementById('loginInputEmail').value.trim();
-      const password = loginInputPassword.value;
-
-      if (!email || !password) {
-        alert('Please enter your email and password.');
-        return;
-      }
-
-      // Navigate to main app (Overview page by default)
-      sessionStorage.setItem('mfv_currentPage', 'overview');
+    // Log In → go to MainLayout
+    document.getElementById('btnLoginSubmit').addEventListener('click', function () {
       window.location.href = 'MainLayout.html';
     });
 
-    // ── Allow Enter key to submit ───────────────────────────
-    document.addEventListener('keydown', (e) => {
-      if (e.key === 'Enter') {
-        document.getElementById('btnLogin').click();
-      }
+    // Allow Enter key
+    document.addEventListener('keydown', function (e) {
+      if (e.key === 'Enter') document.getElementById('btnLoginSubmit').click();
+    });
+
+    // Forgot Password
+    document.getElementById('loginForgotLink').addEventListener('click', function () {
+      window.location.href = 'ForgotPassword.html';
+    });
+
+    // Go to Sign Up
+    document.getElementById('loginGoSignup').addEventListener('click', function () {
+      window.location.href = 'Signup.html';
     });
   </script>
 

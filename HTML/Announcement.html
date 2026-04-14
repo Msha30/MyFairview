@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Announcement</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../Layout.css" />
+</head>
+<body>
+
+  <div class="pageWrapper">
+    <div class="announcementLayout">
+
+      <!-- ── LEFT: Post Form ──────────────────── -->
+      <div class="announcementFormArea">
+
+        <!-- Post Details Card -->
+        <div class="announcementFormCard">
+          <div class="announcementFormCardTitle">Post Details</div>
+          <textarea
+            id="announcementTextInput"
+            class="announcementTextarea"
+            placeholder="Text"
+          ></textarea>
+          <div class="announcementFormActions">
+            <button class="btnSecondary" id="btnAnnouncementCancel" type="button">Cancel</button>
+            <button class="btnGreen"     id="btnAnnouncementPost"   type="button">Post</button>
+          </div>
+        </div>
+
+        <!-- Media Card -->
+        <div class="announcementFormCard">
+          <div class="announcementMediaTitle">Media</div>
+          <div class="announcementMediaSubtext">Cannot exceed 10 photos.</div>
+
+          <!-- File list (placeholder items to show layout) -->
+          <div class="announcementMediaList">
+
+            <div class="announcementMediaItem">
+              <span class="announcementMediaDragHandle">⋮⋮</span>
+              <div class="announcementMediaThumb"></div>
+              <span class="announcementMediaFileName">filenameblahblah.jpeg</span>
+              <button class="btnDeleteMedia" type="button">🗑</button>
+            </div>
+
+            <div class="announcementMediaItem">
+              <span class="announcementMediaDragHandle">⋮⋮</span>
+              <div class="announcementMediaThumb"></div>
+              <span class="announcementMediaFileName">filenameblahblah.jpeg</span>
+              <button class="btnDeleteMedia" type="button">🗑</button>
+            </div>
+
+          </div>
+
+          <button class="btnAddPhotos" id="btnAnnouncementAddPhotos" type="button">
+            📷 Add photos
+          </button>
+        </div>
+
+      </div>
+      <!-- /LEFT -->
+
+      <!-- ── RIGHT: Feed ──────────────────────── -->
+      <div class="announcementFeedColumn">
+
+        <!-- Search bar -->
+        <div class="announcementFeedSearch">
+          <div class="searchBar" style="flex:1">
+            <span class="searchBarIcon">🔍</span>
+            <input class="searchBarInput" type="text" placeholder="Search" />
+          </div>
+          <button class="btnFilterToggle" type="button">☰</button>
+        </div>
+
+        <!-- Feed cards -->
+        <div class="announcementFeedList">
+
+          <!-- Feed Card 1 -->
+          <div class="announcementFeedCard">
+            <div class="announcementFeedCardHeader">
+              <span class="announcementFeedCardTitle">Lorem Ipsum</span>
+              <button class="btnRowMenu" type="button">⋮</button>
+            </div>
+            <p class="announcementFeedCardBody">
+              Lorem ipsum dolor sit amet, consectetur adipiscing elit. Mauris rutrum laoreet pharetra.
+              Pellentesque tellus velit, lobortis sit amet lacus quis, commodo egestas mi.
+            </p>
+            <div class="announcementFeedCardImages">
+              <div class="announcementFeedCardImage"></div>
+              <div class="announcementFeedCardImage"></div>
+              <div class="announcementFeedCardImage"></div>
+            </div>
+            <div class="announcementFeedCardFooter">
+              <span>User</span>
+              <span>Jan 1, 2026</span>
+            </div>
+          </div>
+
+          <hr class="announcementFeedDivider" />
+
+          <!-- Feed Card 2 -->
+          <div class="announcementFeedCard">
+            <div class="announcementFeedCardHeader">
+              <span class="announcementFeedCardTitle">Lorem Ipsum</span>
+              <button class="btnRowMenu" type="button">⋮</button>
+            </div>
+            <p class="announcementFeedCardBody">
+              Lorem ipsum dolor sit amet, consectetur adipiscing elit. Mauris rutrum laoreet pharetra.
+              Pellentesque tellus velit, lobortis sit amet lacus quis, commodo egestas mi.
+            </p>
+            <div class="announcementFeedCardImages">
+              <div class="announcementFeedCardImage"></div>
+              <div class="announcementFeedCardImage"></div>
+              <div class="announcementFeedCardImage"></div>
+            </div>
+            <div class="announcementFeedCardFooter">
+              <span>User</span>
+              <span>Jan 1, 2026</span>
+            </div>
+          </div>
+
+        </div>
+        <!-- /Feed list -->
+
+      </div>
+      <!-- /RIGHT -->
+
+    </div>
+  </div>
+
+</body>
+</html>

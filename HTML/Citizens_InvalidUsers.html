@@ -3,133 +3,137 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>MyFairview — Unverified Citizens</title>
+  <title>Unverified Citizens</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="../Layout.css" />
-  <style>
-    /* Page-specific layout (no sidebar on this view) */
-    body {
-      background: var(--colorBg);
-      min-height: 100vh;
-    }
-
-    .unverifiedPage {
-      display: flex;
-      flex-direction: column;
-      height: 100vh;
-      overflow: hidden;
-    }
-
-    /* Top bar */
-    .unverifiedTopBar {
-      display: flex;
-      align-items: center;
-      gap: var(--spacingXL);
-      padding: var(--spacingLG) var(--contentPadding);
-      background: var(--colorWhite);
-      border-bottom: 1px solid var(--colorBorder);
-      flex-shrink: 0;
-    }
-
-    /* Main body */
-    .unverifiedBody {
-      flex: 1;
-      display: flex;
-      gap: var(--spacingXL);
-      overflow: hidden;
-      padding: var(--contentPadding);
-    }
-
-    .unverifiedTableArea {
-      flex: 1;
-      background: var(--colorWhite);
-      border-radius: var(--radiusLG);
-      overflow-y: auto;
-      box-shadow: var(--shadowSM);
-    }
-
-    /* Filter panel (reused) */
-    .filterPanel {
-      flex-shrink: 0;
-    }
-
-    .filterPanel.open {
-      display: flex;
-      flex-direction: column;
-    }
-  </style>
 </head>
 <body>
 
-  <div class="unverifiedPage">
+  <div class="unverifiedPageShell">
 
     <!-- Top Bar -->
     <div class="unverifiedTopBar">
 
-      <!-- Back button -->
-      <button
-        class="unverifiedBackBtn"
-        id="btnUnverifiedBack"
-        title="Go back"
-        type="button"
-      >‹</button>
+      <button class="btnBack" id="btnUnverifiedBack" type="button">‹</button>
 
       <h1 class="unverifiedPageTitle">Unverified Citizens</h1>
 
-      <!-- Search -->
-      <div class="searchBar" style="max-width:480px; flex:1;">
+      <div class="searchBar" style="flex:1; max-width:480px;">
         <span class="searchBarIcon">🔍</span>
-        <input type="text" placeholder="Search" id="unverifiedSearchInput" />
+        <input class="searchBarInput" type="text" placeholder="Search" id="unverifiedSearchInput" />
       </div>
 
-      <!-- Filter toggle -->
-      <button class="btnFilterToggle" id="btnUnverifiedFilterToggle" title="Filter">☰</button>
+      <button class="btnFilterToggle" id="btnUnverifiedFilterToggle" type="button">☰</button>
 
-      <!-- Invalid Registration button -->
-      <button class="btnInvalidReg" id="btnOpenInvalidModal" type="button">
+      <button class="btnInvalidReg" id="btnOpenInvalidRegModal" type="button">
         ⚠ Invalid Registration
       </button>
 
     </div>
 
-    <!-- Body -->
+    <!-- Body: Table + Filter Panel -->
     <div class="unverifiedBody">
 
       <!-- Table -->
       <div class="unverifiedTableArea">
-        <table class="dataTable" id="unverifiedTable">
-          <thead>
-            <tr>
-              <th>Surname</th>
-              <th>First Name</th>
-              <th>Middle Name</th>
-              <th>Suffix</th>
-              <th>No. of Family Members</th>
-              <th>Contact Number</th>
-              <th>Proof of Residency</th>
-              <th></th>
-            </tr>
-          </thead>
-          <tbody id="unverifiedTableBody">
-            <!-- Rows injected by JS -->
-          </tbody>
-        </table>
+        <div class="tableWrap">
+          <table class="dataTable">
+            <thead>
+              <tr>
+                <th>Surname</th>
+                <th>First Name</th>
+                <th>Middle Name</th>
+                <th>Suffix</th>
+                <th>No. of Family Members</th>
+                <th>Contact Number</th>
+                <th>Proof of Residency</th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr class="rowClickable" onclick="openCitizenDetail()">
+                <td>Surname</td><td>First Name</td><td>Middle Name</td><td>None</td><td>00</td><td>0995 123 4567</td><td>Document Name</td>
+                <td><button class="btnRowMenu" onclick="event.stopPropagation()">⋮</button></td>
+              </tr>
+              <tr class="rowClickable" onclick="openCitizenDetail()">
+                <td>Surname</td><td>First Name</td><td>Middle Name</td><td>None</td><td>00</td><td>0995 123 4567</td><td>Document Name</td>
+                <td><button class="btnRowMenu" onclick="event.stopPropagation()">⋮</button></td>
+              </tr>
+              <tr class="rowClickable" onclick="openCitizenDetail()">
+                <td>Surname</td><td>First Name</td><td>Middle Name</td><td>None</td><td>00</td><td>0995 123 4567</td><td>Document Name</td>
+                <td><button class="btnRowMenu" onclick="event.stopPropagation()">⋮</button></td>
+              </tr>
+              <tr class="rowClickable" onclick="openCitizenDetail()">
+                <td>Surname</td><td>First Name</td><td>Middle Name</td><td>None</td><td>00</td><td>0995 123 4567</td><td>Document Name</td>
+                <td><button class="btnRowMenu" onclick="event.stopPropagation()">⋮</button></td>
+              </tr>
+              <tr class="rowClickable" onclick="openCitizenDetail()">
+                <td>Surname</td><td>First Name</td><td>Middle Name</td><td>None</td><td>00</td><td>0995 123 4567</td><td>Document Name</td>
+                <td><button class="btnRowMenu" onclick="event.stopPropagation()">⋮</button></td>
+              </tr>
+              <tr class="rowClickable" onclick="openCitizenDetail()">
+                <td>Surname</td><td>First Name</td><td>Middle Name</td><td>None</td><td>00</td><td>0995 123 4567</td><td>Document Name</td>
+                <td><button class="btnRowMenu" onclick="event.stopPropagation()">⋮</button></td>
+              </tr>
+              <tr class="rowClickable" onclick="openCitizenDetail()">
+                <td>Surname</td><td>First Name</td><td>Middle Name</td><td>None</td><td>00</td><td>0995 123 4567</td><td>Document Name</td>
+                <td><button class="btnRowMenu" onclick="event.stopPropagation()">⋮</button></td>
+              </tr>
+              <tr class="rowClickable" onclick="openCitizenDetail()">
+                <td>Surname</td><td>First Name</td><td>Middle Name</td><td>None</td><td>00</td><td>0995 123 4567</td><td>Document Name</td>
+                <td><button class="btnRowMenu" onclick="event.stopPropagation()">⋮</button></td>
+              </tr>
+              <tr class="rowClickable" onclick="openCitizenDetail()">
+                <td>Surname</td><td>First Name</td><td>Middle Name</td><td>None</td><td>00</td><td>0995 123 4567</td><td>Document Name</td>
+                <td><button class="btnRowMenu" onclick="event.stopPropagation()">⋮</button></td>
+              </tr>
+              <tr class="rowClickable" onclick="openCitizenDetail()">
+                <td>Surname</td><td>First Name</td><td>Middle Name</td><td>None</td><td>00</td><td>0995 123 4567</td><td>Document Name</td>
+                <td><button class="btnRowMenu" onclick="event.stopPropagation()">⋮</button></td>
+              </tr>
+              <tr class="rowClickable" onclick="openCitizenDetail()">
+                <td>Surname</td><td>First Name</td><td>Middle Name</td><td>None</td><td>00</td><td>0995 123 4567</td><td>Document Name</td>
+                <td><button class="btnRowMenu" onclick="event.stopPropagation()">⋮</button></td>
+              </tr>
+              <tr class="rowClickable" onclick="openCitizenDetail()">
+                <td>Surname</td><td>First Name</td><td>Middle Name</td><td>None</td><td>00</td><td>0995 123 4567</td><td>Document Name</td>
+                <td><button class="btnRowMenu" onclick="event.stopPropagation()">⋮</button></td>
+              </tr>
+              <tr class="rowClickable" onclick="openCitizenDetail()">
+                <td>Surname</td><td>First Name</td><td>Middle Name</td><td>None</td><td>00</td><td>0995 123 4567</td><td>Document Name</td>
+                <td><button class="btnRowMenu" onclick="event.stopPropagation()">⋮</button></td>
+              </tr>
+              <tr class="rowClickable" onclick="openCitizenDetail()">
+                <td>Surname</td><td>First Name</td><td>Middle Name</td><td>None</td><td>00</td><td>0995 123 4567</td><td>Document Name</td>
+                <td><button class="btnRowMenu" onclick="event.stopPropagation()">⋮</button></td>
+              </tr>
+              <tr class="rowClickable" onclick="openCitizenDetail()">
+                <td>Surname</td><td>First Name</td><td>Middle Name</td><td>None</td><td>00</td><td>0995 123 4567</td><td>Document Name</td>
+                <td><button class="btnRowMenu" onclick="event.stopPropagation()">⋮</button></td>
+              </tr>
+              <tr class="rowClickable" onclick="openCitizenDetail()">
+                <td>Surname</td><td>First Name</td><td>Middle Name</td><td>None</td><td>00</td><td>0995 123 4567</td><td>Document Name</td>
+                <td><button class="btnRowMenu" onclick="event.stopPropagation()">⋮</button></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
       </div>
 
-      <!-- Filter Panel -->
+      <!-- Filter Panel (open by default to match design) -->
       <div class="filterPanel open" id="unverifiedFilterPanel">
         <div class="filterPanelHeader">
           <span class="filterPanelTitle">Filter</span>
-          <button class="btnFilterClose" id="btnUnverifiedFilterClose">✕</button>
+          <button class="btnFilterClose" id="btnUnverifiedFilterClose" type="button">✕</button>
         </div>
 
         <div class="filterGroup">
-          <div class="filterGroupHeader">Household Members <span class="accordionArrow">∧</span></div>
-          <label class="filterOption"><input type="radio" name="uvFilterHousehold" value="1-3"/> 1 – 3</label>
-          <label class="filterOption"><input type="radio" name="uvFilterHousehold" value="4-6"/> 4 – 6</label>
-          <label class="filterOption"><input type="radio" name="uvFilterHousehold" value="7+"/>  7+</label>
-          <label class="filterOption"><input type="radio" name="uvFilterHousehold" value="custom"/> Custom</label>
+          <div class="filterGroupHeader">Household Members <span>∧</span></div>
+          <label class="filterOption"><input type="radio" name="uvFilterHousehold" value="1-3" /> 1 – 3</label>
+          <label class="filterOption"><input type="radio" name="uvFilterHousehold" value="4-6" /> 4 – 6</label>
+          <label class="filterOption"><input type="radio" name="uvFilterHousehold" value="7+"  /> 7+</label>
+          <label class="filterOption"><input type="radio" name="uvFilterHousehold" value="custom" /> Custom</label>
           <div class="filterCustomRange">
             <input type="number" class="filterRangeInput" placeholder="–" min="0" />
             <span>–</span>
@@ -138,38 +142,39 @@
         </div>
 
         <div class="filterGroup">
-          <div class="filterGroupHeader">Age <span class="accordionArrow">∨</span></div>
+          <div class="filterGroupHeader">Age <span>∨</span></div>
         </div>
 
         <div class="filterGroup">
-          <div class="filterGroupHeader">Subdivision <span class="accordionArrow">∨</span></div>
+          <div class="filterGroupHeader">Subdivision <span>∨</span></div>
         </div>
 
         <div class="filterGroup">
-          <div class="filterGroupHeader">Proof of Residency <span class="accordionArrow">∨</span></div>
+          <div class="filterGroupHeader">Proof of Residency <span>∨</span></div>
         </div>
 
         <div class="filterResults">100+ Results</div>
 
         <div class="filterPanelFooter">
-          <button class="btnPrimary" id="btnUnverifiedApplyFilter">Apply Filter</button>
-          <button class="btnExport"  id="btnUnverifiedExport2">Export</button>
+          <button class="btnPrimary" id="btnUnverifiedApplyFilter" type="button">Apply Filter</button>
+          <button class="btnExport"  id="btnUnverifiedExport"      type="button">Export</button>
         </div>
       </div>
 
     </div>
-    <!-- /Body -->
+    <!-- /unverifiedBody -->
 
   </div>
-  <!-- /unverifiedPage -->
+  <!-- /unverifiedPageShell -->
 
 
-  <!-- ═══════════════════════════════════════════════════════
-       CITIZEN DETAIL MODAL (same structure, reused)
-  ══════════════════════════════════════════════════════════ -->
+  <!-- ════════════════════════════════════════════════
+       CITIZEN DETAIL MODAL
+  ═════════════════════════════════════════════════ -->
   <div class="modalOverlay" id="citizenDetailOverlay">
-    <div class="citizenModalBox" id="citizenModalBox">
-      <div class="citizenModalMain">
+    <div class="citizenDetailModalBox" id="citizenDetailModalBox">
+
+      <div class="citizenDetailModalMain">
         <div class="citizenInfoCard">
           <div class="citizenInfoCardHeader">
             <div class="citizenInfoCardTitle">
@@ -178,13 +183,13 @@
             </div>
             <button class="btnEdit" type="button">✏ Edit</button>
           </div>
-          <div class="citizenInfoRow"><span class="citizenInfoLabel">Surname</span>          <span class="citizenInfoValue" id="citizenDetailSurname">—</span></div>
-          <div class="citizenInfoRow"><span class="citizenInfoLabel">First Name</span>        <span class="citizenInfoValue" id="citizenDetailFirstName">—</span></div>
-          <div class="citizenInfoRow"><span class="citizenInfoLabel">Middle Name</span>       <span class="citizenInfoValue" id="citizenDetailMiddleName">—</span></div>
-          <div class="citizenInfoRow"><span class="citizenInfoLabel">Suffix</span>            <span class="citizenInfoValue" id="citizenDetailSuffix">—</span></div>
-          <div class="citizenInfoRow"><span class="citizenInfoLabel">Main Contact Number</span><span class="citizenInfoValue" id="citizenDetailContact">—</span></div>
-          <div class="citizenInfoRow"><span class="citizenInfoLabel">Date of Birth</span>     <span class="citizenInfoValue" id="citizenDetailDOB">—</span></div>
-          <div class="citizenInfoRow"><span class="citizenInfoLabel">Valid ID</span>          <span class="citizenInfoValue" id="citizenDetailID">—</span></div>
+          <div class="citizenInfoRow"><span class="citizenInfoLabel">Surname</span>            <span class="citizenInfoValue">Lorem Ipsum</span></div>
+          <div class="citizenInfoRow"><span class="citizenInfoLabel">First Name</span>          <span class="citizenInfoValue">Lorem Ipsum</span></div>
+          <div class="citizenInfoRow"><span class="citizenInfoLabel">Middle Name</span>         <span class="citizenInfoValue">Lorem Ipsum</span></div>
+          <div class="citizenInfoRow"><span class="citizenInfoLabel">Suffix</span>              <span class="citizenInfoValue">Lorem Ipsum</span></div>
+          <div class="citizenInfoRow"><span class="citizenInfoLabel">Main Contact Number</span> <span class="citizenInfoValue">Lorem Ipsum</span></div>
+          <div class="citizenInfoRow"><span class="citizenInfoLabel">Date of Birth</span>       <span class="citizenInfoValue">Lorem Ipsum</span></div>
+          <div class="citizenInfoRow"><span class="citizenInfoLabel">Valid ID</span>            <span class="citizenInfoValue">Lorem Ipsum</span></div>
         </div>
         <div class="citizenInfoCard">
           <div class="citizenInfoCardHeader">
@@ -194,50 +199,54 @@
             </div>
             <button class="btnEdit" type="button">✏ Edit</button>
           </div>
-          <div class="citizenInfoRow"><span class="citizenInfoLabel">Address</span>            <span class="citizenInfoValue" id="citizenDetailAddress">—</span></div>
-          <div class="citizenInfoRow"><span class="citizenInfoLabel">Proof of Residency</span> <span class="citizenInfoValue" id="citizenDetailProof">—</span></div>
-          <div class="citizenInfoRow"><span class="citizenInfoLabel">Attachment</span>         <span class="citizenInfoValue" id="citizenDetailAttachment">—</span></div>
+          <div class="citizenInfoRow"><span class="citizenInfoLabel">Address</span>             <span class="citizenInfoValue">Lorem Ipsum</span></div>
+          <div class="citizenInfoRow"><span class="citizenInfoLabel">Proof of Residency</span>  <span class="citizenInfoValue">Lorem Ipsum</span></div>
+          <div class="citizenInfoRow"><span class="citizenInfoLabel">Attachment</span>          <span class="citizenInfoValue">Lorem Ipsum</span></div>
         </div>
       </div>
-      <div class="citizenModalSide">
-        <div class="citizenRegistrationCard">
-          <div class="regCardRow"><div class="regCardRowLabel">Registered on</div>  <div class="regCardRowValue" id="citizenDetailRegDate">—</div></div>
-          <div class="regCardRow"><div class="regCardRowLabel">Verified on</div>    <div class="regCardRowValue" id="citizenDetailVerDate">—</div></div>
-          <div class="regCardRow"><div class="regCardRowLabel">Verified by</div>    <div class="regCardRowValue" id="citizenDetailVerBy">—</div></div>
+
+      <div class="citizenDetailModalSide">
+        <div class="citizenRegCard">
+          <div class="citizenRegCardRow"><div class="citizenRegCardLabel">Registered on</div><div class="citizenRegCardValue">Month 00, 0000</div></div>
+          <div class="citizenRegCardRow"><div class="citizenRegCardLabel">Verified on</div>  <div class="citizenRegCardValue">Month 00, 0000</div></div>
+          <div class="citizenRegCardRow"><div class="citizenRegCardLabel">Verified by</div>  <div class="citizenRegCardValue">Staff Name</div></div>
         </div>
         <div class="citizenAccordion">
-          <div class="accordionHeader" id="accordionHouseholdHeader">Household Members <span class="accordionArrow">∨</span></div>
-          <div class="accordionBody"   id="accordionHouseholdBody">No household members on record.</div>
+          <div class="citizenAccordionHeader" id="accordionHouseholdHeader">
+            Household Members <span class="citizenAccordionArrow">∨</span>
+          </div>
+          <div class="citizenAccordionBody" id="accordionHouseholdBody">No household members on record.</div>
         </div>
         <div class="citizenAccordion">
-          <div class="accordionHeader" id="accordionVehicleHeader">Vehicle Information <span class="accordionArrow">∨</span></div>
-          <div class="accordionBody"   id="accordionVehicleBody">No vehicles on record.</div>
+          <div class="citizenAccordionHeader" id="accordionVehicleHeader">
+            Vehicle Information <span class="citizenAccordionArrow">∨</span>
+          </div>
+          <div class="citizenAccordionBody" id="accordionVehicleBody">No vehicles on record.</div>
         </div>
       </div>
+
     </div>
   </div>
 
 
-  <!-- ═══════════════════════════════════════════════════════
+  <!-- ════════════════════════════════════════════════
        INVALID REGISTRATION MODAL
-  ══════════════════════════════════════════════════════════ -->
+  ═════════════════════════════════════════════════ -->
   <div class="modalOverlay" id="invalidRegOverlay">
-    <div class="invalidModalBox" id="invalidModalBox">
+    <div class="invalidRegModalBox" id="invalidRegModalBox">
 
-      <!-- Header -->
-      <div class="invalidModalHeader">
-        <span class="invalidModalTitle">Invalid Registration</span>
-        <div class="searchBar invalidModalSearch">
+      <div class="invalidRegModalHeader">
+        <span class="invalidRegModalTitle">Invalid Registration</span>
+        <div class="searchBar" style="flex:1">
           <span class="searchBarIcon">🔍</span>
-          <input type="text" placeholder="Search" id="invalidRegSearchInput"/>
+          <input class="searchBarInput" type="text" placeholder="Search" id="invalidRegSearchInput" />
         </div>
-        <button class="btnExport" id="btnInvalidExport3" type="button">Export</button>
-        <button class="btnModalClose" id="btnCloseInvalidModal" type="button">✕</button>
+        <button class="btnExport" id="btnInvalidRegExport" type="button">Export</button>
+        <button class="btnModalClose" id="btnCloseInvalidRegModal" type="button">✕</button>
       </div>
 
-      <!-- Body -->
-      <div class="invalidModalBody">
-        <table class="dataTable" id="invalidRegTable">
+      <div class="invalidRegModalBody">
+        <table class="dataTable">
           <thead>
             <tr>
               <th>Full Name</th>
@@ -247,8 +256,18 @@
               <th></th>
             </tr>
           </thead>
-          <tbody id="invalidRegTableBody">
-            <!-- Rows injected by JS -->
+          <tbody>
+            <tr><td>Surname, First Name Middle Suffix</td><td>Month 00, 0000</td><td>Staff Name</td><td>Invalid Proof of Residency</td><td><button class="btnRowMenu">⋮</button></td></tr>
+            <tr><td>Surname, First Name Middle Suffix</td><td>Month 00, 0000</td><td>Staff Name</td><td>Fake Information</td>          <td><button class="btnRowMenu">⋮</button></td></tr>
+            <tr><td>Surname, First Name Middle Suffix</td><td>Month 00, 0000</td><td>Staff Name</td><td>Others</td>                    <td><button class="btnRowMenu">⋮</button></td></tr>
+            <tr><td>Surname, First Name Middle Suffix</td><td>Month 00, 0000</td><td>Staff Name</td><td>Not a resident</td>            <td><button class="btnRowMenu">⋮</button></td></tr>
+            <tr><td>Surname, First Name Middle Suffix</td><td>Month 00, 0000</td><td>Staff Name</td><td>Invalid Proof of Residency</td><td><button class="btnRowMenu">⋮</button></td></tr>
+            <tr><td>Surname, First Name Middle Suffix</td><td>Month 00, 0000</td><td>Staff Name</td><td>Invalid Proof of Residency</td><td><button class="btnRowMenu">⋮</button></td></tr>
+            <tr><td>Surname, First Name Middle Suffix</td><td>Month 00, 0000</td><td>Staff Name</td><td>Not a resident</td>            <td><button class="btnRowMenu">⋮</button></td></tr>
+            <tr><td>Surname, First Name Middle Suffix</td><td>Month 00, 0000</td><td>Staff Name</td><td>Fake Information</td>          <td><button class="btnRowMenu">⋮</button></td></tr>
+            <tr><td>Surname, First Name Middle Suffix</td><td>Month 00, 0000</td><td>Staff Name</td><td>Others</td>                    <td><button class="btnRowMenu">⋮</button></td></tr>
+            <tr><td>Surname, First Name Middle Suffix</td><td>Month 00, 0000</td><td>Staff Name</td><td>Fake Information</td>          <td><button class="btnRowMenu">⋮</button></td></tr>
+            <tr><td>Surname, First Name Middle Suffix</td><td>Month 00, 0000</td><td>Staff Name</td><td>Invalid Proof of Residency</td><td><button class="btnRowMenu">⋮</button></td></tr>
           </tbody>
         </table>
       </div>
@@ -257,214 +276,78 @@
   </div>
 
 
-  <!-- ── Page-specific JavaScript ────────────────────────── -->
+  <!-- ── Button navigation JS (belongs to this page) ──────────── -->
   <script>
-    (function () {
-      'use strict';
-
-      // ── Unverified citizens data ──────────────────────────
-      const unverifiedData = [
-        { surname: 'Ocampo',    firstName: 'Lucia',    middleName: 'Perez',    suffix: 'None', household: 3, contact: '0991 111 2222', proof: 'Utility Bill',        dob: 'May 5, 1993',      address: '10 Narra St',   regDate: 'July 1, 2025',   verDate: 'Pending', verBy: 'Pending', id: 'PhilSys' },
-        { surname: 'Navarro',   firstName: 'Marco',    middleName: 'Dela Vega',suffix: 'None', household: 5, contact: '0992 222 3333', proof: 'Lease Contract',      dob: 'October 14, 1987', address: '22 Molave Ave', regDate: 'July 3, 2025',   verDate: 'Pending', verBy: 'Pending', id: 'Passport' },
-        { surname: 'Espiritu',  firstName: 'Hannah',   middleName: 'Buenaventura', suffix: 'None', household: 2, contact: '0993 333 4444', proof: 'Barangay Certificate', dob: 'March 22, 2000', address: '5 Santol Rd', regDate: 'July 5, 2025', verDate: 'Pending', verBy: 'Pending', id: 'UMID' },
-        { surname: 'Suarez',    firstName: 'Gabriel',  middleName: 'Morales',  suffix: 'Sr.',  household: 7, contact: '0994 444 5555', proof: 'Utility Bill',        dob: 'January 31, 1966',  address: '88 Tanguile Blvd', regDate: 'July 8, 2025', verDate: 'Pending', verBy: 'Pending', id: 'Drivers License' },
-        { surname: 'Manalo',    firstName: 'Sofia',    middleName: 'Aguilar',  suffix: 'None', household: 4, contact: '0995 555 6666', proof: 'Lease Contract',      dob: 'September 9, 1990', address: '3 Ipil Lane', regDate: 'July 10, 2025', verDate: 'Pending', verBy: 'Pending', id: 'SSS ID' },
-        { surname: 'Pabalan',   firstName: 'Dante',    middleName: 'Sison',    suffix: 'None', household: 6, contact: '0996 666 7777', proof: 'Barangay Certificate', dob: 'June 18, 1978',   address: '17 Kamagong St', regDate: 'July 12, 2025', verDate: 'Pending', verBy: 'Pending', id: 'PhilSys' },
-        { surname: 'Coronel',   firstName: 'Yvonne',   middleName: 'Pascual',  suffix: 'None', household: 3, contact: '0997 777 8888', proof: 'Utility Bill',        dob: 'December 4, 1985', address: '55 Acacia Ct', regDate: 'July 15, 2025', verDate: 'Pending', verBy: 'Pending', id: 'Passport' },
-        { surname: 'Halili',    firstName: 'Kenneth',  middleName: 'Tan',      suffix: 'Jr.',  household: 5, contact: '0998 888 9999', proof: 'Lease Contract',      dob: 'February 14, 1996',address: '29 Yakal Drive', regDate: 'July 17, 2025', verDate: 'Pending', verBy: 'Pending', id: 'UMID' },
-        { surname: 'Tiongco',   firstName: 'Maribel',  middleName: 'Guerrero', suffix: 'None', household: 2, contact: '0999 999 0000', proof: 'Barangay Certificate', dob: 'August 28, 2002', address: '7 Duhat St',  regDate: 'July 19, 2025', verDate: 'Pending', verBy: 'Pending', id: 'SSS ID' },
-        { surname: 'Sagun',     firstName: 'Alvin',    middleName: 'Tolentino',suffix: 'None', household: 4, contact: '0900 000 1111', proof: 'Utility Bill',        dob: 'April 7, 1972',   address: '41 Lauan Rd',  regDate: 'July 21, 2025', verDate: 'Pending', verBy: 'Pending', id: 'Drivers License' },
-        { surname: 'Poblete',   firstName: 'Cristina', middleName: 'Viernes',  suffix: 'None', household: 3, contact: '0901 111 2223', proof: 'Lease Contract',      dob: 'November 11, 1989',address: '62 Mangga Ave', regDate: 'July 24, 2025', verDate: 'Pending', verBy: 'Pending', id: 'PhilSys' },
-        { surname: 'Generoso',  firstName: 'Nestor',   middleName: 'Bernales', suffix: 'None', household: 6, contact: '0902 222 3334', proof: 'Barangay Certificate', dob: 'July 25, 1969',   address: '14 Bayabas St', regDate: 'July 26, 2025', verDate: 'Pending', verBy: 'Pending', id: 'UMID' },
-        { surname: 'Alvarado',  firstName: 'Theresa',  middleName: 'Magpayo', suffix: 'None',  household: 2, contact: '0903 333 4445', proof: 'Utility Bill',        dob: 'March 3, 1998',   address: '38 Papaya Blvd', regDate: 'July 28, 2025', verDate: 'Pending', verBy: 'Pending', id: 'SSS ID' },
-        { surname: 'Tuazon',    firstName: 'Ronaldo',  middleName: 'Manimtim',suffix: 'None',  household: 5, contact: '0904 444 5556', proof: 'Lease Contract',      dob: 'January 16, 1981', address: '9 Guava Lane', regDate: 'July 30, 2025', verDate: 'Pending', verBy: 'Pending', id: 'Passport' },
-        { surname: 'Villasis',  firstName: 'Rowena',   middleName: 'Abella',  suffix: 'None',  household: 4, contact: '0905 555 6667', proof: 'Barangay Certificate', dob: 'October 20, 1991', address: '71 Tiesa St', regDate: 'August 1, 2025', verDate: 'Pending', verBy: 'Pending', id: 'Drivers License' },
-        { surname: 'Dungca',    firstName: 'Edwin',    middleName: 'Recto',   suffix: 'None',  household: 7, contact: '0906 666 7778', proof: 'Utility Bill',        dob: 'May 29, 1974',    address: '3 Siniguelas Ct', regDate: 'August 3, 2025', verDate: 'Pending', verBy: 'Pending', id: 'UMID' },
-      ];
-
-      let filteredUnverified = [...unverifiedData];
-
-      // ── Invalid registration data ─────────────────────────
-      const invalidRegData = [
-        { fullName: 'Ocampo, Lucia P.',     regDate: 'July 1, 2025',    flaggedBy: 'Staff Cruz',   reason: 'Invalid Proof of Residency' },
-        { fullName: 'Navarro, Marco D.',    regDate: 'July 3, 2025',    flaggedBy: 'Staff Lim',    reason: 'Fake Information' },
-        { fullName: 'Espiritu, Hannah B.',  regDate: 'July 5, 2025',    flaggedBy: 'Staff Torres', reason: 'Others' },
-        { fullName: 'Suarez, Gabriel M.',   regDate: 'July 8, 2025',    flaggedBy: 'Staff Cruz',   reason: 'Not a resident' },
-        { fullName: 'Manalo, Sofia A.',     regDate: 'July 10, 2025',   flaggedBy: 'Staff Lim',    reason: 'Invalid Proof of Residency' },
-        { fullName: 'Pabalan, Dante S.',    regDate: 'July 12, 2025',   flaggedBy: 'Staff Torres', reason: 'Invalid Proof of Residency' },
-        { fullName: 'Coronel, Yvonne P.',   regDate: 'July 15, 2025',   flaggedBy: 'Staff Cruz',   reason: 'Not a resident' },
-        { fullName: 'Halili, Kenneth T.',   regDate: 'July 17, 2025',   flaggedBy: 'Staff Lim',    reason: 'Fake Information' },
-        { fullName: 'Tiongco, Maribel G.',  regDate: 'July 19, 2025',   flaggedBy: 'Staff Torres', reason: 'Others' },
-        { fullName: 'Sagun, Alvin T.',      regDate: 'July 21, 2025',   flaggedBy: 'Staff Cruz',   reason: 'Fake Information' },
-        { fullName: 'Poblete, Cristina V.', regDate: 'July 24, 2025',   flaggedBy: 'Staff Lim',    reason: 'Invalid Proof of Residency' },
-      ];
-
-      // ── Render unverified table ───────────────────────────
-      function renderUnverifiedTable(data) {
-        const tbody = document.getElementById('unverifiedTableBody');
-        if (!tbody) return;
-
-        tbody.innerHTML = data.map((citizen, idx) => `
-          <tr class="rowClickable" data-uv-idx="${idx}">
-            <td>${citizen.surname}</td>
-            <td>${citizen.firstName}</td>
-            <td>${citizen.middleName}</td>
-            <td>${citizen.suffix}</td>
-            <td>${citizen.household}</td>
-            <td>${citizen.contact}</td>
-            <td>${citizen.proof}</td>
-            <td><button class="btnRowMenu" data-no-row-click>⋮</button></td>
-          </tr>
-        `).join('');
-
-        tbody.querySelectorAll('tr.rowClickable').forEach((row) => {
-          row.addEventListener('click', (e) => {
-            if (e.target.closest('[data-no-row-click]')) return;
-            const idx = parseInt(row.getAttribute('data-uv-idx'), 10);
-            openCitizenModal(data[idx]);
-          });
-        });
-      }
-
-      // ── Render invalid registration table ─────────────────
-      function renderInvalidTable(data) {
-        const tbody = document.getElementById('invalidRegTableBody');
-        if (!tbody) return;
-
-        tbody.innerHTML = data.map((entry) => `
-          <tr>
-            <td>${entry.fullName}</td>
-            <td>${entry.regDate}</td>
-            <td>${entry.flaggedBy}</td>
-            <td>${entry.reason}</td>
-            <td><button class="btnRowMenu">⋮</button></td>
-          </tr>
-        `).join('');
-      }
-
-      // ── Open citizen detail modal ─────────────────────────
-      function openCitizenModal(citizen) {
-        document.getElementById('citizenDetailSurname').textContent    = citizen.surname;
-        document.getElementById('citizenDetailFirstName').textContent  = citizen.firstName;
-        document.getElementById('citizenDetailMiddleName').textContent = citizen.middleName;
-        document.getElementById('citizenDetailSuffix').textContent     = citizen.suffix;
-        document.getElementById('citizenDetailContact').textContent    = citizen.contact;
-        document.getElementById('citizenDetailDOB').textContent        = citizen.dob;
-        document.getElementById('citizenDetailID').textContent         = citizen.id;
-        document.getElementById('citizenDetailAddress').textContent    = citizen.address;
-        document.getElementById('citizenDetailProof').textContent      = citizen.proof;
-        document.getElementById('citizenDetailAttachment').textContent = 'N/A';
-        document.getElementById('citizenDetailRegDate').textContent    = citizen.regDate;
-        document.getElementById('citizenDetailVerDate').textContent    = citizen.verDate;
-        document.getElementById('citizenDetailVerBy').textContent      = citizen.verBy;
-
-        document.getElementById('citizenDetailOverlay').classList.add('open');
-        document.body.style.overflow = 'hidden';
-      }
-
-      function closeCitizenModal() {
-        document.getElementById('citizenDetailOverlay').classList.remove('open');
-        document.body.style.overflow = '';
-      }
-
-      // ── Invalid reg modal ─────────────────────────────────
-      function openInvalidModal() {
-        renderInvalidTable(invalidRegData);
-        document.getElementById('invalidRegOverlay').classList.add('open');
-        document.body.style.overflow = 'hidden';
-      }
-
-      function closeInvalidModal() {
-        document.getElementById('invalidRegOverlay').classList.remove('open');
-        document.body.style.overflow = '';
-      }
-
-      // ── Click outside modals ──────────────────────────────
-      document.getElementById('citizenDetailOverlay').addEventListener('click', (e) => {
-        if (!document.getElementById('citizenModalBox').contains(e.target)) closeCitizenModal();
-      });
-
-      document.getElementById('invalidRegOverlay').addEventListener('click', (e) => {
-        if (!document.getElementById('invalidModalBox').contains(e.target)) closeInvalidModal();
-      });
-
-      // ── Back button ───────────────────────────────────────
-      document.getElementById('btnUnverifiedBack').addEventListener('click', () => {
+    // ── Back button → go back to MainLayout with Citizens active ─
+    document.getElementById('btnUnverifiedBack').addEventListener('click', function () {
+      // If inside an iframe in MainLayout, navigate parent; otherwise go directly
+      if (window.parent && window.parent !== window) {
+        window.parent.mfvNavigateTo('Citizens');
+      } else {
         window.location.href = 'MainLayout.html';
+      }
+    });
+
+    // ── Filter panel toggle ──────────────────────────────────────
+    var btnFilterToggle     = document.getElementById('btnUnverifiedFilterToggle');
+    var btnFilterClose      = document.getElementById('btnUnverifiedFilterClose');
+    var unverifiedFilterPanel = document.getElementById('unverifiedFilterPanel');
+
+    btnFilterToggle.addEventListener('click', function () {
+      var isOpen = unverifiedFilterPanel.classList.toggle('open');
+      btnFilterToggle.classList.toggle('active', isOpen);
+    });
+
+    btnFilterClose.addEventListener('click', function () {
+      unverifiedFilterPanel.classList.remove('open');
+      btnFilterToggle.classList.remove('active');
+    });
+
+    // ── Citizen Detail Modal ─────────────────────────────────────
+    function openCitizenDetail() {
+      document.getElementById('citizenDetailOverlay').classList.add('open');
+      document.body.style.overflow = 'hidden';
+    }
+
+    function closeCitizenDetail() {
+      document.getElementById('citizenDetailOverlay').classList.remove('open');
+      document.body.style.overflow = '';
+    }
+
+    document.getElementById('citizenDetailOverlay').addEventListener('click', function (e) {
+      if (!document.getElementById('citizenDetailModalBox').contains(e.target)) {
+        closeCitizenDetail();
+      }
+    });
+
+    // Accordion toggles
+    ['accordionHouseholdHeader', 'accordionVehicleHeader'].forEach(function (headerId) {
+      var header = document.getElementById(headerId);
+      header.addEventListener('click', function () {
+        var isOpen = header.classList.toggle('open');
+        document.getElementById(headerId.replace('Header', 'Body')).classList.toggle('open', isOpen);
       });
+    });
 
-      // ── Open / close invalid modal ────────────────────────
-      document.getElementById('btnOpenInvalidModal').addEventListener('click', openInvalidModal);
-      document.getElementById('btnCloseInvalidModal').addEventListener('click', closeInvalidModal);
+    // ── Invalid Registration Modal ───────────────────────────────
+    function openInvalidRegModal() {
+      document.getElementById('invalidRegOverlay').classList.add('open');
+      document.body.style.overflow = 'hidden';
+    }
 
-      // ── Filter panel toggle ───────────────────────────────
-      const btnFilterToggle = document.getElementById('btnUnverifiedFilterToggle');
-      const filterPanel     = document.getElementById('unverifiedFilterPanel');
-      btnFilterToggle.addEventListener('click', () => {
-        filterPanel.classList.toggle('open');
-        btnFilterToggle.classList.toggle('active');
-      });
+    function closeInvalidRegModal() {
+      document.getElementById('invalidRegOverlay').classList.remove('open');
+      document.body.style.overflow = '';
+    }
 
-      document.getElementById('btnUnverifiedFilterClose').addEventListener('click', () => {
-        filterPanel.classList.remove('open');
-        btnFilterToggle.classList.remove('active');
-      });
+    document.getElementById('btnOpenInvalidRegModal').addEventListener('click', openInvalidRegModal);
+    document.getElementById('btnCloseInvalidRegModal').addEventListener('click', closeInvalidRegModal);
 
-      // ── Search ────────────────────────────────────────────
-      document.getElementById('unverifiedSearchInput').addEventListener('input', (e) => {
-        const query = e.target.value.trim().toLowerCase();
-        filteredUnverified = !query
-          ? [...unverifiedData]
-          : unverifiedData.filter((c) =>
-              `${c.surname} ${c.firstName} ${c.middleName} ${c.contact}`.toLowerCase().includes(query)
-            );
-        renderUnverifiedTable(filteredUnverified);
-      });
-
-      // ── Invalid reg search ────────────────────────────────
-      document.getElementById('invalidRegSearchInput').addEventListener('input', (e) => {
-        const query = e.target.value.trim().toLowerCase();
-        const filtered = !query
-          ? invalidRegData
-          : invalidRegData.filter((r) =>
-              `${r.fullName} ${r.reason} ${r.flaggedBy}`.toLowerCase().includes(query)
-            );
-        renderInvalidTable(filtered);
-      });
-
-      // ── Accordions in citizen modal ───────────────────────
-      ['accordionHouseholdHeader', 'accordionVehicleHeader'].forEach((headerId) => {
-        const header = document.getElementById(headerId);
-        if (!header) return;
-        header.addEventListener('click', () => {
-          const isOpen = header.classList.toggle('open');
-          const bodyId = headerId.replace('Header', 'Body');
-          document.getElementById(bodyId)?.classList.toggle('open', isOpen);
-        });
-      });
-
-      // ── Apply filter ──────────────────────────────────────
-      document.getElementById('btnUnverifiedApplyFilter').addEventListener('click', () => {
-        const selected = document.querySelector('input[name="uvFilterHousehold"]:checked');
-        const val      = selected ? selected.value : null;
-        if (!val || val === 'custom') {
-          renderUnverifiedTable(unverifiedData);
-          return;
-        }
-        const ranges = { '1-3': [1, 3], '4-6': [4, 6], '7+': [7, 999] };
-        const [min, max] = ranges[val] || [0, 999];
-        filteredUnverified = unverifiedData.filter((c) => c.household >= min && c.household <= max);
-        renderUnverifiedTable(filteredUnverified);
-      });
-
-      // ── Export stubs ──────────────────────────────────────
-      document.getElementById('btnUnverifiedExport2').addEventListener('click', () => alert('Export coming soon.'));
-      document.getElementById('btnInvalidExport3').addEventListener('click',    () => alert('Export coming soon.'));
-
-      // ── Init ──────────────────────────────────────────────
-      renderUnverifiedTable(unverifiedData);
-
-    })();
+    document.getElementById('invalidRegOverlay').addEventListener('click', function (e) {
+      if (!document.getElementById('invalidRegModalBox').contains(e.target)) {
+        closeInvalidRegModal();
+      }
+    });
   </script>
 
 </body>
