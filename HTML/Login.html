@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>MyFairview — Sign In</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../Layout.css" />
+</head>
+<body>
+
+  <div class="loginPageWrap">
+    <div class="loginCard">
+      <h1 class="loginTitle">Sign In</h1>
+
+      <div class="loginFieldGroup">
+        <!-- Email -->
+        <div class="loginInputWrap">
+          <input
+            id="loginInputEmail"
+            class="loginInput"
+            type="email"
+            placeholder="Email"
+            autocomplete="email"
+          />
+        </div>
+
+        <!-- Password -->
+        <div class="loginInputWrap">
+          <input
+            id="loginInputPassword"
+            class="loginInput"
+            type="password"
+            placeholder="Password"
+            autocomplete="current-password"
+          />
+          <button
+            id="loginBtnTogglePassword"
+            class="loginPasswordToggle"
+            type="button"
+            title="Show/hide password"
+          >👁</button>
+        </div>
+      </div>
+
+      <!-- Log In -->
+      <button id="btnLogin" class="btnLogin" type="button">Log In</button>
+
+      <!-- Forgot Password -->
+      <p class="loginForgot" onclick="window.location.href='ForgotPassword.html'">Forgot Password</p>
+
+      <!-- Switch to sign up -->
+      <p class="loginSwitchLink">
+        Don't have an account? <a onclick="window.location.href='Signup.html'">Sign up</a>
+      </p>
+    </div>
+  </div>
+
+  <script>
+    // ── Toggle password visibility ──────────────────────────
+    const loginInputPassword   = document.getElementById('loginInputPassword');
+    const loginBtnTogglePassword = document.getElementById('loginBtnTogglePassword');
+
+    loginBtnTogglePassword.addEventListener('click', () => {
+      const isHidden = loginInputPassword.type === 'password';
+      loginInputPassword.type = isHidden ? 'text' : 'password';
+      loginBtnTogglePassword.textContent = isHidden ? '🙈' : '👁';
+    });
+
+    // ── Login button → navigate to main app ────────────────
+    document.getElementById('btnLogin').addEventListener('click', () => {
+      const email    = document.getElementById('loginInputEmail').value.trim();
+      const password = loginInputPassword.value;
+
+      if (!email || !password) {
+        alert('Please enter your email and password.');
+        return;
+      }
+
+      // Navigate to main app (Overview page by default)
+      sessionStorage.setItem('mfv_currentPage', 'overview');
+      window.location.href = 'MainLayout.html';
+    });
+
+    // ── Allow Enter key to submit ───────────────────────────
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') {
+        document.getElementById('btnLogin').click();
+      }
+    });
+  </script>
+
+</body>
+</html>

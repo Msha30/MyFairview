@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>MyFairview — Sign Up</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../Layout.css" />
+</head>
+<body>
+
+  <div class="loginPageWrap">
+    <div class="loginCard">
+      <h1 class="loginTitle">Sign Up</h1>
+
+      <div class="loginFieldGroup">
+        <div class="loginInputWrap">
+          <input id="signupInputName" class="loginInput" type="text" placeholder="Full Name" />
+        </div>
+        <div class="loginInputWrap">
+          <input id="signupInputEmail" class="loginInput" type="email" placeholder="Email" />
+        </div>
+        <div class="loginInputWrap">
+          <input id="signupInputPassword" class="loginInput" type="password" placeholder="Password" />
+          <button id="signupBtnTogglePassword" class="loginPasswordToggle" type="button">👁</button>
+        </div>
+        <div class="loginInputWrap">
+          <input id="signupInputConfirm" class="loginInput" type="password" placeholder="Confirm Password" />
+        </div>
+      </div>
+
+      <button id="btnSignup" class="btnLogin" type="button">Create Account</button>
+
+      <p class="loginSwitchLink">
+        Already have an account? <a onclick="window.location.href='Login.html'">Sign in</a>
+      </p>
+    </div>
+  </div>
+
+  <script>
+    // ── Toggle password visibility ──────────────────────────
+    const signupInputPassword      = document.getElementById('signupInputPassword');
+    const signupBtnTogglePassword  = document.getElementById('signupBtnTogglePassword');
+
+    signupBtnTogglePassword.addEventListener('click', () => {
+      const isHidden = signupInputPassword.type === 'password';
+      signupInputPassword.type = isHidden ? 'text' : 'password';
+      signupBtnTogglePassword.textContent = isHidden ? '🙈' : '👁';
+    });
+
+    // ── Signup button ───────────────────────────────────────
+    document.getElementById('btnSignup').addEventListener('click', () => {
+      const name     = document.getElementById('signupInputName').value.trim();
+      const email    = document.getElementById('signupInputEmail').value.trim();
+      const password = signupInputPassword.value;
+      const confirm  = document.getElementById('signupInputConfirm').value;
+
+      if (!name || !email || !password || !confirm) {
+        alert('Please fill in all fields.');
+        return;
+      }
+
+      if (password !== confirm) {
+        alert('Passwords do not match.');
+        return;
+      }
+
+      // Navigate to main app
+      sessionStorage.setItem('mfv_currentPage', 'overview');
+      window.location.href = 'MainLayout.html';
+    });
+  </script>
+
+</body>
+</html>

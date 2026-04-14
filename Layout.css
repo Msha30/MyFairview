@@ -1,0 +1,1669 @@
+/* ============================================================
+   MYFAIRVIEW — Layout.css
+   All variables, resets, and component styles in one file.
+   ============================================================ */
+
+/* ── 1. CSS CUSTOM PROPERTIES (Variables) ────────────────── */
+:root {
+  /* Colors */
+  --colorPrimary:        #E8521A;   /* orange — brand accent */
+  --colorPrimaryHover:   #cf4615;
+  --colorPrimaryActive:  #b83d12;
+  --colorPrimaryLight:   #fde8df;
+
+  --colorGreen:          #1B6B2F;   /* dark green — cards */
+  --colorGreenMid:       #2a7d3e;
+  --colorGreenLight:     #e8f5ec;
+
+  --colorBrown:          #C0521C;   /* stats card bg */
+
+  --colorWhite:          #ffffff;
+  --colorBg:             #f4f5f7;   /* main page background */
+  --colorSidebar:        #ffffff;
+
+  --colorText:           #1a1a1a;
+  --colorTextMid:        #4a4a4a;
+  --colorTextLight:      #888888;
+  --colorTextInverse:    #ffffff;
+
+  --colorBorder:         #e2e4e8;
+  --colorBorderDark:     #c8cad0;
+
+  --colorRowHover:       #f9fafb;
+  --colorRowActive:      #f1f3f5;
+
+  --colorInvalid:        #fff0ed;   /* light red bg for invalid modal */
+
+  /* Typography */
+  --fontFamily:          'DM Sans', 'Segoe UI', sans-serif;
+  --fontFamilyMono:      'DM Mono', monospace;
+
+  --fontSizeXS:          11px;
+  --fontSizeSM:          13px;
+  --fontSizeMD:          14px;
+  --fontSizeLG:          16px;
+  --fontSizeXL:          20px;
+  --fontSizeXXL:         28px;
+  --fontSizeHero:        38px;
+
+  --fontWeightNormal:    400;
+  --fontWeightMedium:    500;
+  --fontWeightSemiBold:  600;
+  --fontWeightBold:      700;
+
+  /* Spacing */
+  --spacingXS:           4px;
+  --spacingSM:           8px;
+  --spacingMD:           12px;
+  --spacingLG:           16px;
+  --spacingXL:           24px;
+  --spacingXXL:          32px;
+  --spacingSection:      40px;
+
+  /* Layout */
+  --sidebarWidth:        220px;
+  --topbarHeight:        0px;
+  --contentPadding:      28px;
+
+  /* Borders & Radius */
+  --radiusSM:            6px;
+  --radiusMD:            10px;
+  --radiusLG:            14px;
+  --radiusXL:            20px;
+  --radiusFull:          9999px;
+
+  /* Shadows */
+  --shadowSM:            0 1px 3px rgba(0,0,0,0.07);
+  --shadowMD:            0 2px 8px rgba(0,0,0,0.10);
+  --shadowLG:            0 4px 20px rgba(0,0,0,0.13);
+  --shadowModal:         0 8px 40px rgba(0,0,0,0.20);
+
+  /* Transitions */
+  --transitionFast:      0.15s ease;
+  --transitionMid:       0.25s ease;
+  --transitionSlow:      0.35s ease;
+
+  /* Z-index */
+  --zSidebar:            100;
+  --zOverlay:            200;
+  --zModal:              300;
+  --zTooltip:            400;
+}
+
+/* ── 2. RESET & BASE ─────────────────────────────────────── */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html, body {
+  height: 100%;
+  font-family: var(--fontFamily);
+  font-size: var(--fontSizeMD);
+  color: var(--colorText);
+  background: var(--colorBg);
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+}
+
+a {
+  text-decoration: none;
+  color: inherit;
+}
+
+button {
+  font-family: var(--fontFamily);
+  cursor: pointer;
+  border: none;
+  outline: none;
+}
+
+input, textarea, select {
+  font-family: var(--fontFamily);
+  font-size: var(--fontSizeMD);
+  outline: none;
+}
+
+table {
+  border-collapse: collapse;
+  width: 100%;
+}
+
+/* ── 3. LAYOUT SHELL ─────────────────────────────────────── */
+.layoutShell {
+  display: flex;
+  height: 100vh;
+  overflow: hidden;
+}
+
+/* ── 4. SIDEBAR ──────────────────────────────────────────── */
+.layoutSidebar {
+  width: var(--sidebarWidth);
+  min-width: var(--sidebarWidth);
+  background: var(--colorSidebar);
+  display: flex;
+  flex-direction: column;
+  padding: var(--spacingXL) 0 var(--spacingLG) 0;
+  border-right: 1px solid var(--colorBorder);
+  z-index: var(--zSidebar);
+  transition: width var(--transitionMid);
+  overflow: hidden;
+}
+
+.sidebarLogo {
+  padding: 0 var(--spacingXL) var(--spacingXL) var(--spacingXL);
+  font-size: var(--fontSizeXL);
+  font-weight: var(--fontWeightBold);
+  color: var(--colorPrimary);
+  letter-spacing: -0.5px;
+  user-select: none;
+}
+
+.sidebarNav {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacingXS);
+  padding: 0 var(--spacingMD);
+}
+
+.sidebarNavItem {
+  display: flex;
+  align-items: center;
+  gap: var(--spacingMD);
+  padding: var(--spacingSM) var(--spacingMD);
+  border-radius: var(--radiusMD);
+  font-size: var(--fontSizeMD);
+  font-weight: var(--fontWeightMedium);
+  color: var(--colorTextMid);
+  cursor: pointer;
+  transition: background var(--transitionFast), color var(--transitionFast);
+  user-select: none;
+  white-space: nowrap;
+}
+
+.sidebarNavItem:hover {
+  background: var(--colorRowHover);
+  color: var(--colorText);
+}
+
+.sidebarNavItem.active {
+  background: var(--colorPrimary);
+  color: var(--colorTextInverse);
+}
+
+.sidebarNavItem.active:hover {
+  background: var(--colorPrimaryHover);
+}
+
+.sidebarNavItem:active {
+  transform: scale(0.98);
+}
+
+.sidebarNavItem .navIcon {
+  width: 18px;
+  height: 18px;
+  opacity: 0.75;
+  flex-shrink: 0;
+}
+
+.sidebarNavItem.active .navIcon {
+  opacity: 1;
+}
+
+.sidebarSignOut {
+  padding: var(--spacingMD);
+  border-top: 1px solid var(--colorBorder);
+}
+
+.sidebarSignOutBtn {
+  display: flex;
+  align-items: center;
+  gap: var(--spacingMD);
+  padding: var(--spacingSM) var(--spacingMD);
+  width: 100%;
+  background: none;
+  border-radius: var(--radiusMD);
+  color: var(--colorTextMid);
+  font-size: var(--fontSizeMD);
+  font-weight: var(--fontWeightMedium);
+  transition: background var(--transitionFast), color var(--transitionFast);
+}
+
+.sidebarSignOutBtn:hover {
+  background: var(--colorRowHover);
+  color: var(--colorText);
+}
+
+.sidebarSignOutBtn:active {
+  background: var(--colorRowActive);
+}
+
+/* ── 5. MAIN CONTENT AREA ────────────────────────────────── */
+.layoutMain {
+  flex: 1;
+  overflow-y: auto;
+  overflow-x: hidden;
+  background: var(--colorBg);
+}
+
+.pageContent {
+  padding: var(--contentPadding);
+  min-height: 100%;
+}
+
+/* ── 6. PAGE SECTIONS (show/hide) ────────────────────────── */
+.pageSection {
+  display: none;
+}
+
+.pageSection.active {
+  display: block;
+}
+
+/* ── 7. OVERVIEW — Report Cards ──────────────────────────── */
+.overviewReportCards {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  background: var(--colorGreen);
+  border-radius: var(--radiusLG);
+  overflow: hidden;
+  margin-bottom: var(--spacingXL);
+}
+
+.overviewReportCard {
+  padding: var(--spacingXL);
+  border-right: 1px solid rgba(255,255,255,0.15);
+  cursor: pointer;
+  transition: background var(--transitionFast);
+}
+
+.overviewReportCard:last-child {
+  border-right: none;
+}
+
+.overviewReportCard:hover {
+  background: var(--colorGreenMid);
+}
+
+.overviewReportCard:active {
+  background: rgba(255,255,255,0.1);
+}
+
+.reportCardHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: var(--spacingMD);
+}
+
+.reportCardTitle {
+  font-size: var(--fontSizeMD);
+  font-weight: var(--fontWeightSemiBold);
+  color: rgba(255,255,255,0.9);
+}
+
+.reportCardArrow {
+  width: 28px;
+  height: 28px;
+  background: rgba(0,0,0,0.25);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-size: var(--fontSizeSM);
+  flex-shrink: 0;
+}
+
+.reportCardValue {
+  font-size: var(--fontSizeHero);
+  font-weight: var(--fontWeightBold);
+  color: var(--colorTextInverse);
+  letter-spacing: -1px;
+}
+
+/* ── 8. OVERVIEW — Middle Row ────────────────────────────── */
+.overviewMidRow {
+  display: grid;
+  grid-template-columns: 1fr 260px;
+  gap: var(--spacingXL);
+  margin-bottom: var(--spacingXL);
+  align-items: start;
+}
+
+/* Water Level Chart */
+.overviewWaterCard {
+  background: var(--colorGreen);
+  border-radius: var(--radiusLG);
+  padding: var(--spacingXL);
+}
+
+.waterCardTitle {
+  font-size: var(--fontSizeMD);
+  font-weight: var(--fontWeightSemiBold);
+  color: rgba(255,255,255,0.9);
+  margin-bottom: var(--spacingLG);
+}
+
+.waterChartWrap {
+  position: relative;
+  height: 120px;
+}
+
+.waterChartSVG {
+  width: 100%;
+  height: 100%;
+}
+
+/* Vehicle Stats */
+.overviewVehicleStats {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacingLG);
+}
+
+.vehicleStatCard {
+  background: var(--colorWhite);
+  border-radius: var(--radiusLG);
+  padding: var(--spacingXL);
+  text-align: center;
+  box-shadow: var(--shadowSM);
+}
+
+.vehicleStatValue {
+  font-size: var(--fontSizeXXL);
+  font-weight: var(--fontWeightBold);
+  color: var(--colorText);
+  letter-spacing: -1px;
+}
+
+.vehicleStatLabel {
+  font-size: var(--fontSizeSM);
+  color: var(--colorTextLight);
+  margin-top: var(--spacingXS);
+}
+
+.vehicleStatDivider {
+  border: none;
+  border-top: 1px solid var(--colorBorder);
+  margin: var(--spacingMD) 0;
+}
+
+/* Population Stats (brown card) */
+.overviewPopCard {
+  background: var(--colorBrown);
+  border-radius: var(--radiusLG);
+  padding: var(--spacingLG) var(--spacingXL);
+}
+
+.popStatRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: var(--spacingSM) 0;
+  color: var(--colorTextInverse);
+  font-size: var(--fontSizeMD);
+}
+
+.popStatRow + .popStatRow {
+  border-top: 1px solid rgba(255,255,255,0.2);
+}
+
+.popStatLabel {
+  font-weight: var(--fontWeightMedium);
+}
+
+.popStatValue {
+  font-weight: var(--fontWeightBold);
+}
+
+/* ── 9. OVERVIEW — Subdivision Table ────────────────────── */
+.overviewBottomRow {
+  display: grid;
+  grid-template-columns: 1fr 260px;
+  gap: var(--spacingXL);
+  align-items: start;
+}
+
+.overviewSubdivisionCard {
+  background: var(--colorWhite);
+  border-radius: var(--radiusLG);
+  overflow: hidden;
+  box-shadow: var(--shadowSM);
+}
+
+/* ── 10. GENERIC TABLE ───────────────────────────────────── */
+.tableWrap {
+  overflow-x: auto;
+}
+
+.dataTable {
+  width: 100%;
+}
+
+.dataTable thead tr {
+  border-bottom: 2px solid var(--colorBorder);
+}
+
+.dataTable thead th {
+  padding: var(--spacingMD) var(--spacingLG);
+  text-align: left;
+  font-size: var(--fontSizeSM);
+  font-weight: var(--fontWeightSemiBold);
+  color: var(--colorText);
+  white-space: nowrap;
+}
+
+.dataTable tbody tr {
+  border-bottom: 1px solid var(--colorBorder);
+  transition: background var(--transitionFast);
+  cursor: default;
+}
+
+.dataTable tbody tr:last-child {
+  border-bottom: none;
+}
+
+.dataTable tbody tr:hover {
+  background: var(--colorRowHover);
+}
+
+.dataTable tbody tr.rowClickable {
+  cursor: pointer;
+}
+
+.dataTable tbody tr.rowClickable:active {
+  background: var(--colorRowActive);
+}
+
+.dataTable tbody td {
+  padding: var(--spacingMD) var(--spacingLG);
+  font-size: var(--fontSizeMD);
+  color: var(--colorTextMid);
+}
+
+/* Download icon button in table */
+.btnDownloadRow {
+  width: 32px;
+  height: 32px;
+  background: var(--colorBg);
+  border: 1px solid var(--colorBorder);
+  border-radius: var(--radiusSM);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  color: var(--colorTextMid);
+  transition: background var(--transitionFast), border-color var(--transitionFast);
+}
+
+.btnDownloadRow:hover {
+  background: var(--colorBorder);
+  border-color: var(--colorBorderDark);
+}
+
+.btnDownloadRow:active {
+  background: var(--colorBorderDark);
+  transform: scale(0.96);
+}
+
+/* Three-dot menu button */
+.btnRowMenu {
+  width: 28px;
+  height: 28px;
+  background: none;
+  border-radius: var(--radiusSM);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  color: var(--colorTextLight);
+  transition: background var(--transitionFast), color var(--transitionFast);
+  font-size: var(--fontSizeLG);
+  letter-spacing: 1px;
+}
+
+.btnRowMenu:hover {
+  background: var(--colorRowHover);
+  color: var(--colorText);
+}
+
+.btnRowMenu:active {
+  background: var(--colorRowActive);
+}
+
+/* ── 11. ANNOUNCEMENT PAGE ───────────────────────────────── */
+.announcementLayout {
+  display: grid;
+  grid-template-columns: 1fr 420px;
+  gap: var(--spacingXL);
+  align-items: start;
+}
+
+/* Post Form */
+.announcementPostForm {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacingLG);
+}
+
+.formCard {
+  background: var(--colorWhite);
+  border-radius: var(--radiusLG);
+  padding: var(--spacingXL);
+  box-shadow: var(--shadowSM);
+}
+
+.formCardTitle {
+  font-size: var(--fontSizeLG);
+  font-weight: var(--fontWeightSemiBold);
+  color: var(--colorText);
+  margin-bottom: var(--spacingLG);
+}
+
+.formTextarea {
+  width: 100%;
+  min-height: 160px;
+  resize: vertical;
+  padding: var(--spacingMD);
+  border: 1px solid var(--colorBorder);
+  border-radius: var(--radiusMD);
+  font-size: var(--fontSizeMD);
+  color: var(--colorText);
+  background: var(--colorWhite);
+  transition: border-color var(--transitionFast);
+}
+
+.formTextarea:focus {
+  border-color: var(--colorPrimary);
+}
+
+.formTextarea::placeholder {
+  color: var(--colorTextLight);
+}
+
+.formActions {
+  display: flex;
+  justify-content: flex-end;
+  gap: var(--spacingMD);
+  margin-top: var(--spacingMD);
+}
+
+/* Media Section */
+.mediaLabel {
+  font-size: var(--fontSizeLG);
+  font-weight: var(--fontWeightSemiBold);
+  color: var(--colorText);
+  margin-bottom: var(--spacingXS);
+}
+
+.mediaSubLabel {
+  font-size: var(--fontSizeSM);
+  color: var(--colorTextLight);
+  margin-bottom: var(--spacingLG);
+}
+
+.mediaFileList {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacingMD);
+  margin-bottom: var(--spacingLG);
+}
+
+.mediaFileItem {
+  display: flex;
+  align-items: center;
+  gap: var(--spacingMD);
+}
+
+.mediaFileItemDrag {
+  color: var(--colorTextLight);
+  cursor: grab;
+  font-size: var(--fontSizeLG);
+}
+
+.mediaFileThumbnail {
+  width: 56px;
+  height: 56px;
+  background: var(--colorBorder);
+  border-radius: var(--radiusSM);
+  flex-shrink: 0;
+}
+
+.mediaFileName {
+  flex: 1;
+  font-size: var(--fontSizeMD);
+  color: var(--colorTextMid);
+}
+
+.btnDeleteMedia {
+  width: 32px;
+  height: 32px;
+  background: none;
+  border: 1px solid var(--colorBorder);
+  border-radius: var(--radiusSM);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  color: var(--colorTextLight);
+  transition: background var(--transitionFast), color var(--transitionFast), border-color var(--transitionFast);
+}
+
+.btnDeleteMedia:hover {
+  background: #fff0f0;
+  color: #d93025;
+  border-color: #f5b7b1;
+}
+
+.btnDeleteMedia:active {
+  background: #ffd7d7;
+  transform: scale(0.95);
+}
+
+.btnAddPhotos {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--spacingSM);
+  padding: var(--spacingSM) var(--spacingLG);
+  background: var(--colorWhite);
+  border: 1px solid var(--colorBorder);
+  border-radius: var(--radiusSM);
+  font-size: var(--fontSizeSM);
+  color: var(--colorTextMid);
+  cursor: pointer;
+  transition: background var(--transitionFast), border-color var(--transitionFast);
+}
+
+.btnAddPhotos:hover {
+  background: var(--colorBg);
+  border-color: var(--colorBorderDark);
+}
+
+.btnAddPhotos:active {
+  background: var(--colorRowActive);
+}
+
+/* Announcement Feed (right column) */
+.announcementFeedWrap {
+  position: sticky;
+  top: 0;
+}
+
+.announcementFeedSearch {
+  display: flex;
+  align-items: center;
+  gap: var(--spacingMD);
+  margin-bottom: var(--spacingLG);
+}
+
+.announcementFeedList {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacingLG);
+  max-height: calc(100vh - 120px);
+  overflow-y: auto;
+}
+
+.announcementFeedCard {
+  background: var(--colorWhite);
+  border-radius: var(--radiusLG);
+  padding: var(--spacingXL);
+  box-shadow: var(--shadowSM);
+}
+
+.feedCardHeader {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  margin-bottom: var(--spacingSM);
+}
+
+.feedCardTitle {
+  font-size: var(--fontSizeMD);
+  font-weight: var(--fontWeightSemiBold);
+  color: var(--colorText);
+}
+
+.feedCardBody {
+  font-size: var(--fontSizeSM);
+  color: var(--colorTextMid);
+  line-height: 1.6;
+  margin-bottom: var(--spacingMD);
+}
+
+.feedCardImages {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--spacingSM);
+  margin-bottom: var(--spacingMD);
+}
+
+.feedCardImage {
+  height: 90px;
+  background: var(--colorBorder);
+  border-radius: var(--radiusSM);
+}
+
+.feedCardFooter {
+  display: flex;
+  justify-content: space-between;
+  font-size: var(--fontSizeXS);
+  color: var(--colorTextLight);
+}
+
+.feedCardDivider {
+  border: none;
+  border-top: 1px solid var(--colorBorder);
+  margin: var(--spacingLG) 0;
+}
+
+/* ── 12. CITIZENS PAGE ───────────────────────────────────── */
+.citizensTopBar {
+  display: flex;
+  align-items: center;
+  gap: var(--spacingLG);
+  margin-bottom: var(--spacingXL);
+}
+
+.citizensContent {
+  display: flex;
+  gap: var(--spacingXL);
+  align-items: flex-start;
+}
+
+.citizensTableWrap {
+  flex: 1;
+  background: var(--colorWhite);
+  border-radius: var(--radiusLG);
+  overflow: hidden;
+  box-shadow: var(--shadowSM);
+}
+
+/* ── 13. FILTER PANEL ────────────────────────────────────── */
+.filterPanel {
+  width: 200px;
+  min-width: 200px;
+  background: var(--colorWhite);
+  border-radius: var(--radiusLG);
+  padding: var(--spacingXL);
+  box-shadow: var(--shadowSM);
+  display: none;
+}
+
+.filterPanel.open {
+  display: block;
+}
+
+.filterPanelHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: var(--spacingXL);
+}
+
+.filterPanelTitle {
+  font-size: var(--fontSizeMD);
+  font-weight: var(--fontWeightSemiBold);
+  color: var(--colorTextLight);
+}
+
+.btnFilterClose {
+  background: none;
+  border: none;
+  color: var(--colorTextLight);
+  cursor: pointer;
+  font-size: var(--fontSizeLG);
+  line-height: 1;
+  padding: 2px;
+  transition: color var(--transitionFast);
+}
+
+.btnFilterClose:hover {
+  color: var(--colorText);
+}
+
+.filterGroup {
+  margin-bottom: var(--spacingXL);
+}
+
+.filterGroupHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: var(--fontSizeSM);
+  font-weight: var(--fontWeightSemiBold);
+  color: var(--colorText);
+  cursor: pointer;
+  padding-bottom: var(--spacingSM);
+  border-bottom: 1px solid var(--colorBorder);
+  margin-bottom: var(--spacingMD);
+  transition: color var(--transitionFast);
+}
+
+.filterGroupHeader:hover {
+  color: var(--colorPrimary);
+}
+
+.filterOption {
+  display: flex;
+  align-items: center;
+  gap: var(--spacingSM);
+  font-size: var(--fontSizeSM);
+  color: var(--colorTextMid);
+  margin-bottom: var(--spacingSM);
+  cursor: pointer;
+  user-select: none;
+}
+
+.filterOption input[type="radio"] {
+  accent-color: var(--colorPrimary);
+  cursor: pointer;
+}
+
+.filterCustomRange {
+  display: flex;
+  align-items: center;
+  gap: var(--spacingSM);
+  margin-top: var(--spacingSM);
+}
+
+.filterRangeInput {
+  width: 60px;
+  padding: var(--spacingXS) var(--spacingSM);
+  border: 1px solid var(--colorBorder);
+  border-radius: var(--radiusSM);
+  font-size: var(--fontSizeSM);
+  text-align: center;
+}
+
+.filterRangeInput:focus {
+  border-color: var(--colorPrimary);
+}
+
+.filterResults {
+  font-size: var(--fontSizeXS);
+  color: var(--colorTextLight);
+  text-align: right;
+  margin-bottom: var(--spacingMD);
+  margin-top: auto;
+}
+
+.filterPanelFooter {
+  margin-top: var(--spacingXL);
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacingSM);
+}
+
+/* ── 14. CITIZEN DETAIL MODAL ────────────────────────────── */
+.modalOverlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.45);
+  z-index: var(--zOverlay);
+  display: none;
+  align-items: center;
+  justify-content: center;
+  animation: overlayFadeIn var(--transitionFast) ease;
+}
+
+.modalOverlay.open {
+  display: flex;
+}
+
+@keyframes overlayFadeIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+.citizenModalBox {
+  background: var(--colorWhite);
+  border-radius: var(--radiusXL);
+  width: 900px;
+  max-width: 95vw;
+  max-height: 90vh;
+  overflow-y: auto;
+  padding: var(--spacingXL);
+  display: grid;
+  grid-template-columns: 1fr 260px;
+  gap: var(--spacingXL);
+  animation: modalSlideIn var(--transitionMid) ease;
+  position: relative;
+}
+
+@keyframes modalSlideIn {
+  from { opacity: 0; transform: translateY(16px) scale(0.98); }
+  to   { opacity: 1; transform: translateY(0)   scale(1); }
+}
+
+.citizenModalMain {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacingLG);
+}
+
+.citizenInfoCard {
+  background: var(--colorWhite);
+  border-radius: var(--radiusLG);
+  border: 1px solid var(--colorBorder);
+  padding: var(--spacingXL);
+}
+
+.citizenInfoCardHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: var(--spacingXL);
+}
+
+.citizenInfoCardTitle {
+  display: flex;
+  align-items: center;
+  gap: var(--spacingMD);
+  font-size: var(--fontSizeLG);
+  font-weight: var(--fontWeightSemiBold);
+  color: var(--colorText);
+}
+
+.citizenInfoIconWrap {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: var(--fontSizeLG);
+}
+
+.citizenInfoIconWrap.orange {
+  background: #fde8df;
+}
+
+.citizenInfoIconWrap.green {
+  background: var(--colorGreenLight);
+}
+
+.btnEdit {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--spacingXS);
+  background: none;
+  border: none;
+  color: #1a73e8;
+  font-size: var(--fontSizeSM);
+  font-weight: var(--fontWeightMedium);
+  cursor: pointer;
+  transition: color var(--transitionFast);
+}
+
+.btnEdit:hover {
+  color: #1558b0;
+  text-decoration: underline;
+}
+
+.citizenInfoRow {
+  display: flex;
+  align-items: center;
+  padding: var(--spacingMD) 0;
+  border-bottom: 1px solid var(--colorBorder);
+}
+
+.citizenInfoRow:last-child {
+  border-bottom: none;
+}
+
+.citizenInfoLabel {
+  width: 200px;
+  min-width: 200px;
+  font-size: var(--fontSizeMD);
+  font-weight: var(--fontWeightMedium);
+  color: var(--colorText);
+}
+
+.citizenInfoValue {
+  font-size: var(--fontSizeMD);
+  color: var(--colorTextMid);
+}
+
+/* Modal Right Sidebar */
+.citizenModalSide {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacingLG);
+}
+
+.citizenRegistrationCard {
+  background: var(--colorWhite);
+  border-radius: var(--radiusLG);
+  border: 1px solid var(--colorBorder);
+  padding: var(--spacingXL);
+}
+
+.regCardRow {
+  margin-bottom: var(--spacingMD);
+}
+
+.regCardRow:last-child {
+  margin-bottom: 0;
+}
+
+.regCardRowLabel {
+  font-size: var(--fontSizeSM);
+  font-weight: var(--fontWeightSemiBold);
+  color: var(--colorText);
+  margin-bottom: 2px;
+}
+
+.regCardRowValue {
+  font-size: var(--fontSizeSM);
+  color: var(--colorTextMid);
+}
+
+.citizenAccordion {
+  background: var(--colorWhite);
+  border-radius: var(--radiusLG);
+  border: 1px solid var(--colorBorder);
+  overflow: hidden;
+}
+
+.accordionHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--spacingLG) var(--spacingXL);
+  font-size: var(--fontSizeMD);
+  font-weight: var(--fontWeightSemiBold);
+  color: var(--colorText);
+  cursor: pointer;
+  transition: background var(--transitionFast);
+  user-select: none;
+}
+
+.accordionHeader:hover {
+  background: var(--colorRowHover);
+}
+
+.accordionArrow {
+  font-size: var(--fontSizeLG);
+  color: var(--colorTextLight);
+  transition: transform var(--transitionFast);
+}
+
+.accordionBody {
+  display: none;
+  padding: var(--spacingLG) var(--spacingXL);
+  border-top: 1px solid var(--colorBorder);
+  font-size: var(--fontSizeSM);
+  color: var(--colorTextMid);
+}
+
+.accordionBody.open {
+  display: block;
+}
+
+.accordionHeader.open .accordionArrow {
+  transform: rotate(180deg);
+}
+
+/* ── 15. UNVERIFIED CITIZENS PAGE ────────────────────────── */
+.unverifiedTopBar {
+  display: flex;
+  align-items: center;
+  gap: var(--spacingLG);
+  padding: var(--spacingLG) var(--contentPadding);
+  background: var(--colorWhite);
+  border-bottom: 1px solid var(--colorBorder);
+}
+
+.unverifiedBackBtn {
+  width: 40px;
+  height: 40px;
+  background: var(--colorPrimary);
+  border-radius: var(--radiusMD);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  cursor: pointer;
+  font-size: var(--fontSizeXL);
+  font-weight: var(--fontWeightBold);
+  transition: background var(--transitionFast);
+  flex-shrink: 0;
+  text-decoration: none;
+}
+
+.unverifiedBackBtn:hover {
+  background: var(--colorPrimaryHover);
+}
+
+.unverifiedBackBtn:active {
+  background: var(--colorPrimaryActive);
+  transform: scale(0.96);
+}
+
+.unverifiedPageTitle {
+  font-size: var(--fontSizeXXL);
+  font-weight: var(--fontWeightBold);
+  color: var(--colorText);
+}
+
+.unverifiedTopSearch {
+  flex: 1;
+}
+
+/* ── 16. INVALID REGISTRATION MODAL ──────────────────────── */
+.invalidModalBox {
+  background: var(--colorWhite);
+  border-radius: var(--radiusXL);
+  width: 860px;
+  max-width: 95vw;
+  max-height: 85vh;
+  overflow-y: auto;
+  animation: modalSlideIn var(--transitionMid) ease;
+}
+
+.invalidModalHeader {
+  display: flex;
+  align-items: center;
+  gap: var(--spacingXL);
+  padding: var(--spacingXL);
+  border-bottom: 1px solid var(--colorBorder);
+  background: var(--colorInvalid);
+  border-radius: var(--radiusXL) var(--radiusXL) 0 0;
+}
+
+.invalidModalTitle {
+  font-size: var(--fontSizeXL);
+  font-weight: var(--fontWeightBold);
+  color: var(--colorPrimary);
+  flex-shrink: 0;
+}
+
+.invalidModalSearch {
+  flex: 1;
+}
+
+.btnModalClose {
+  width: 32px;
+  height: 32px;
+  background: none;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: var(--fontSizeXL);
+  color: var(--colorTextMid);
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: background var(--transitionFast), color var(--transitionFast);
+}
+
+.btnModalClose:hover {
+  background: rgba(0,0,0,0.08);
+  color: var(--colorText);
+}
+
+.btnModalClose:active {
+  background: rgba(0,0,0,0.14);
+}
+
+.invalidModalBody {
+  padding: var(--spacingXL);
+}
+
+/* ── 17. SEARCH BAR ──────────────────────────────────────── */
+.searchBar {
+  display: flex;
+  align-items: center;
+  gap: var(--spacingSM);
+  background: var(--colorWhite);
+  border: 1px solid var(--colorBorder);
+  border-radius: var(--radiusMD);
+  padding: var(--spacingSM) var(--spacingMD);
+  flex: 1;
+  transition: border-color var(--transitionFast), box-shadow var(--transitionFast);
+}
+
+.searchBar:focus-within {
+  border-color: var(--colorPrimary);
+  box-shadow: 0 0 0 3px rgba(232,82,26,0.12);
+}
+
+.searchBar input {
+  flex: 1;
+  border: none;
+  background: none;
+  font-size: var(--fontSizeMD);
+  color: var(--colorText);
+}
+
+.searchBar input::placeholder {
+  color: var(--colorTextLight);
+}
+
+.searchBarIcon {
+  color: var(--colorTextLight);
+  font-size: var(--fontSizeMD);
+  flex-shrink: 0;
+}
+
+/* ── 18. BUTTONS ─────────────────────────────────────────── */
+/* Primary (orange) */
+.btnPrimary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--spacingSM);
+  padding: var(--spacingSM) var(--spacingXL);
+  background: var(--colorPrimary);
+  color: var(--colorTextInverse);
+  font-size: var(--fontSizeMD);
+  font-weight: var(--fontWeightSemiBold);
+  border-radius: var(--radiusMD);
+  cursor: pointer;
+  transition: background var(--transitionFast), transform var(--transitionFast);
+  white-space: nowrap;
+  border: none;
+}
+
+.btnPrimary:hover {
+  background: var(--colorPrimaryHover);
+}
+
+.btnPrimary:active {
+  background: var(--colorPrimaryActive);
+  transform: scale(0.97);
+}
+
+/* Secondary (outlined) */
+.btnSecondary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--spacingSM);
+  padding: var(--spacingSM) var(--spacingXL);
+  background: var(--colorWhite);
+  color: var(--colorText);
+  font-size: var(--fontSizeMD);
+  font-weight: var(--fontWeightMedium);
+  border-radius: var(--radiusMD);
+  cursor: pointer;
+  border: 1px solid var(--colorBorder);
+  transition: background var(--transitionFast), border-color var(--transitionFast), transform var(--transitionFast);
+  white-space: nowrap;
+}
+
+.btnSecondary:hover {
+  background: var(--colorBg);
+  border-color: var(--colorBorderDark);
+}
+
+.btnSecondary:active {
+  background: var(--colorRowActive);
+  transform: scale(0.97);
+}
+
+/* Green */
+.btnGreen {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--spacingSM);
+  padding: var(--spacingSM) var(--spacingXL);
+  background: var(--colorGreen);
+  color: var(--colorTextInverse);
+  font-size: var(--fontSizeMD);
+  font-weight: var(--fontWeightSemiBold);
+  border-radius: var(--radiusMD);
+  cursor: pointer;
+  transition: background var(--transitionFast), transform var(--transitionFast);
+  white-space: nowrap;
+  border: none;
+}
+
+.btnGreen:hover {
+  background: var(--colorGreenMid);
+}
+
+.btnGreen:active {
+  background: #1a5c27;
+  transform: scale(0.97);
+}
+
+/* Unverified Citizens badge button */
+.btnUnverifiedBadge {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--spacingMD);
+  padding: var(--spacingSM) var(--spacingLG);
+  background: var(--colorGreen);
+  color: var(--colorTextInverse);
+  font-size: var(--fontSizeSM);
+  font-weight: var(--fontWeightSemiBold);
+  border-radius: var(--radiusMD);
+  cursor: pointer;
+  transition: background var(--transitionFast), transform var(--transitionFast);
+  border: none;
+  white-space: nowrap;
+}
+
+.btnUnverifiedBadge:hover {
+  background: var(--colorGreenMid);
+}
+
+.btnUnverifiedBadge:active {
+  background: #1a5c27;
+  transform: scale(0.97);
+}
+
+.badgeCount {
+  background: rgba(255,255,255,0.25);
+  border-radius: var(--radiusFull);
+  padding: 1px 8px;
+  font-size: var(--fontSizeXS);
+  font-weight: var(--fontWeightBold);
+}
+
+/* Filter toggle button */
+.btnFilterToggle {
+  width: 40px;
+  height: 40px;
+  background: var(--colorWhite);
+  border: 1px solid var(--colorBorder);
+  border-radius: var(--radiusMD);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  color: var(--colorTextMid);
+  transition: background var(--transitionFast), border-color var(--transitionFast);
+  flex-shrink: 0;
+}
+
+.btnFilterToggle:hover {
+  background: var(--colorBg);
+  border-color: var(--colorBorderDark);
+}
+
+.btnFilterToggle:active {
+  background: var(--colorRowActive);
+}
+
+.btnFilterToggle.active {
+  background: var(--colorPrimary);
+  border-color: var(--colorPrimary);
+  color: white;
+}
+
+/* Invalid Registration button */
+.btnInvalidReg {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--spacingSM);
+  padding: var(--spacingSM) var(--spacingLG);
+  background: #444;
+  color: var(--colorTextInverse);
+  font-size: var(--fontSizeSM);
+  font-weight: var(--fontWeightMedium);
+  border-radius: var(--radiusMD);
+  cursor: pointer;
+  transition: background var(--transitionFast);
+  border: none;
+  white-space: nowrap;
+}
+
+.btnInvalidReg:hover {
+  background: #222;
+}
+
+.btnInvalidReg:active {
+  background: #000;
+  transform: scale(0.97);
+}
+
+/* Export button (dark, outlined) */
+.btnExport {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--spacingSM);
+  padding: var(--spacingSM) var(--spacingXL);
+  background: var(--colorWhite);
+  color: var(--colorText);
+  font-size: var(--fontSizeSM);
+  font-weight: var(--fontWeightMedium);
+  border-radius: var(--radiusMD);
+  cursor: pointer;
+  border: 1px solid var(--colorBorder);
+  transition: background var(--transitionFast), border-color var(--transitionFast);
+  white-space: nowrap;
+}
+
+.btnExport:hover {
+  background: var(--colorBg);
+  border-color: var(--colorBorderDark);
+}
+
+.btnExport:active {
+  background: var(--colorRowActive);
+  transform: scale(0.97);
+}
+
+/* ── 19. PLACEHOLDER PAGE ────────────────────────────────── */
+.placeholderPage {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 60vh;
+  color: var(--colorTextLight);
+  text-align: center;
+  gap: var(--spacingLG);
+}
+
+.placeholderPageIcon {
+  font-size: 64px;
+  opacity: 0.25;
+}
+
+.placeholderPageTitle {
+  font-size: var(--fontSizeXXL);
+  font-weight: var(--fontWeightBold);
+  color: var(--colorBorder);
+}
+
+.placeholderPageSub {
+  font-size: var(--fontSizeMD);
+  color: var(--colorTextLight);
+}
+
+/* ── 20. LOGIN PAGE ──────────────────────────────────────── */
+.loginPageWrap {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, #C0521C 0%, #8B6914 50%, #2a5c1c 100%);
+}
+
+.loginCard {
+  background: var(--colorWhite);
+  border-radius: var(--radiusXL);
+  padding: var(--spacingXXL) var(--spacingSection);
+  width: 420px;
+  max-width: 94vw;
+  box-shadow: var(--shadowModal);
+  animation: modalSlideIn var(--transitionMid) ease;
+}
+
+.loginTitle {
+  font-size: var(--fontSizeXXL);
+  font-weight: var(--fontWeightBold);
+  color: var(--colorPrimary);
+  margin-bottom: var(--spacingXXL);
+}
+
+.loginFieldGroup {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacingMD);
+  margin-bottom: var(--spacingXL);
+}
+
+.loginInputWrap {
+  position: relative;
+}
+
+.loginInput {
+  width: 100%;
+  padding: var(--spacingMD) var(--spacingXL);
+  background: var(--colorBg);
+  border: 1px solid transparent;
+  border-radius: var(--radiusMD);
+  font-size: var(--fontSizeMD);
+  color: var(--colorText);
+  transition: border-color var(--transitionFast), box-shadow var(--transitionFast);
+}
+
+.loginInput:focus {
+  border-color: var(--colorPrimary);
+  box-shadow: 0 0 0 3px rgba(232,82,26,0.12);
+}
+
+.loginInput::placeholder {
+  color: var(--colorTextLight);
+}
+
+.loginPasswordToggle {
+  position: absolute;
+  right: var(--spacingLG);
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: var(--colorTextLight);
+  font-size: var(--fontSizeLG);
+  transition: color var(--transitionFast);
+}
+
+.loginPasswordToggle:hover {
+  color: var(--colorText);
+}
+
+.btnLogin {
+  width: 100%;
+  padding: var(--spacingMD);
+  background: var(--colorPrimary);
+  color: var(--colorTextInverse);
+  font-size: var(--fontSizeMD);
+  font-weight: var(--fontWeightSemiBold);
+  border-radius: var(--radiusFull);
+  cursor: pointer;
+  border: none;
+  transition: background var(--transitionFast), transform var(--transitionFast);
+  margin-bottom: var(--spacingLG);
+}
+
+.btnLogin:hover {
+  background: var(--colorPrimaryHover);
+}
+
+.btnLogin:active {
+  background: var(--colorPrimaryActive);
+  transform: scale(0.98);
+}
+
+.loginForgot {
+  text-align: center;
+  font-size: var(--fontSizeMD);
+  color: var(--colorGreen);
+  cursor: pointer;
+  transition: color var(--transitionFast);
+}
+
+.loginForgot:hover {
+  color: var(--colorGreenMid);
+  text-decoration: underline;
+}
+
+.loginSwitchLink {
+  text-align: center;
+  font-size: var(--fontSizeSM);
+  color: var(--colorTextMid);
+  margin-top: var(--spacingLG);
+}
+
+.loginSwitchLink a {
+  color: var(--colorPrimary);
+  font-weight: var(--fontWeightSemiBold);
+  cursor: pointer;
+  transition: color var(--transitionFast);
+}
+
+.loginSwitchLink a:hover {
+  color: var(--colorPrimaryHover);
+  text-decoration: underline;
+}
+
+/* ── 21. RESPONSIVE ──────────────────────────────────────── */
+@media (max-width: 1100px) {
+  .overviewReportCards {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  .overviewMidRow,
+  .overviewBottomRow {
+    grid-template-columns: 1fr;
+  }
+  .overviewVehicleStats {
+    flex-direction: row;
+  }
+  .announcementLayout {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 768px) {
+  :root {
+    --sidebarWidth: 180px;
+    --contentPadding: 16px;
+  }
+
+  .overviewReportCards {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .citizenModalBox {
+    grid-template-columns: 1fr;
+  }
+
+  .filterPanel {
+    position: fixed;
+    right: 0;
+    top: 0;
+    height: 100vh;
+    border-radius: 0;
+    z-index: var(--zOverlay);
+    overflow-y: auto;
+  }
+}
+
+@media (max-width: 560px) {
+  .layoutSidebar {
+    width: 60px;
+    min-width: 60px;
+  }
+
+  .sidebarNavItem span,
+  .sidebarLogo,
+  .sidebarSignOutBtn span {
+    display: none;
+  }
+
+  .overviewReportCards {
+    grid-template-columns: 1fr;
+  }
+}

@@ -1,0 +1,659 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>MyFairview</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../Layout.css" />
+</head>
+<body>
+
+  <div class="layoutShell">
+
+    <!-- ═══════════════════════════════════════════════════
+         SIDEBAR
+    ════════════════════════════════════════════════════ -->
+    <aside class="layoutSidebar">
+
+      <div class="sidebarLogo">MyFairview</div>
+
+      <nav class="sidebarNav">
+
+        <div class="sidebarNavItem active" id="sidebarNavOverview" data-page="overview">
+          <!-- Grid icon -->
+          <svg class="navIcon" viewBox="0 0 24 24" fill="currentColor">
+            <rect x="3" y="3" width="8" height="8" rx="1.5"/>
+            <rect x="13" y="3" width="8" height="8" rx="1.5"/>
+            <rect x="3" y="13" width="8" height="8" rx="1.5"/>
+            <rect x="13" y="13" width="8" height="8" rx="1.5"/>
+          </svg>
+          <span>Overview</span>
+        </div>
+
+        <div class="sidebarNavItem" id="sidebarNavAnnouncement" data-page="announcement">
+          <!-- Bell icon -->
+          <svg class="navIcon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/>
+            <path d="M13.73 21a2 2 0 0 1-3.46 0"/>
+          </svg>
+          <span>Announcement</span>
+        </div>
+
+        <div class="sidebarNavItem" id="sidebarNavCitizens" data-page="citizens">
+          <!-- Person icon -->
+          <svg class="navIcon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+            <circle cx="12" cy="7" r="4"/>
+          </svg>
+          <span>Citizens</span>
+        </div>
+
+        <div class="sidebarNavItem" id="sidebarNavVehicles" data-page="vehicles">
+          <!-- Car icon -->
+          <svg class="navIcon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M5 17H3v-5l2-5h14l2 5v5h-2"/>
+            <circle cx="7.5" cy="17.5" r="1.5"/>
+            <circle cx="16.5" cy="17.5" r="1.5"/>
+          </svg>
+          <span>Vehicles</span>
+        </div>
+
+        <div class="sidebarNavItem" id="sidebarNavSurveillance" data-page="surveillance">
+          <!-- Camera icon -->
+          <svg class="navIcon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="2" y="7" width="20" height="12" rx="2"/>
+            <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/>
+          </svg>
+          <span>Surveillance</span>
+        </div>
+
+        <div class="sidebarNavItem" id="sidebarNavReports" data-page="reports">
+          <!-- Megaphone icon -->
+          <svg class="navIcon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="m3 11 18-5v12L3 14v-3z"/>
+            <path d="M11.6 16.8a3 3 0 1 1-5.8-1.6"/>
+          </svg>
+          <span>Reports</span>
+        </div>
+
+        <div class="sidebarNavItem" id="sidebarNavWaterLevel" data-page="waterLevel">
+          <!-- Water level icon -->
+          <svg class="navIcon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="3" y="3" width="18" height="18" rx="2"/>
+            <path d="M3 14h18"/>
+            <path d="M8 14v4"/>
+            <path d="M16 14v4"/>
+          </svg>
+          <span>Water Level</span>
+        </div>
+
+        <div class="sidebarNavItem" id="sidebarNavEvacuation" data-page="evacuation">
+          <!-- Pin icon -->
+          <svg class="navIcon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/>
+            <circle cx="12" cy="10" r="3"/>
+          </svg>
+          <span>Evacuation Plan</span>
+        </div>
+
+      </nav>
+
+      <div class="sidebarSignOut">
+        <button class="sidebarSignOutBtn" id="btnSignOut" type="button">
+          <!-- Sign out icon -->
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
+            <polyline points="16,17 21,12 16,7"/>
+            <line x1="21" y1="12" x2="9" y2="12"/>
+          </svg>
+          <span>Sign Out</span>
+        </button>
+      </div>
+
+    </aside>
+
+    <!-- ═══════════════════════════════════════════════════
+         MAIN CONTENT
+    ════════════════════════════════════════════════════ -->
+    <main class="layoutMain">
+
+      <!-- ─────────────────────────────────────────────────
+           OVERVIEW PAGE (pageSection)
+      ────────────────────────────────────────────────── -->
+      <section id="pageOverview" class="pageSection">
+        <div class="pageContent">
+
+          <!-- Report Cards -->
+          <div class="overviewReportCards">
+            <div class="overviewReportCard">
+              <div class="reportCardHeader">
+                <span class="reportCardTitle">Emergency Reports</span>
+                <span class="reportCardArrow">›</span>
+              </div>
+              <div class="reportCardValue">1,204</div>
+            </div>
+            <div class="overviewReportCard">
+              <div class="reportCardHeader">
+                <span class="reportCardTitle">Noise Complaints</span>
+                <span class="reportCardArrow">›</span>
+              </div>
+              <div class="reportCardValue">3,870</div>
+            </div>
+            <div class="overviewReportCard">
+              <div class="reportCardHeader">
+                <span class="reportCardTitle">Environmental Reports</span>
+                <span class="reportCardArrow">›</span>
+              </div>
+              <div class="reportCardValue">2,543</div>
+            </div>
+            <div class="overviewReportCard">
+              <div class="reportCardHeader">
+                <span class="reportCardTitle">Other Reports</span>
+                <span class="reportCardArrow">›</span>
+              </div>
+              <div class="reportCardValue">8,019</div>
+            </div>
+          </div>
+
+          <!-- Middle Row: Water Level + Vehicle Stats -->
+          <div class="overviewMidRow">
+
+            <!-- Water Level Chart -->
+            <div class="overviewWaterCard">
+              <div class="waterCardTitle">Water Level</div>
+              <div class="waterChartWrap">
+                <svg class="waterChartSVG" viewBox="0 0 700 120" preserveAspectRatio="none">
+                  <!-- Y-axis labels -->
+                  <text x="0" y="10" fill="rgba(255,255,255,0.5)" font-size="9">30 ft</text>
+                  <text x="0" y="40" fill="rgba(255,255,255,0.5)" font-size="9">20 ft</text>
+                  <text x="0" y="70" fill="rgba(255,255,255,0.5)" font-size="9">10 ft</text>
+                  <text x="0" y="100" fill="rgba(255,255,255,0.5)" font-size="9">0 ft</text>
+
+                  <!-- Chart area fill -->
+                  <defs>
+                    <linearGradient id="waterGrad" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="0%" stop-color="rgba(255,255,255,0.2)"/>
+                      <stop offset="100%" stop-color="rgba(255,255,255,0)"/>
+                    </linearGradient>
+                  </defs>
+
+                  <!-- Line path (data points manually placed) -->
+                  <polyline
+                    points="30,30 90,32 150,38 210,42 270,40 330,35 390,28 450,32 510,36 570,38 630,34 690,33"
+                    fill="none"
+                    stroke="white"
+                    stroke-width="2"
+                    stroke-linejoin="round"
+                  />
+
+                  <!-- Dots -->
+                  <circle cx="30"  cy="30" r="4" fill="white"/>
+                  <circle cx="90"  cy="32" r="4" fill="white"/>
+                  <circle cx="150" cy="38" r="4" fill="white"/>
+                  <circle cx="210" cy="42" r="4" fill="white"/>
+                  <circle cx="270" cy="40" r="4" fill="white"/>
+                  <circle cx="330" cy="35" r="4" fill="white"/>
+                  <circle cx="390" cy="28" r="4" fill="white"/>
+                  <circle cx="450" cy="32" r="4" fill="white"/>
+                  <circle cx="510" cy="36" r="4" fill="white"/>
+                  <circle cx="570" cy="38" r="4" fill="white"/>
+                  <circle cx="630" cy="34" r="4" fill="white"/>
+                  <circle cx="690" cy="33" r="4" fill="white"/>
+
+                  <!-- X labels -->
+                  <text x="22"  y="115" fill="rgba(255,255,255,0.5)" font-size="8">Jan 1</text>
+                  <text x="82"  y="115" fill="rgba(255,255,255,0.5)" font-size="8">Jan 8</text>
+                  <text x="138" y="115" fill="rgba(255,255,255,0.5)" font-size="8">Jan 15</text>
+                  <text x="198" y="115" fill="rgba(255,255,255,0.5)" font-size="8">Jan 22</text>
+                  <text x="258" y="115" fill="rgba(255,255,255,0.5)" font-size="8">Jan 29</text>
+                  <text x="318" y="115" fill="rgba(255,255,255,0.5)" font-size="8">Feb 5</text>
+                  <text x="378" y="115" fill="rgba(255,255,255,0.5)" font-size="8">Feb 12</text>
+                  <text x="438" y="115" fill="rgba(255,255,255,0.5)" font-size="8">Feb 19</text>
+                  <text x="498" y="115" fill="rgba(255,255,255,0.5)" font-size="8">Feb 26</text>
+                  <text x="558" y="115" fill="rgba(255,255,255,0.5)" font-size="8">Mar 5</text>
+                  <text x="614" y="115" fill="rgba(255,255,255,0.5)" font-size="8">Mar 12</text>
+                  <text x="668" y="115" fill="rgba(255,255,255,0.5)" font-size="8">Mar 19</text>
+                </svg>
+              </div>
+            </div>
+
+            <!-- Vehicle Stats + Population -->
+            <div class="overviewVehicleStats">
+              <div class="vehicleStatCard">
+                <div class="vehicleStatValue">4,871</div>
+                <div class="vehicleStatLabel">Inbound Vehicles</div>
+                <hr class="vehicleStatDivider" />
+                <div class="vehicleStatValue">3,204</div>
+                <div class="vehicleStatLabel">Outbound Vehicles</div>
+              </div>
+
+              <div class="overviewPopCard">
+                <div class="popStatRow">
+                  <span class="popStatLabel">Population</span>
+                  <span class="popStatValue">12,458</span>
+                </div>
+                <div class="popStatRow">
+                  <span class="popStatLabel">Unverified</span>
+                  <span class="popStatValue">1,043</span>
+                </div>
+                <div class="popStatRow">
+                  <span class="popStatLabel">Invalid</span>
+                  <span class="popStatValue">278</span>
+                </div>
+              </div>
+            </div>
+
+          </div><!-- /overviewMidRow -->
+
+          <!-- Subdivision Table -->
+          <div class="overviewSubdivisionCard">
+            <div class="tableWrap">
+              <table class="dataTable">
+                <thead>
+                  <tr>
+                    <th>Subdivision</th>
+                    <th>Population</th>
+                    <th>Registered Users</th>
+                    <th>Unverified User</th>
+                    <th>Invalid Users</th>
+                    <th></th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>Fairview Heights</td><td>3,500</td><td>2,980</td><td>320</td><td>45</td>
+                    <td><button class="btnDownloadRow" title="Export">↓</button></td>
+                  </tr>
+                  <tr>
+                    <td>Greenview</td><td>2,200</td><td>1,900</td><td>210</td><td>30</td>
+                    <td><button class="btnDownloadRow" title="Export">↓</button></td>
+                  </tr>
+                  <tr>
+                    <td>Ridgewood</td><td>1,800</td><td>1,640</td><td>140</td><td>18</td>
+                    <td><button class="btnDownloadRow" title="Export">↓</button></td>
+                  </tr>
+                  <tr>
+                    <td>Lakeside</td><td>2,400</td><td>2,100</td><td>200</td><td>55</td>
+                    <td><button class="btnDownloadRow" title="Export">↓</button></td>
+                  </tr>
+                  <tr>
+                    <td>Elmwood</td><td>1,050</td><td>950</td><td>88</td><td>12</td>
+                    <td><button class="btnDownloadRow" title="Export">↓</button></td>
+                  </tr>
+                  <tr>
+                    <td>No Subdivision</td><td>890</td><td>712</td><td>63</td><td>90</td>
+                    <td><button class="btnDownloadRow" title="Export">↓</button></td>
+                  </tr>
+                  <tr>
+                    <td>Condo</td><td>618</td><td>600</td><td>22</td><td>28</td>
+                    <td><button class="btnDownloadRow" title="Export">↓</button></td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+        </div>
+      </section>
+      <!-- /OVERVIEW PAGE -->
+
+
+      <!-- ─────────────────────────────────────────────────
+           ANNOUNCEMENT PAGE
+      ────────────────────────────────────────────────── -->
+      <section id="pageAnnouncement" class="pageSection">
+        <div class="pageContent">
+          <div class="announcementLayout">
+
+            <!-- LEFT: Post Form -->
+            <div class="announcementPostForm">
+
+              <!-- Post Details Card -->
+              <div class="formCard">
+                <div class="formCardTitle">Post Details</div>
+                <textarea
+                  id="announcementTextInput"
+                  class="formTextarea"
+                  placeholder="Text"
+                ></textarea>
+                <div class="formActions">
+                  <button class="btnSecondary" id="btnAnnouncementCancel" type="button">Cancel</button>
+                  <button class="btnGreen"     id="btnAnnouncementPost"   type="button">Post</button>
+                </div>
+              </div>
+
+              <!-- Media Card -->
+              <div class="formCard">
+                <div class="mediaLabel">Media</div>
+                <div class="mediaSubLabel">Cannot exceed 10 photos.</div>
+
+                <div class="mediaFileList" id="announcementMediaList">
+                  <!-- File items injected by JS -->
+                </div>
+
+                <button class="btnAddPhotos" id="btnAnnouncementAddPhotos" type="button">
+                  📷 Add photos
+                </button>
+                <!-- Hidden file input -->
+                <input type="file" id="announcementFileInput" accept="image/*" multiple style="display:none"/>
+              </div>
+
+            </div>
+            <!-- /LEFT -->
+
+            <!-- RIGHT: Feed -->
+            <div class="announcementFeedWrap">
+
+              <!-- Search + Filter -->
+              <div class="announcementFeedSearch">
+                <div class="searchBar">
+                  <span class="searchBarIcon">🔍</span>
+                  <input type="text" placeholder="Search" id="announcementFeedSearchInput"/>
+                </div>
+                <button class="btnFilterToggle" id="btnAnnouncementFeedFilter" title="Filter">
+                  ☰
+                </button>
+              </div>
+
+              <!-- Feed Cards -->
+              <div class="announcementFeedList" id="announcementFeedList">
+
+                <div class="announcementFeedCard">
+                  <div class="feedCardHeader">
+                    <span class="feedCardTitle">Road Maintenance Notice</span>
+                    <button class="btnRowMenu">⋮</button>
+                  </div>
+                  <p class="feedCardBody">
+                    Please be advised that road maintenance will be conducted along Main Avenue from Jan 5 to Jan 10. Expect minor traffic delays and plan your routes accordingly.
+                  </p>
+                  <div class="feedCardImages">
+                    <div class="feedCardImage"></div>
+                    <div class="feedCardImage"></div>
+                    <div class="feedCardImage"></div>
+                  </div>
+                  <div class="feedCardFooter">
+                    <span>Admin</span>
+                    <span>Jan 1, 2026</span>
+                  </div>
+                </div>
+
+                <hr class="feedCardDivider" />
+
+                <div class="announcementFeedCard">
+                  <div class="feedCardHeader">
+                    <span class="feedCardTitle">Community Clean-Up Drive</span>
+                    <button class="btnRowMenu">⋮</button>
+                  </div>
+                  <p class="feedCardBody">
+                    Join us for a community clean-up drive this Saturday at 7 AM at the Barangay Hall. Bring your own gloves and garbage bags. Free breakfast for all participants!
+                  </p>
+                  <div class="feedCardImages">
+                    <div class="feedCardImage"></div>
+                    <div class="feedCardImage"></div>
+                    <div class="feedCardImage"></div>
+                  </div>
+                  <div class="feedCardFooter">
+                    <span>Admin</span>
+                    <span>Jan 1, 2026</span>
+                  </div>
+                </div>
+
+              </div>
+            </div>
+            <!-- /RIGHT -->
+
+          </div>
+        </div>
+      </section>
+      <!-- /ANNOUNCEMENT PAGE -->
+
+
+      <!-- ─────────────────────────────────────────────────
+           CITIZENS PAGE
+      ────────────────────────────────────────────────── -->
+      <section id="pageCitizens" class="pageSection">
+        <div class="pageContent">
+
+          <!-- Top Bar -->
+          <div class="citizensTopBar">
+            <div class="searchBar">
+              <span class="searchBarIcon">🔍</span>
+              <input type="text" placeholder="Search" id="citizensSearchInput"/>
+            </div>
+            <button class="btnFilterToggle" id="btnCitizensFilterToggle" title="Filter">☰</button>
+            <button class="btnUnverifiedBadge" id="btnCitizensUnverified">
+              👤 Unverified Citizens <span class="badgeCount">15+</span>
+            </button>
+          </div>
+
+          <!-- Table + Filter Panel -->
+          <div class="citizensContent">
+
+            <div class="citizensTableWrap">
+              <div class="tableWrap">
+                <table class="dataTable" id="citizensTable">
+                  <thead>
+                    <tr>
+                      <th>Surname</th>
+                      <th>First Name</th>
+                      <th>Middle Name</th>
+                      <th>Suffix</th>
+                      <th>No. of Family Members</th>
+                      <th>Contact Number</th>
+                      <th></th>
+                    </tr>
+                  </thead>
+                  <tbody id="citizensTableBody">
+                    <!-- Rows injected by citizens.js -->
+                  </tbody>
+                </table>
+              </div>
+            </div>
+
+            <!-- Filter Panel -->
+            <div class="filterPanel" id="citizensFilterPanel">
+              <div class="filterPanelHeader">
+                <span class="filterPanelTitle">Filter</span>
+                <button class="btnFilterClose" id="btnCitizensFilterClose">✕</button>
+              </div>
+
+              <div class="filterGroup">
+                <div class="filterGroupHeader" id="filterGroupHousehold">
+                  Household Members <span class="accordionArrow">∧</span>
+                </div>
+                <div id="filterGroupHouseholdBody">
+                  <label class="filterOption"><input type="radio" name="filterHousehold" value="1-3"/> 1 – 3</label>
+                  <label class="filterOption"><input type="radio" name="filterHousehold" value="4-6"/> 4 – 6</label>
+                  <label class="filterOption"><input type="radio" name="filterHousehold" value="7+"/>  7+</label>
+                  <label class="filterOption"><input type="radio" name="filterHousehold" value="custom"/> Custom</label>
+                  <div class="filterCustomRange">
+                    <input type="number" class="filterRangeInput" id="filterHouseholdMin" placeholder="–" min="0"/>
+                    <span>–</span>
+                    <input type="number" class="filterRangeInput" id="filterHouseholdMax" placeholder="–" min="0"/>
+                  </div>
+                </div>
+              </div>
+
+              <div class="filterGroup">
+                <div class="filterGroupHeader">Age <span class="accordionArrow">∨</span></div>
+              </div>
+
+              <div class="filterGroup">
+                <div class="filterGroupHeader">Subdivision <span class="accordionArrow">∨</span></div>
+              </div>
+
+              <div class="filterResults">100+ Results</div>
+
+              <div class="filterPanelFooter">
+                <button class="btnPrimary" id="btnCitizensApplyFilter">Apply Filter</button>
+                <button class="btnExport"  id="btnCitizensExport1">Export</button>
+              </div>
+            </div>
+
+          </div><!-- /citizensContent -->
+
+        </div>
+      </section>
+      <!-- /CITIZENS PAGE -->
+
+
+      <!-- ─────────────────────────────────────────────────
+           PLACEHOLDER PAGES (Vehicles, Surveillance, etc.)
+      ────────────────────────────────────────────────── -->
+      <section id="pageVehicles"     class="pageSection">
+        <div class="pageContent">
+          <div class="placeholderPage">
+            <div class="placeholderPageIcon">🚗</div>
+            <div class="placeholderPageTitle">Vehicles</div>
+            <div class="placeholderPageSub">This section is coming soon.</div>
+          </div>
+        </div>
+      </section>
+
+      <section id="pageSurveillance" class="pageSection">
+        <div class="pageContent">
+          <div class="placeholderPage">
+            <div class="placeholderPageIcon">📹</div>
+            <div class="placeholderPageTitle">Surveillance</div>
+            <div class="placeholderPageSub">This section is coming soon.</div>
+          </div>
+        </div>
+      </section>
+
+      <section id="pageReports"      class="pageSection">
+        <div class="pageContent">
+          <div class="placeholderPage">
+            <div class="placeholderPageIcon">📢</div>
+            <div class="placeholderPageTitle">Reports</div>
+            <div class="placeholderPageSub">This section is coming soon.</div>
+          </div>
+        </div>
+      </section>
+
+      <section id="pageWaterLevel"   class="pageSection">
+        <div class="pageContent">
+          <div class="placeholderPage">
+            <div class="placeholderPageIcon">💧</div>
+            <div class="placeholderPageTitle">Water Level</div>
+            <div class="placeholderPageSub">This section is coming soon.</div>
+          </div>
+        </div>
+      </section>
+
+      <section id="pageEvacuation"   class="pageSection">
+        <div class="pageContent">
+          <div class="placeholderPage">
+            <div class="placeholderPageIcon">📍</div>
+            <div class="placeholderPageTitle">Evacuation Plan</div>
+            <div class="placeholderPageSub">This section is coming soon.</div>
+          </div>
+        </div>
+      </section>
+
+    </main>
+    <!-- /MAIN CONTENT -->
+
+  </div><!-- /layoutShell -->
+
+
+  <!-- ═══════════════════════════════════════════════════════
+       CITIZEN DETAIL MODAL  (lives inside Citizens page)
+  ══════════════════════════════════════════════════════════ -->
+  <div class="modalOverlay" id="citizenDetailOverlay">
+    <div class="citizenModalBox" id="citizenModalBox">
+
+      <!-- LEFT: Info cards -->
+      <div class="citizenModalMain">
+
+        <!-- Personal Information -->
+        <div class="citizenInfoCard">
+          <div class="citizenInfoCardHeader">
+            <div class="citizenInfoCardTitle">
+              <span class="citizenInfoIconWrap orange">👤</span>
+              Personal Information
+            </div>
+            <button class="btnEdit" type="button">✏ Edit</button>
+          </div>
+          <div class="citizenInfoRow"><span class="citizenInfoLabel">Surname</span>         <span class="citizenInfoValue" id="citizenDetailSurname">—</span></div>
+          <div class="citizenInfoRow"><span class="citizenInfoLabel">First Name</span>       <span class="citizenInfoValue" id="citizenDetailFirstName">—</span></div>
+          <div class="citizenInfoRow"><span class="citizenInfoLabel">Middle Name</span>      <span class="citizenInfoValue" id="citizenDetailMiddleName">—</span></div>
+          <div class="citizenInfoRow"><span class="citizenInfoLabel">Suffix</span>           <span class="citizenInfoValue" id="citizenDetailSuffix">—</span></div>
+          <div class="citizenInfoRow"><span class="citizenInfoLabel">Main Contact Number</span><span class="citizenInfoValue" id="citizenDetailContact">—</span></div>
+          <div class="citizenInfoRow"><span class="citizenInfoLabel">Date of Birth</span>    <span class="citizenInfoValue" id="citizenDetailDOB">—</span></div>
+          <div class="citizenInfoRow"><span class="citizenInfoLabel">Valid ID</span>         <span class="citizenInfoValue" id="citizenDetailID">—</span></div>
+        </div>
+
+        <!-- Home Address -->
+        <div class="citizenInfoCard">
+          <div class="citizenInfoCardHeader">
+            <div class="citizenInfoCardTitle">
+              <span class="citizenInfoIconWrap green">🏠</span>
+              Home Address
+            </div>
+            <button class="btnEdit" type="button">✏ Edit</button>
+          </div>
+          <div class="citizenInfoRow"><span class="citizenInfoLabel">Address</span>           <span class="citizenInfoValue" id="citizenDetailAddress">—</span></div>
+          <div class="citizenInfoRow"><span class="citizenInfoLabel">Proof of Residency</span><span class="citizenInfoValue" id="citizenDetailProof">—</span></div>
+          <div class="citizenInfoRow"><span class="citizenInfoLabel">Attachment</span>        <span class="citizenInfoValue" id="citizenDetailAttachment">—</span></div>
+        </div>
+
+      </div>
+      <!-- /LEFT -->
+
+      <!-- RIGHT: Side cards -->
+      <div class="citizenModalSide">
+
+        <div class="citizenRegistrationCard">
+          <div class="regCardRow">
+            <div class="regCardRowLabel">Registered on</div>
+            <div class="regCardRowValue" id="citizenDetailRegDate">—</div>
+          </div>
+          <div class="regCardRow">
+            <div class="regCardRowLabel">Verified on</div>
+            <div class="regCardRowValue" id="citizenDetailVerDate">—</div>
+          </div>
+          <div class="regCardRow">
+            <div class="regCardRowLabel">Verified by</div>
+            <div class="regCardRowValue" id="citizenDetailVerBy">—</div>
+          </div>
+        </div>
+
+        <div class="citizenAccordion">
+          <div class="accordionHeader" id="accordionHouseholdHeader">
+            Household Members
+            <span class="accordionArrow">∨</span>
+          </div>
+          <div class="accordionBody" id="accordionHouseholdBody">
+            No household members on record.
+          </div>
+        </div>
+
+        <div class="citizenAccordion">
+          <div class="accordionHeader" id="accordionVehicleHeader">
+            Vehicle Information
+            <span class="accordionArrow">∨</span>
+          </div>
+          <div class="accordionBody" id="accordionVehicleBody">
+            No vehicles on record.
+          </div>
+        </div>
+
+      </div>
+      <!-- /RIGHT -->
+
+    </div>
+  </div>
+  <!-- /CITIZEN DETAIL MODAL -->
+
+
+  <!-- ═══════════════════════════════════════════════════════
+       EXTERNAL JS FILES
+  ══════════════════════════════════════════════════════════ -->
+  <script src="../JS/navigation.js"></script>
+  <script src="../JS/citizens.js"></script>
+  <script src="../JS/announcement.js"></script>
+
+</body>
+</html>
