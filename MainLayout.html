@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MyFairview</title>
+
+<style>
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family:Arial, Helvetica, sans-serif;
+}
+
+body{
+    display:flex;
+    height:100vh;
+    overflow:hidden;
+}
+
+/* =======================
+   SIDEBAR
+======================= */
+.sidebar{
+    width:250px;
+    background:white;
+    border-right:1px solid #ddd;
+    display:flex;
+    flex-direction:column;
+}
+
+.logo{
+    padding:25px;
+    font-size:32px;
+    font-weight:bold;
+}
+
+.menu{
+    flex:1;
+    padding:10px;
+}
+
+.menu-title{
+    font-size:11px;
+    color:#999;
+    margin:20px 10px 10px;
+    text-transform:uppercase;
+}
+
+.menu-item{
+    padding:12px 15px;
+    border-radius:8px;
+    cursor:pointer;
+    margin-bottom:5px;
+    transition:.2s;
+}
+
+.menu-item:hover{
+    background:#ececec;
+}
+
+.menu-item.active{
+    background:#f26a21;
+    color:white;
+}
+
+.user-section{
+    padding:20px;
+    border-top:1px solid #ddd;
+}
+
+/* =======================
+   CONTENT
+======================= */
+.content{
+    flex:1;
+    display:flex;
+    flex-direction:column;
+    overflow:hidden;
+}
+
+/* top area */
+.top-box{
+    display:flex;
+    background:white;
+    border-bottom:1px solid #ddd;
+    height:50px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-weight:bold;
+}
+
+/* iframe */
+#iframeContainer{
+    flex:1;
+    background:#f4f4f2;
+}
+
+#contentFrame{
+    width:100%;
+    height:100%;
+    border:none;
+}
+</style>
+</head>
+
+<body>
+
+<!-- Sidebar -->
+<div class="sidebar">
+
+    <div class="logo">MyFairview</div>
+
+    <div class="menu">
+
+        <div class="menu-title">Main</div>
+
+        <div class="menu-item active"
+            onclick="loadPage(this,'MainPages/Overview.html')">
+            Overview
+        </div>
+
+        <div class="menu-item"
+            onclick="loadPage(this,'MainPages/Announcement.html')">
+            Announcement
+        </div>
+
+        <div class="menu-item"
+            onclick="loadPage(this,'MainPages/Citizens.html')">
+            Citizens
+        </div>
+
+        <div class="menu-title">Operations</div>
+
+        <div class="menu-item"
+            onclick="loadPage(this,'MainPages/Vehicles.html')">
+            Vehicles
+        </div>
+
+        <div class="menu-item"
+            onclick="loadPage(this,'MainPages/Reports.html')">
+            Reports
+        </div>
+
+        <div class="menu-item"
+            onclick="loadPage(this,'MainPages/WaterLevel.html')">
+            Water Level
+        </div>
+
+        <div class="menu-item"
+            onclick="loadPage(this,'MainPages/EvacuationPlan.html')">
+            Evacuation Plan
+        </div>
+
+        <div class="menu-title">Admin</div>
+
+        <div class="menu-item"
+            onclick="loadPage(this,'MainPages/Access.html')">
+            Access Management
+        </div>
+
+    </div>
+
+    <div class="user-section">
+      </div class="menu-item">
+        <strong>Lorem Ipsum</strong><br>
+        Administrator
+      </div>
+    </div>
+
+</div>
+
+<!-- Main Content -->
+<div class="content">
+
+    <!-- Two divs above iframe -->
+    <div class="top-box">
+    </div>
+
+    <!-- iframe -->
+    <div id="iframeContainer">
+        <iframe
+            id="contentFrame"
+            src="MainPages/Overview.html">
+        </iframe>
+    </div>
+
+</div>
+
+<script>
+
+function loadPage(element, page){
+
+    document.querySelectorAll('.menu-item')
+        .forEach(item => item.classList.remove('active'));
+
+    element.classList.add('active');
+
+    document.getElementById('contentFrame').src = page;
+}
+
+</script>
+
+</body>
+</html>
