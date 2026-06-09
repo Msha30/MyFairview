@@ -1,207 +1,229 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>MyFairview</title>
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>MyFairview</title>
+        <link rel="stylesheet" href="Styles/Fonts.css">
+        <link rel="stylesheet" href="Styles/Variables.css">
+        <style>
+            *{
+                margin:0;
+                padding:0;
+                box-sizing:border-box;
+                font-family: 'Inter', sans-serif;
+                letter-spacing: 0.02em; 
+            }
 
-<style>
-*{
-    margin:0;
-    padding:0;
-    box-sizing:border-box;
-    font-family:Arial, Helvetica, sans-serif;
-}
+            body{
+                letter-spacing: 1px;
+                display:flex;
+                height:100vh;
+                overflow:hidden;
+            }
 
-body{
-    display:flex;
-    height:100vh;
-    overflow:hidden;
-}
+            /* =======================
+            SIDEBAR
+            ======================= */
+            .sidebar{
+                width:250px;
+                background:white;
+                border-right:1px solid var(--border);
+                display:flex;
+                flex-direction:column;
+            }
 
-/* =======================
-   SIDEBAR
-======================= */
-.sidebar{
-    width:250px;
-    background:white;
-    border-right:1px solid #ddd;
-    display:flex;
-    flex-direction:column;
-}
+            .logo{
+                margin: 30px 30px 0px 30px;
+                font-size:32px;
+                font-family: 'InterExtraBold', sans-serif;
+                background: var(--grad);
+                background-clip: text;
+                -webkit-background-clip: text;
+                color: transparent;
+                -webkit-text-fill-color: transparent;
+                user-select: none;
+            }
 
-.logo{
-    padding:25px;
-    font-size:32px;
-    font-weight:bold;
-}
+            .menu{
+                flex:1;
+                padding:20px;
+            }
 
-.menu{
-    flex:1;
-    padding:10px;
-}
+            .menu-title{
+                font-size:10px;
+                color: var(--greylight);
+                margin:20px 10px 5px;
+                text-transform:uppercase;
+            }
 
-.menu-title{
-    font-size:11px;
-    color:#999;
-    margin:20px 10px 10px;
-    text-transform:uppercase;
-}
+            .menu-icon {
+                width: 18px;
+                height: 18px;
+                flex-shrink: 0;
+                margin-bottom: 1px;
+                opacity: 0.5;
+            }
 
-.menu-item{
-    padding:12px 15px;
-    border-radius:8px;
-    cursor:pointer;
-    margin-bottom:5px;
-    transition:.2s;
-}
+            .menu-item.active .menu-icon{
+                filter: invert(100%);
+                opacity: 100;
+            }
 
-.menu-item:hover{
-    background:#ececec;
-}
+            .menu-item{
+                color: var(--grey);
+                display: flex;
+                align-items: center;  
+                gap: 10px;
+                font-size: 13px;
+                padding: 12px;
+                border-radius: 8px;
+                cursor: pointer;
+                transition: .2s;
+            }
 
-.menu-item.active{
-    background:#f26a21;
-    color:white;
-}
+            .menu-item:hover{
+                background: var(--bg);
+            }
 
-.user-section{
-    padding:20px;
-    border-top:1px solid #ddd;
-}
+            .menu-item.active{
+                background:var(--orange);
+                color:white;
+                font-family: 'InterSemiBold', sans-serif;
+            }
 
-/* =======================
-   CONTENT
-======================= */
-.content{
-    flex:1;
-    display:flex;
-    flex-direction:column;
-    overflow:hidden;
-}
+            .user-section{
+                display: flex;
+                align-items: center;
+                gap: 10px;
+                padding: 8px 10px;
+                margin:20px;
+                border-radius: 8px;
+                cursor: pointer;
+                margin-bottom: 6px;
+            }
 
-/* top area */
-.top-box{
-    display:flex;
-    background:white;
-    border-bottom:1px solid #ddd;
-    height:50px;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    font-weight:bold;
-}
+            .user-section:hover { background: var(--bg); }
 
-/* iframe */
-#iframeContainer{
-    flex:1;
-    background:#f4f4f2;
-}
+            .user-avatar {
+                width: 32px; height: 32px;
+                border-radius: 8px;
+                background: var(--gradorange);
+                display: flex; align-items: center; justify-content: center;
+                font-size: 12px; font-weight: 700; color: white;
+                flex-shrink: 0;
+            }
 
-#contentFrame{
-    width:100%;
-    height:100%;
-    border:none;
-}
-</style>
-</head>
+            .user-info{
+                align-items: center;  
+                font-size: 13px;
+                cursor: pointer;
+                transition: .2s;
+            }
 
-<body>
+            .user-info{
+                font-size: var(--textreg);
+            }
 
-<!-- Sidebar -->
-<div class="sidebar">
+            .user-info span{
+                font-size: var(--textsmall);
+                color: var(--grey);
+            }
 
-    <div class="logo">MyFairview</div>
 
-    <div class="menu">
 
-        <div class="menu-title">Main</div>
+            /* =======================
+            CONTENT
+            ======================= */
+            .content{
+                flex:1;
+                display:flex;
+                flex-direction:column;
+                overflow:hidden;
+                background: var(--bg);
+            }
 
-        <div class="menu-item active"
-            onclick="loadPage(this,'MainPages/Overview.html')">
-            Overview
+            #contentFrame{
+                width:100%;
+                height:100%;
+                border:none;
+            }
+
+        </style>
+    </head>
+    <body>
+    <!-- Sidebar -->
+        <div class="sidebar">
+            <div class="logo">MyFairview</div>
+            <div class="menu">
+                <div class="menu-title">Main</div>
+                <div class="menu-item active"
+                    onclick="loadPage(this,'MainPages/Overview.html')">
+                    <img src="Icons\nav_overview.svg" class="menu-icon" alt=""/>
+                    Overview
+                </div>
+                <div class="menu-item"
+                    onclick="loadPage(this,'MainPages/Announcement.html')">
+                    <img src="Icons\nav_announcement.svg" class="menu-icon" alt=""/>
+                    Announcement
+                </div>
+                <div class="menu-item"
+                    onclick="loadPage(this,'MainPages/Citizens.html')">
+                    <img src="Icons\nav_citizens.svg" class="menu-icon" alt=""/>
+                    Citizens
+                </div>
+
+                <div class="menu-title">Operations</div>
+                <div class="menu-item"
+                    onclick="loadPage(this,'MainPages/Vehicles.html')">
+                    <img src="Icons\nav_vehicles.svg" class="menu-icon" alt=""/>
+                    Emergency Vehicles
+                </div>
+                <div class="menu-item"
+                    onclick="loadPage(this,'MainPages/Reports.html')">
+                    <img src="Icons\nav_reports.svg" class="menu-icon" alt=""/>
+                    Community Reports
+                </div>
+                <div class="menu-item"
+                    onclick="loadPage(this,'MainPages/WaterLevel.html')">
+                    <img src="Icons\nav_water.svg" class="menu-icon" alt=""/>
+                    Water Level
+                </div>
+                <div class="menu-item"
+                    onclick="loadPage(this,'MainPages/EvacuationPlan.html')">
+                    <img src="Icons\nav_evacuation.svg" class="menu-icon" alt=""/>
+                    Evacuation Plan
+                </div>
+
+                <div class="menu-title">Admin</div>
+                <div class="menu-item"
+                    onclick="loadPage(this,'MainPages/Access.html')">
+                    <img src="Icons\nav_access.svg" class="menu-icon" alt=""/>
+                    Access Management
+                </div>
+            </div>
+            <div class="user-section">
+                <div class="user-avatar">LI</div>
+                <div class="user-info">
+                    <strong>Lorem Ipsum</strong><br>
+                    <span>Administrator</span>
+                </div>
+            </div>
         </div>
-
-        <div class="menu-item"
-            onclick="loadPage(this,'MainPages/Announcement.html')">
-            Announcement
+        <!-- Main Content -->
+        <div class="content">
+            <iframe
+                id="contentFrame"
+                src="MainPages/Overview.html">
+            </iframe>
         </div>
-
-        <div class="menu-item"
-            onclick="loadPage(this,'MainPages/Citizens.html')">
-            Citizens
-        </div>
-
-        <div class="menu-title">Operations</div>
-
-        <div class="menu-item"
-            onclick="loadPage(this,'MainPages/Vehicles.html')">
-            Vehicles
-        </div>
-
-        <div class="menu-item"
-            onclick="loadPage(this,'MainPages/Reports.html')">
-            Reports
-        </div>
-
-        <div class="menu-item"
-            onclick="loadPage(this,'MainPages/WaterLevel.html')">
-            Water Level
-        </div>
-
-        <div class="menu-item"
-            onclick="loadPage(this,'MainPages/EvacuationPlan.html')">
-            Evacuation Plan
-        </div>
-
-        <div class="menu-title">Admin</div>
-
-        <div class="menu-item"
-            onclick="loadPage(this,'MainPages/Access.html')">
-            Access Management
-        </div>
-
-    </div>
-
-    <div class="user-section">
-      </div class="menu-item">
-        <strong>Lorem Ipsum</strong><br>
-        Administrator
-      </div>
-    </div>
-
-</div>
-
-<!-- Main Content -->
-<div class="content">
-
-    <!-- Two divs above iframe -->
-    <div class="top-box">
-    </div>
-
-    <!-- iframe -->
-    <div id="iframeContainer">
-        <iframe
-            id="contentFrame"
-            src="MainPages/Overview.html">
-        </iframe>
-    </div>
-
-</div>
-
-<script>
-
-function loadPage(element, page){
-
-    document.querySelectorAll('.menu-item')
-        .forEach(item => item.classList.remove('active'));
-
-    element.classList.add('active');
-
-    document.getElementById('contentFrame').src = page;
-}
-
-</script>
-
-</body>
+        <script>
+            function loadPage(element, page){
+                document.querySelectorAll('.menu-item')
+                    .forEach(item => item.classList.remove('active'));
+                element.classList.add('active');
+                document.getElementById('contentFrame').src = page;
+            }
+        </script>
+    </body>
 </html>

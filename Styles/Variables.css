@@ -1,0 +1,25 @@
+:root {
+    --orange: #ee6423;
+    --orangelight: #ff832b;
+
+    --red: #ce0000;
+    --yellow: #ffdf01;
+    --green: #1A7A35;
+    --greenlight: #22A84A;
+    --blue: #015498;
+    
+    --black: #0F1A10;
+    --grey: #4A5549;
+    --greylight: #8A9889;
+
+    --bg: #F4F5F3;
+    --border: #ddd;
+
+    --grad: linear-gradient(135deg, #c84c12, #c63f00, var(--green));
+    --gradgreen: linear-gradient(135deg, var(--green), var(--greenlight));
+    --gradorange: linear-gradient(135deg, var(--orange), var(--orangelight));
+
+    --textbig: 15px;
+    --textreg: 13.5px;
+    --textsmall: 11px;
+}
