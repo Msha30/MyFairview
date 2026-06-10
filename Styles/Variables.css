@@ -10,10 +10,12 @@
     --yellow: #ffdf01;
     --yellowfaded: #fff3c7;
 
+    --greendark: #1A3A1F;
     --green: #1A7A35;
     --greenlight: #22A84A;
     --greenfaded: #e9f4eb;
 
+    --bluedark: #002747;
     --blue: #015498;
     --bluefaded: #e6f3ff;
     
@@ -25,8 +27,9 @@
     --border: #ddd;
 
     --grad: linear-gradient(135deg, #c84c12, #c63f00, var(--green));
-    --gradgreen: linear-gradient(135deg, var(--green), var(--greenlight));
+    --gradgreen: linear-gradient(135deg, var(--greendark), var(--green));
     --gradorange: linear-gradient(135deg, var(--orange), var(--orangelight));
+    --gradblue: linear-gradient(180deg, white, var(--bluefaded));
 
     --textgiant: 25px;
     --textbigger: 18px;
