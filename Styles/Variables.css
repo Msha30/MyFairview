@@ -1,12 +1,21 @@
 :root {
     --orange: #ee6423;
     --orangelight: #ff832b;
+    --orangefaded: #ffeee7;
 
     --red: #ce0000;
+    --redfaded: #fedfe4;
+
+    --yellowdark: #d37303;
     --yellow: #ffdf01;
+    --yellowfaded: #fff3c7;
+
     --green: #1A7A35;
     --greenlight: #22A84A;
+    --greenfaded: #e9f4eb;
+
     --blue: #015498;
+    --bluefaded: #e6f3ff;
     
     --black: #0F1A10;
     --grey: #4A5549;
@@ -19,7 +28,13 @@
     --gradgreen: linear-gradient(135deg, var(--green), var(--greenlight));
     --gradorange: linear-gradient(135deg, var(--orange), var(--orangelight));
 
+    --textgiant: 25px;
+    --textbigger: 18px;
     --textbig: 15px;
     --textreg: 13.5px;
     --textsmall: 11px;
+
+    --rad: 12px;
+    --radbox: 8px;
+    --radsmall: 6px;
 }

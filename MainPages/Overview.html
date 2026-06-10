@@ -2,12 +2,71 @@
 <html lang="en">
     <head>
         <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta name="viewport" content="width=device-width, initial-statale=1.0">
         <title>MyFairview</title>
-        <link rel="stylesheet" href="Styles/Fonts.css">
-        <link rel="stylesheet" href="Styles/Variables.css">
+        <link rel="stylesheet" href="../CSS/Overview.css">
     </head>
     <body>
-    
+        <!-- ═══════════════════════════════════════════════ -->
+        <!-- ════════════════════ STATS ════════════════════ -->
+        <!-- ═══════════════════════════════════════════════ -->
+        <div class="row-4">
+            <div class="card white">
+                <div class="stat-top">
+                    <div class="stat-icon a">
+                        <img src="../Icons/nav_reports.svg" class="iconpic a" alt=""/>
+                    </div>
+                    <span class="stat-trend aa">Details ></span>
+                </div>
+                <div class="stat-val">00</div>
+                <div class="stat-label">Total Unresolved Reports</div>
+            </div>
+            <div class="card white">
+                <div class="stat-top">
+                    <div class="stat-icon b">
+                        <img src="../Icons/nav_vehicles.svg" class="iconpic b" alt=""/>
+                    </div>
+                    <span class="stat-trend bb">Details ></span>
+                </div>
+                <div class="stat-val">3 / 6</div>
+                <div class="stat-label">Available Emergency Vehicles</div>
+            </div>
+            <div class="card white">
+                <div class="stat-top">
+                    <div class="stat-icon c">
+                        <img src="../Icons/nav_citizens.svg" class="iconpic c" alt=""/>
+                    </div>
+                    <span class="stat-trend cc">Details ></span>
+                </div>
+                <div class="stat-val">0,000</div>
+                <div class="stat-label">Total Registered Citizens</div> 
+            </div>
+            <div class="card white">
+                <div class="stat-top">
+                    <div class="stat-icon d">
+                        <img src="../Icons/nav_water.svg" class="iconpic d" alt=""/>
+                    </div>
+                    <span class="stat-trend dd">Details ></span>
+                </div>
+                <div class="stat-val">0.00ft</div>
+                <div class="stat-label">Current Water Level</div>
+            </div>
+            
+        </div>
+        <!-- ═══════════════════════════════════════════════ -->
+        <!-- ════════════════════ WATER ════════════════════ -->
+        <!-- ═══════════════════════════════════════════════ -->
+
+        <div class="row-water">
+            <div class="card water">
+                <div class="cardtitle">Water Level</div>
+                <div class="cardsubtitle">Barangay Fairview Bridge</div>                
+                <div class="watercard">
+                    <svg id="waterchart" class="chartsvg"></svg>
+                </div>
+            </div>
+        </div>
+        <script src="../JS/WaterChart.js"></script>
+
     </body>
 </html>
