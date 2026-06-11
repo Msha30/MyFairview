@@ -13,6 +13,20 @@ body {
   padding: 30px;
 }
 
+img {
+    user-select: none;
+    -webkit-user-select: none;
+    -ms-user-select: none;
+    -webkit-user-drag: none;
+}
+
+svg {
+    user-select: none;
+    -webkit-user-select: none;
+    -ms-user-select: none;
+    -webkit-user-drag: none;
+}
+
 /* ════════════════════════════════════════════════════════ */
 /* ═════════════════════════ CARD ═════════════════════════ */
 /* ════════════════════════════════════════════════════════ */
@@ -38,7 +52,7 @@ body {
     font-size: var(--textreg);
     color: var(--grey);
     padding-bottom: var(--cardgap);
-    margin-bottom: var(--cardgap);
+    margin-bottom: 8px;
 }
 
 /* ═════════════════════════════════════════════════════════ */
