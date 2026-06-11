@@ -1,12 +1,23 @@
 const svg = document.getElementById("waterchart");
 
-svg.setAttribute("viewBox", "0 0 700 120");
+svg.setAttribute("viewBox", "0 0 735 120");
 svg.setAttribute("preserveAspectRatio", "none");
 
+const leftMargin = 20;
+
 const points = [
-    [34,30], [94,32], [154,38], [214,42], [274,40],
-    [334,35], [394,28], [454,33], [514,36],
-    [574,38], [634,34], [694,33]
+    [34 + leftMargin,30],
+    [94 + leftMargin,32],
+    [154 + leftMargin,38],
+    [214 + leftMargin,42],
+    [274 + leftMargin,40],
+    [334 + leftMargin,35],
+    [394 + leftMargin,28],
+    [454 + leftMargin,33],
+    [514 + leftMargin,36],
+    [574 + leftMargin,38],
+    [634 + leftMargin,34],
+    [694 + leftMargin,33]
 ];
 
 // Create polyline string
@@ -48,6 +59,8 @@ yLabels.forEach(label => {
     t.setAttribute("y", label.y);
     t.setAttribute("fill", "var(--blue)");
     t.setAttribute("font-size", "var(--textsmall)");
+    t.setAttribute("x", 30);
+    t.setAttribute("text-anchor", "end");
     t.textContent = label.text;
     svg.appendChild(t);
 });
@@ -60,10 +73,14 @@ const xLabels = [
 
 xLabels.forEach((label, i) => {
     const t = document.createElementNS("http://www.w3.org/2000/svg", "text");
-    t.setAttribute("x", 26 + i * 60);
+
+    t.setAttribute("x", points[i][0]); // same x as circle
     t.setAttribute("y", 115);
+
+    t.setAttribute("text-anchor", "middle"); // center text horizontally
     t.setAttribute("fill", "var(--blue)");
     t.setAttribute("font-size", "var(--textsmall)");
+
     t.textContent = label;
     svg.appendChild(t);
 });

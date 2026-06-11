@@ -8,6 +8,7 @@
         <link rel="stylesheet" href="Styles/Variables.css">
         <link rel="icon" type="image/png" href="Images/Logo.png">
         <style>
+
             *{
                 margin:0;
                 padding:0;
@@ -22,6 +23,46 @@
                 height:100vh;
                 overflow:hidden;
             }
+
+            .body {
+                flex: 1;
+                display: flex;
+                flex-direction: column;
+                height: 100vh;
+            }
+
+            .content {
+                flex: 1;
+                display: flex;
+                flex-direction: column;
+                height: 100%;
+            }
+
+            /* =======================
+            ALERT
+            ======================= */
+
+            .alert {
+                background: var(--orange);
+                padding: 10px 28px;
+                display: flex;
+                align-items: center;
+                gap: 10px;
+                font-size: var(--textreg);
+                color: white;
+                font-weight: 500;
+                }
+                
+                .alert strong { font-weight: 700; }
+                .alert-pill {
+                background: #ffffff47;
+                border: 1px solid #ffffff5e;
+                padding: 3px 10px;
+                border-radius: 20px;
+                font-size: 11px;
+                font-weight: 700;
+                letter-spacing: 0.5px;
+                }
 
             /* =======================
             SIDEBAR
@@ -76,7 +117,7 @@
                 display: flex;
                 align-items: center;  
                 gap: 10px;
-                font-size: 13px;
+                font-size: var(--textreg);
                 padding: 12px;
                 border-radius: var(--radbox);
                 cursor: pointer;
@@ -212,11 +253,19 @@
             </div>
         </div>
         <!-- Main Content -->
-        <div class="content">
-            <iframe
-                id="contentFrame"
-                src="MainPages/Overview.html">
-            </iframe>
+        <div class="body">
+            <div class="alert">
+                <span class="alert-pill">⚠ ALERT</span>
+                <strong>Water Level Advisory:</strong> 
+                Barangay Fairview Bridge is at 0.0ft — monitor closely.
+                <span style="margin-left:auto;font-size:12px;opacity:0.8">Jun 8, 2026 · 10:42 AM</span>
+            </div>
+            <div class="content">
+                <iframe
+                    id="contentFrame"
+                    src="MainPages/Overview.html">
+                </iframe>
+            </div>
         </div>
         <script>
             function loadPage(element, page){

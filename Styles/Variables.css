@@ -40,4 +40,7 @@
     --rad: 12px;
     --radbox: 8px;
     --radsmall: 6px;
+
+    --cardgap: 15px;
+    --cardpadding: 20px;
 }
