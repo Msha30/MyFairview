@@ -27,6 +27,11 @@ svg {
     -webkit-user-drag: none;
 }
 
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: white; }
+::-webkit-scrollbar-thumb { background: #bababa; border-radius: 10px; opacity: 0.2;}
+::-webkit-scrollbar-thumb:hover { background: var(--greylight); }
+
 /* ════════════════════════════════════════════════════════ */
 /* ═════════════════════════ CARD ═════════════════════════ */
 /* ════════════════════════════════════════════════════════ */
@@ -52,7 +57,7 @@ svg {
     font-size: var(--textreg);
     color: var(--grey);
     padding-bottom: var(--cardgap);
-    margin-bottom: 8px;
+    margin-bottom: 5px;
 }
 
 /* ═════════════════════════════════════════════════════════ */
