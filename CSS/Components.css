@@ -40,6 +40,10 @@ svg {
     border: 1px solid var(--border);
     border-radius: var(--rad);
     padding: var(--cardpadding);
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
 }
 
 .card.white {
@@ -56,8 +60,45 @@ svg {
 .cardsubtitle {
     font-size: var(--textreg);
     color: var(--grey);
-    padding-bottom: var(--cardgap);
-    margin-bottom: 5px;
+}
+
+.card-scroll {
+    flex: 1;
+    overflow-y: auto;
+    position: relative;
+    padding-right: 8px;
+}
+
+.card-scroll::before,
+.card-scroll::after {
+    content: "";
+    position: sticky;
+    left: 0;
+    right: 0;
+    height: 10px;
+    pointer-events: none;
+    z-index: 5;
+    display: block;
+}
+
+/* TOP fade */
+.card-scroll::before {
+    top: 0;
+    background: linear-gradient(
+        to bottom,
+        white,
+        rgba(255, 255, 255, 0)
+    );
+}
+
+/* BOTTOM fade */
+.card-scroll::after {
+    bottom: 0;
+    background: linear-gradient(
+        to top,
+        white,
+        rgba(255, 255, 255, 0)
+    );
 }
 
 /* ═════════════════════════════════════════════════════════ */

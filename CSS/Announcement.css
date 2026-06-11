@@ -16,57 +16,16 @@ body {
     gap: var(--cardgap);
 }
 
-.card {
-    height: 100%;
-    display: flex;
-    flex-direction: column;
-    overflow: hidden; /* important */
-}
-
-.card-scroll {
-    flex: 1;
-    overflow-y: auto;
-    position: relative;
-    padding-right: 15px;
-}
-
-.card-scroll::before,
-.card-scroll::after {
-    content: "";
-    position: sticky;
-    left: 0;
-    right: 0;
-    height: 20px;
-    pointer-events: none;
-    z-index: 5;
-    display: block;
-}
-
-/* TOP fade */
-.card-scroll::before {
-    top: 0;
-    background: linear-gradient(
-        to bottom,
-        white,
-        rgba(255, 255, 255, 0)
-    );
-}
-
-/* BOTTOM fade */
-.card-scroll::after {
-    bottom: 0;
-    background: linear-gradient(
-        to top,
-        white,
-        rgba(255, 255, 255, 0)
-    );
-}
-
 /* ══════════════════════════════════════════════════════════ */
 /* ═════════════════════════ CREATE ═════════════════════════ */
 /* ══════════════════════════════════════════════════════════ */
 
 .form-row {
+    margin-bottom: 15px;
+}
+
+.form-row.title {
+    margin-top: 20px;
     margin-bottom: 15px;
 }
 
@@ -131,12 +90,10 @@ textarea.form-input {
 
 
 .grid-media {
-    flex: auto;
     display: flex;
     grid-template-columns: 1fr 1fr;
     align-items: center;
     gap: var(--cardgap);
-    margin-bottom: 10px;
 }
 
 .one {
@@ -179,9 +136,6 @@ textarea.form-input {
     display: flex;
     flex-direction: column;
     gap: 5px;
-    overflow-y: auto;
-    position: relative;
-    padding-right: 10px;
 }
 
 .media-item {
@@ -208,8 +162,8 @@ textarea.form-input {
 .media-item img:active { cursor: grabbing;}
 
 .media {
-    width: 50px;
-    height: 50px;
+    width: 40px;
+    height: 40px;
     border-radius: var(--radsmall);
     background: #D1D5DB;
     flex-shrink: 0;
@@ -288,104 +242,15 @@ textarea.form-input {
 
 
 
-/* ══════════════════════════════════════════════════════════ */
-/* ═════════════════════════ CREATE ═════════════════════════ */
-/* ══════════════════════════════════════════════════════════ */
+/* ═══════════════════════════════════════════════════════════ */
+/* ═════════════════════════ HISTORY ═════════════════════════ */
+/* ═══════════════════════════════════════════════════════════ */
 
-.section-head {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    margin-bottom: 16px;
-    margin-top: 32px;
-}
-
-.section-head:first-child {
-    margin-top: 0;
-}
-
-.section-title {
-    font-family: 'Syne', sans-serif;
-    font-size: 16px;
-    font-weight: 700;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-}
-
-.section-anchor {
-    width: 4px;
-    height: 20px;
-    background: var(--orange);
-    border-radius: 4px;
-}
-
-.section-anchor.green {
-    background: var(--greenlight);
-}
-
-.section-action {
-    font-size: 12px;
-    font-weight: 600;
-    color: var(--orange);
-    cursor: pointer;
-    text-decoration: none;
-    display: flex;
-    align-items: center;
-    gap: 4px;
-}
-
-.card-header {
-    padding: 16px 20px 12px;
-    border-bottom: 1px solid var(--border);
-    display: flex;
-    align-items: flex-start;
-    justify-content: space-between;
-}
-
-.ch-title {
-    font-family: 'Syne', sans-serif;
-    font-size: 14px;
-    font-weight: 700;
-}
-
-.ch-sub {
-    font-size: 11.5px;
-    color: var(--greylight);
-    margin-top: 2px;
-}
-
-.ch-action {
-    font-size: 12px;
-    font-weight: 600;
-    color: var(--orange);
-    cursor: pointer;
-    text-decoration: none;
-    flex-shrink: 0;
-}
-
-/* ════ OVERVIEW GRID ════ */
-
-
-.grid-3 {
-    display: grid;
-    grid-template-columns: 1fr 1fr 1fr;
-    gap: 14px;
-    margin-bottom: 14px;
-}
-
-.grid-main-side {
-    display: grid;
-    grid-template-columns: 1fr 300px;
-    gap: 14px;
-    margin-bottom: 14px;
-}
-
-.ann-list {
+.announce-list {
     padding: 6px 0;
 }
 
-.ann-item {
+.announce-item {
     display: flex;
     align-items: flex-start;
     gap: 12px;
@@ -393,47 +258,37 @@ textarea.form-input {
     border-bottom: 1px solid var(--border);
 }
 
-.ann-item:last-child {
+.announce-item:last-child {
     border-bottom: none;
 }
 
-.ann-dot {
-    width: 10px;
-    height: 10px;
-    border-radius: 50%;
-    flex-shrink: 0;
-    margin-top: 4px;
-}
+.content { flex: 1; }
 
-.ann-body {
-    flex: 1;
-}
-
-.ann-title {
-    font-size: 13.5px;
-    font-weight: 600;
+.title {
+    font-family: 'InterBold', sans-serif;
+    font-size: var(--textreg);
     margin-bottom: 3px;
 }
 
-.ann-desc {
+.desc {
     font-size: 12px;
     color: var(--grey);
     margin-bottom: 5px;
 }
 
-.ann-meta {
+.meta {
     font-size: 11px;
     color: var(--greylight);
     display: flex;
     gap: 10px;
 }
 
-.ann-actions {
+.actions {
     display: flex;
     gap: 4px;
 }
 
-.ann-btn {
+.btn {
     padding: 4px 10px;
     border-radius: 6px;
     font-size: 11px;
@@ -445,80 +300,14 @@ textarea.form-input {
     text-decoration: none;
 }
 
-.ann-btn.edit {
+.btn.edit {
     border-color: var(--orange-border);
     background: var(--orange-light);
     color: var(--orange);
 }
 
-.ann-btn.del {
+.btn.del {
     border-color: #FECACA;
     background: var(--redfaded);
     color: var(--red);
 }
-
-
-
-
-
-
-
-.btn-green {
-    background: var(--greenlight);
-    color: white;
-    border: none;
-    padding: 9px 18px;
-    border-radius: var(--rad);
-    font-size: 13px;
-    font-weight: 600;
-    cursor: pointer;
-    font-family: 'DM Sans', sans-serif;
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-}
-
-.btn-outline {
-    background: transparent;
-    color: var(--greylight);
-    border: 1px solid var(--border);
-    padding: 9px 18px;
-    border-radius: var(--radsmall);
-    font-size: 13px;
-    font-weight: 600;
-    cursor: pointer;
-    font-family: 'DM Sans', sans-serif;
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-}
-
-
-.media-upload-section {
-    margin-bottom: 12px;
-}
-
-.media-upload-label {
-    font-size: 12px;
-    font-weight: 600;
-    color: var(--greylight);
-    margin-bottom: 2px;
-    display: block;
-}
-
-
-
-
-
-.drag-dot-row {
-    display: flex;
-    gap: 2.5px;
-}
-
-.drag-dot {
-    width: 3px;
-    height: 3px;
-    border-radius: 50%;
-    background: var(--greylight);
-}
-
