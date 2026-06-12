@@ -8,14 +8,6 @@ body {
     height: 100vh;
 }
 
-.card.green {
-    background: var(--gradgreen);
-}
-
-.card.blue {
-    background: var(--gradblue);
-}
-
 
 /* ═════════════════════════════════════════════════════════ */
 /* ═════════════════════════ STATS ═════════════════════════ */

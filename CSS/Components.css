@@ -35,6 +35,13 @@ btn {
     -webkit-user-drag: none;
 }
 
+.btn {
+    cursor: pointer;
+    -webkit-user-select: none;
+    -ms-user-select: none;
+    -webkit-user-drag: none;
+}
+
 ::-webkit-scrollbar { width: 6px; height: 6px; }
 ::-webkit-scrollbar-track { background: white; }
 ::-webkit-scrollbar-thumb { background: #bababa; border-radius: 10px; opacity: 0.2;}
@@ -143,6 +150,29 @@ btn {
   font-size: var(--textreg);
   color: var(--grey);
   text-align: center;
+}
+
+.cardtable {
+    border: 1px solid var(--border);
+    border-radius: var(--rad);
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    background: white;
+}
+
+.tabletitle {
+    font-size: var(--textbigger);
+    font-family: 'InterBold', sans-serif;
+    color: var(--black);
+    margin: var(--cardpadding) var(--cardpadding) 5px;
+}
+
+.tablesubtitle {
+    font-size: var(--textreg);
+    color: var(--grey);
+    margin: 0px var(--cardpadding) 5px;
 }
 
 

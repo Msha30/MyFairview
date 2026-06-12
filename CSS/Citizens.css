@@ -1,0 +1,14 @@
+@import url("../Styles/Fonts.css");
+@import url("../Styles/Variables.css");
+@import url("Components.css");
+
+body {
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+}
+
+/* ═════════════════════════════════════════════════════════ */
+/* ═════════════════════════ STATS ═════════════════════════ */
+/* ═════════════════════════════════════════════════════════ */
+
