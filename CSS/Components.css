@@ -8,9 +8,9 @@
     letter-spacing: 0.02em;
 }
 
-body { 
-  font-family: 'Inter', sans-serif; 
-  padding: 30px;
+body {
+    font-family: 'Inter', sans-serif;
+    padding: 30px;
 }
 
 img {
@@ -42,10 +42,24 @@ btn {
     -webkit-user-drag: none;
 }
 
-::-webkit-scrollbar { width: 6px; height: 6px; }
-::-webkit-scrollbar-track { background: white; }
-::-webkit-scrollbar-thumb { background: #bababa; border-radius: 10px; opacity: 0.2;}
-::-webkit-scrollbar-thumb:hover { background: var(--greylight); }
+::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+}
+
+::-webkit-scrollbar-track {
+    background: white;
+}
+
+::-webkit-scrollbar-thumb {
+    background: #bababa;
+    border-radius: 10px;
+    opacity: 0.2;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: var(--greylight);
+}
 
 /* ════════════════════════════════════════════════════════ */
 /* ═════════════════════════ CARD ═════════════════════════ */
@@ -78,6 +92,29 @@ btn {
     padding-bottom: 5px;
 }
 
+.tableDiv {
+    width: 100%;
+    overflow-x: auto;
+    background: white;
+    padding-bottom: 10px;
+    border-collapse: collapse;
+    border-spacing: 0;
+}
+
+.cardtable {
+    border: 1px solid var(--border);
+    border-radius: var(--rad);
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    background: white;
+}
+
+/* ══════════════════════════════════════════════════════════ */
+/* ═════════════════════════ SCROLL ═════════════════════════ */
+/* ══════════════════════════════════════════════════════════ */
+
 .card-scroll {
     flex: 1;
     overflow-y: auto;
@@ -100,66 +137,78 @@ btn {
 /* TOP fade */
 .card-scroll::before {
     top: 0;
-    background: linear-gradient(
-        to bottom,
-        white,
-        rgba(255, 255, 255, 0)
-    );
+    background: linear-gradient(to bottom,
+            white,
+            rgba(255, 255, 255, 0));
 }
 
 /* BOTTOM fade */
 .card-scroll::after {
     bottom: 0;
-    background: linear-gradient(
-        to top,
-        white,
-        rgba(255, 255, 255, 0)
-    );
+    background: linear-gradient(to top,
+            white,
+            rgba(255, 255, 255, 0));
 }
+
+.table-scroll-wrapper {
+    flex: 1;
+    overflow-y: auto;
+    position: relative;
+}
+
+/* Bottom fade */
+.table-scroll-wrapper::after {
+    content: "";
+    position: sticky;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 15px;
+    display: block;
+    background: linear-gradient(to top, white, rgba(255, 255, 255, 0));
+    pointer-events: none;
+    z-index: 1;
+}
+
+.table-scroll-wrapper {
+    overflow-x: auto;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+}
+
+.table-scroll-wrapper::-webkit-scrollbar {
+    display: none;
+}
+
+
 
 /* ═════════════════════════════════════════════════════════ */
 /* ═════════════════════════ TABLE ═════════════════════════ */
 /* ═════════════════════════════════════════════════════════ */
 
-.tableDiv { 
-    width: 100%; overflow-x: auto;
-    border: 1px solid var(--border);
-    border-radius: var(--rad);
-    background: white;
-    padding-bottom: 10px;
-}
-
-.tableDiv thead th  {
-  padding: 20px 5px 10px;
-  text-align: center;
-  font-size: var(--textreg);
-  color: var(--black);
-  white-space: nowrap;
+.tableDiv thead th {
+    text-align: center;
+    font-size: var(--textreg);
+    color: var(--greylight);
+    white-space: nowrap;
+    padding: 10px 5px 10px;
 }
 
 .tableDiv thead th:first-child { text-align: left; padding-left: 20px; }
-.tableDiv thead th:last-child { padding-right: 20px 20px 0px 10px;}
+.tableDiv thead th:last-child { padding-right: 20px 20px 0px 10px; }
 .tableDiv tbody td:first-child { text-align: left; padding-left: 20px; }
 .tableDiv tbody td:last-child { padding-right: 20px 20px 0px 10px; }
 
-.tableDiv tbody tr:hover { background: var(--bg); }
-.tableDiv tbody tr.tableRow { cursor: pointer; }
-
-.tableDiv tbody td  {
-  padding: 5px 10px;
-  font-size: var(--textreg);
-  color: var(--grey);
-  text-align: center;
+.tableDiv tbody tr:hover {
+    background: var(--bg);
+    cursor: pointer;
 }
 
-.cardtable {
-    border: 1px solid var(--border);
-    border-radius: var(--rad);
-    height: 100%;
-    display: flex;
-    flex-direction: column;
-    overflow: hidden;
-    background: white;
+.tableDiv tbody td {
+    padding: 5px 10px;
+    font-size: var(--textreg);
+    color: var(--grey);
+    text-align: center;
 }
 
 .tabletitle {
@@ -175,6 +224,122 @@ btn {
     margin: 0px var(--cardpadding) 5px;
 }
 
+/* ═════════════════════════════════════════════════════════ */
+/* ═════════════════════════ FORMS ═════════════════════════ */
+/* ═════════════════════════════════════════════════════════ */
 
 
+.form-row {
+    margin-bottom: 15px;
+}
 
+.form-row.title {
+    margin-top: var(--subbelow2);
+    margin-bottom: 15px;
+}
+
+.form-label {
+    font-size: var(--textsmall);
+    font-family: 'InterSemiBold', sans-serif;
+    color: var(--black);
+    margin-bottom: 8px;
+    display: block;
+}
+
+.form-label.sub {
+    margin-bottom: 3px;
+}
+
+.form-input {
+    width: 100%;
+    padding: 10px;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: var(--radsmall);
+    font-size: var(--textreg);
+    font-family: 'Inter', sans-serif;
+    color: var(--grey);
+    outline: none;
+}
+
+.form-input:focus {
+    border-color: var(--orange);
+}
+
+textarea.form-input {
+    resize: none;
+    height: 80px;
+}
+
+
+.form-selectbg {
+    padding: 0px 10px;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: var(--radsmall);
+}
+
+.form-select {
+    width: 100%;
+    padding: 9px 0px;
+    background: var(--bg);
+    border: none;
+    border-radius: var(--radsmall);
+    font-size: var(--textreg);
+    font-family: 'InterSemiBold', sans-serif;
+    color: var(--black);
+    outline: none;
+}
+
+
+.form-hint {
+    font-size: var(--textsmall);
+    color: var(--grey);
+}
+
+/* ════════════════════════════════════════════════════════ */
+/* ═════════════════════════ USER ═════════════════════════ */
+/* ════════════════════════════════════════════════════════ */
+
+.user-section {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.user-section:hover {
+    background: var(--bg);
+}
+
+.user-avatar {
+    width: 32px;
+    height: 32px;
+    border-radius: var(--radbox);
+    background: var(--gradorange);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    font-weight: 700;
+    color: white;
+    flex-shrink: 0;
+    -webkit-user-select: none;
+    -ms-user-select: none;
+    -webkit-user-drag: none;
+}
+
+.user-info {
+    align-items: center;
+    font-size: 13px;
+    cursor: pointer;
+    transition: .2s;
+}
+
+.user-info {
+    font-size: var(--textreg);
+}
+
+.user-info span {
+    font-size: var(--textsmall);
+    color: var(--grey);
+}

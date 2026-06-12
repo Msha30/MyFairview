@@ -16,72 +16,6 @@ body {
     gap: var(--cardgap);
 }
 
-/* ══════════════════════════════════════════════════════════ */
-/* ═════════════════════════ CREATE ═════════════════════════ */
-/* ══════════════════════════════════════════════════════════ */
-
-.form-row {
-    margin-bottom: 15px;
-}
-
-.form-row.title {
-    margin-top: var(--subbelow2);
-    margin-bottom: 15px;
-}
-
-.form-label {
-    font-size: var(--textsmall);
-    font-family: 'InterSemiBold', sans-serif;
-    color: var(--black);
-    margin-bottom: 8px;
-    display: block;
-}
-
-.form-label.sub {
-    margin-bottom: 3px;
-}
-
-.form-input {
-    width: 100%;
-    padding: 10px;
-    background: var(--bg);
-    border: 1px solid var(--border);
-    border-radius: var(--radsmall);
-    font-size: var(--textreg);
-    font-family: 'DM Sans', sans-serif;
-    color: var(--grey);
-    outline: none;
-}
-
-.form-input:focus {
-    border-color: var(--orange);
-}
-
-textarea.form-input {
-    resize: none;
-    height: 80px;
-}
-
-.form-select {
-    width: 100%;
-    padding: 9px 13px;
-    background: var(--bg);
-    border: 1px solid var(--border);
-    border-radius: var(--radsmall);
-    font-size: 13px;
-    font-family: 'DM Sans', sans-serif;
-    color: var(--grey);
-    outline: none;
-    appearance: none;
-}
-
-.form-hint {
-    font-size: var(--textsmall);
-    color: var(--grey);
-}
-
-
-
 /* ═════════════════════════════════════════════════════════ */
 /* ═════════════════════════ MEDIA ═════════════════════════ */
 /* ═════════════════════════════════════════════════════════ */
@@ -232,7 +166,7 @@ textarea.form-input {
     border: none;
     padding: 10px 15px;
     border-radius: var(--radsmall);
-    font-size: 13px;
+    font-size: var(--textreg);
     cursor: pointer;
     font-family: 'InterBold', sans-serif;
     display: inline-flex;
@@ -291,8 +225,8 @@ textarea.form-input {
 .btn {
     padding: 8px 10px;
     border-radius: var(--radsmall);
-    font-size: 11px;
-    font-weight: 600;
+    font-size: var(--textsmall);
+    font-family: 'InterBold', sans-serif;
     cursor: pointer;
     border: 1px solid var(--border);
     background: white;

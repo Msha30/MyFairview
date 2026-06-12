@@ -3,7 +3,7 @@
 
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-statale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>MyFairview</title>
     <link rel="stylesheet" href="../CSS/Components.css">
     <link rel="stylesheet" href="../CSS/Citizens.css">
@@ -12,13 +12,121 @@
 <body>
     <div class="cardtable">
         <!-- ════════════════════════════════════════════════ -->
-        <!-- ════════════════════ CREATE ════════════════════ -->
+        <!-- ════════════════════ HEADER ════════════════════ -->
         <!-- ════════════════════════════════════════════════ -->
         <div class="header">
-            <div class="tabletitle">Citizen Registry</div>
-            <div class="tablesubtitle">Resident Information and Verification Status</div>
+            <div class="title">
+                <div class="tabletitle">Citizen Registry</div>
+                <div class="tablesubtitle">Resident Information and Verification Status</div>
+            </div>
+            <a class="btn export" href="#">Export CSV</a>
         </div>
-        <a class="btn edit" href="#">Edit</a>
+
+        <!-- ════════════════════════════════════════════════ -->
+        <!-- ═══════════════════ SEARCH ROW ═════════════════ -->
+        <!-- ════════════════════════════════════════════════ -->
+        <div class="search-row">
+            <div class="inline-search">
+                <img src="../Icons/ic_search.svg">
+                <input id="search" type="text" placeholder="Search...">
+            </div>
+            <div class="form-selectbg">
+                <select class="form-select" style="width:150px;">
+                    <option>All Subdivision</option>
+                    <option>Subdivision 1</option>
+                    <option>Subdivision 2</option>
+                    <option>Subdivision 3</option>
+                    <option>No Subdivision</option>
+                    <option>Condominium</option>
+                </select>
+            </div>
+            <div class="form-selectbg">
+                <select class="form-select" style="width:100px;">
+                    <option>All Users</option>
+                    <option>Verified</option>
+                    <option>Unverified</option>
+                    <option>Invalid</option>
+                </select>
+            </div>
+        </div>
+
+        <!-- ════════════════════════════════════════════════ -->
+        <!-- ════════════════════ TABLE ═════════════════════ -->
+        <!-- ════════════════════════════════════════════════ -->
+        <div class="table-scroll-wrapper">
+            <table class="tableDiv citizens">
+                <thead>
+                    <tr>
+                        <th>RESIDENT</th>
+                        <th>SUBDIVISION</th>
+                        <th>SEX</th>
+                        <th>DATE OF BIRTH</th>
+                        <th>CONTACT NUMBER</th>
+                        <th>STATUS</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr class="tableRow">
+                        <td class="user-section">
+                            <div class="user-avatar verified">LI</div>
+                            <div class="user-info">
+                                <strong>Surname, First Name  M.</strong><br>
+                                <span>BFV-2026-00067</span>
+                            </div>
+                        </td>
+                        <td>Sunridge Village</td>
+                        <td>Female</td>
+                        <td>Mar 14, 1990</td>
+                        <td>0994 123 4567</td>
+                        <td><span class="badge verified">● Verified</span></td>
+                    </tr>
+                    <tr class="tableRow">
+                        <td class="user-section">
+                            <div class="user-avatar verified">LI</div>
+                            <div class="user-info">
+                                <strong>Surname, First Name  M.</strong><br>
+                                <span>BFV-2026-00067</span>
+                            </div>
+                        </td>
+                        <td>Sunridge Village</td>
+                        <td>Female</td>
+                        <td>Mar 14, 1990</td>
+                        <td>0994 123 4567</td>
+                        <td><span class="badge verified">● Verified</span></td>
+                    </tr>
+                    <tr class="tableRow">
+                        <td class="user-section">
+                            <div class="user-avatar unverified">LI</div>
+                            <div class="user-info">
+                                <strong>Surname, First Name  M.</strong><br>
+                                <span>BFV-2026-00067</span>
+                            </div>
+                        </td>
+                        <td>Sunridge Village</td>
+                        <td>Female</td>
+                        <td>Mar 14, 1990</td>
+                        <td>0994 123 4567</td>
+                        <td><span class="badge unverified">◉ Unverified</span></td>
+                    </tr>
+                    <tr class="tableRow">
+                        <td class="user-section">
+                            <div class="user-avatar invalid">LI</div>
+                            <div class="user-info">
+                                <strong>Surname, First Name  M.</strong><br>
+                                <span>BFV-2026-00067</span>
+                            </div>
+                        </td>
+                        <td>Sunridge Village</td>
+                        <td>Female</td>
+                        <td>Mar 14, 1990</td>
+                        <td>0994 123 4567</td>
+                        <td><span class="badge invalid">● Invalid</span></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
     </div>
 </body>
+
 </html>

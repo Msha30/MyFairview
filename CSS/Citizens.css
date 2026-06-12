@@ -6,9 +6,139 @@ body {
     display: flex;
     flex-direction: column;
     height: 100vh;
+    overflow: hidden;
 }
 
-/* ═════════════════════════════════════════════════════════ */
-/* ═════════════════════════ STATS ═════════════════════════ */
-/* ═════════════════════════════════════════════════════════ */
+/* ═══════════════════════════════════════════════════════════ */
+/* ════════════════════════ CARDTABLE ════════════════════════ */
+/* ═══════════════════════════════════════════════════════════ */
+
+.cardtable {
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+/* ═══════════════════════════════════════════════════════════ */
+/* ═════════════════════════ HEADER ══════════════════════════ */
+/* ═══════════════════════════════════════════════════════════ */
+
+.header {
+    display: flex;
+    align-items: center;
+    flex-shrink: 0;
+}
+
+.title {
+    flex: 1;
+}
+
+.btn.export {
+    margin: 20px;
+    color: var(--orange);
+    font-size: var(--textreg);
+    font-family: 'InterSemiBold', sans-serif;
+    cursor: pointer;
+    background: white;
+    text-decoration: none;
+}
+
+/* ═══════════════════════════════════════════════════════════ */
+/* ══════════════════════ SEARCH ROW ═════════════════════════ */
+/* ═══════════════════════════════════════════════════════════ */
+
+.search-row {
+    display: flex;
+    gap: 10px;
+    padding: 15px 20px;
+    border-top: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
+    margin-top: 15px;
+    flex-shrink: 0;
+}
+
+.inline-search {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: var(--radsmall);
+    padding: 10px 15px;
+    font-size: var(--textreg);
+    color: var(--black);
+}
+
+.inline-search img {
+    height: 10px;
+    width: 10px;
+    opacity: 0.7;
+}
+
+.inline-search input {
+    background: none;
+    height: 100%;
+    flex: 1;
+    border: none;
+    outline: none;
+    margin-left: 5px;
+    font-size: var(--textreg);
+    font-family: 'Inter' sans-serif;
+}
+
+
+/* ═══════════════════════════════════════════════════════════ */
+/* ══════════════════════ USER TABLE ═════════════════════════ */
+/* ═══════════════════════════════════════════════════════════ */
+
+.tableDiv.citizens thead tr {
+    position: sticky;
+    top: 0;
+    z-index: 2;
+}
+
+.tableDiv.citizens thead th {
+    background: var(--bg);
+    font-size: 12px;
+    border-bottom: 1px solid var(--border);
+}
+
+
+.badge {
+    display: inline-block;
+    padding: 3px 10px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-family: 'InterSemiBold', sans-serif;
+}
+
+.badge.verified { background: var(--greenfaded); color: var(--greenlight); }
+.badge.unverified { background: var(--orangefaded); color: var(--orange); }
+.badge.invalid { background: var(--bg); color: var(--greylight); }
+
+.tableRow .user-avatar {
+    width: 35px;
+    height: 35px;
+}
+
+.user-avatar.verified { background: var(--gradgreen); color: white; }
+.user-avatar.unverified { background: var(--gradorange); color: white; }
+.user-avatar.invalid { background: var(--greylight); color: white; }
+
+.tableDiv.citizens tbody td {
+    padding: 15px;
+    border-bottom: 1px solid var(--border);
+}
+
+.tableDiv.citizens tbody tr:last-child td {
+    border-bottom: none;
+}
+
+.tableDiv.citizens thead th:last-child { padding-right: 0px; }
+.tableDiv.citizens tbody td:last-child { padding-right: 5px; }
+.tableDiv.citizens tbody td:first-child { text-align: left; padding-left: 20px; }
+
+
 

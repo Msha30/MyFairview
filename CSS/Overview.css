@@ -226,7 +226,17 @@ body {
     background: white;
 }
 
-.tableDiv {
+.tableDiv.overview{
     flex: 1;
     overflow: auto;
+    border: 1px solid var(--border);
+    border-radius: var(--rad);
 }
+
+.tableDiv.overview tbody tr:last-child td {
+    padding-bottom: 15px;
+}
+
+.tableDiv.overview thead th  { color: var(--black);}
+.tableDiv.overview tbody tr.tableRow { cursor: pointer; }
+.tableDiv.overview thead th  { padding-top: 20px; }
