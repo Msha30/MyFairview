@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sign In</title>
+    <title>Login</title>
     <link rel="stylesheet" href="Styles/Fonts.css">
     <link rel="stylesheet" href="Styles/Variables.css">
     <link rel="stylesheet" href="CSS/Components.css">
@@ -28,6 +28,20 @@
             overflow: hidden;
         }
 
+        input[type="password"]::-ms-reveal,
+        input[type="password"]::-ms-clear {
+            display: none;
+        }
+
+        input[type="password"]::-webkit-credentials-auto-fill-button,
+        input[type="password"]::-webkit-textfield-decoration-container {
+            display: none !important;
+        }
+
+        input[type="password"]::-ms-reveal {
+            display: none !important;
+        }
+
         .login {
             display: flex;
             flex-direction: column;
@@ -41,7 +55,6 @@
             box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2);
         }
 
-        /* SAFESPACE*/
         .logo {
             width: 130px;
             align-self: center;
@@ -77,23 +90,14 @@
             border-color: var(--orange);
         }
 
-        .input-box {
-            margin-bottom: 15px;
-            position: relative;
-            left: 0px;
-            top: -45px;
+        .form-label {
+            font-size: var(--textreg);
         }
 
-        .input-box input {
-            flex: 1;
-            height: 55px;
-            padding: 0 12px;
-            border-radius: 4px;
-            border: none;
-            outline: none;
-            font-family: "RegularPublicSans", sans-serif;
-            font-size: 14px;
+        .form-input {
+            color: var(--black);
         }
+
 
         .toggle-password {
             align-self: center;
@@ -123,7 +127,8 @@
         }
 
         .forgot {
-            margin-top: 20px;
+            margin-top: 15px;
+            margin-bottom: 10px;
             text-align: center;
         }
 
@@ -134,90 +139,49 @@
             position: relative;
         }
 
-
-        .input-box2 {
-            margin-bottom: 15px;
-            position: relative;
-            left: 0px;
-        }
-
-        .input-box2 input {
-            width: 95%;
-            height: 55px;
-            padding: 0 12px;
-            border-radius: 4px;
-            border: none;
-            outline: none;
-            font-family: "RegularPublicSans", sans-serif;
-            font-size: 14px;
-        }
-
-        .btn2 {
-            width: 100%;
-            height: 55px;
-            padding: 0 12px;
-            background: #c3e1f4;
-            border: none;
-            border-radius: 6px;
-            font-size: 16px;
-            font-weight: bold;
-            color: #0847b2;
-            cursor: pointer;
-            transition: 0.3s;
-            position: relative;
-            left: 0px;
-        }
-
-        .btn2:hover {
-            background: #357ab7;
-            color: white
-        }
-
-        .forgot2 {
-            margin-top: 20px;
-            text-align: center;
-        }
-
-        .forgot2 a {
-            text-decoration: none;
-            color: white;
-            font-size: 14px;
-            position: relative;
+        .forgot a:hover {
+            color: var(--green);
+            font-family: 'InterSemiBold', sans-serif;
         }
 
         .header-with-back {
             display: flex;
             align-items: center;
-            gap: 15px;
-            position: relative;
-            top: -47px;
+        }
+
+        h3 {
+            color: var(--green);
+            font-family: 'InterBlack', sans-serif;
+            margin-top: 3px;
         }
 
         .back-btn {
             background: none;
             border: none;
-            color: white;
+            color: var(--green);
+            font-family: 'InterBold', sans-serif;
             font-size: 25px;
             cursor: pointer;
             padding: 0;
-            width: 40px;
-            height: 40px;
+            width: 30px;
+            height: 30px;
             display: flex;
             align-items: center;
-            justify-content: center;
         }
 
         .back-btn:hover {
-            color: #c3e1f4;
-        }
-
-        .header-with-back h2 {
-            margin: 0;
-            top: 0;
+            color: var(--black);
         }
 
         .hidden {
             display: none !important;
+        }
+
+        .toggle-password {
+            align-self: center;
+            padding-right: 10px;
+            cursor: pointer;
+            display: none;
         }
     </style>
 </head>
@@ -226,7 +190,7 @@
     <!-- ================= SIGN IN ================= -->
     <div id="ITLogIn" class="login">
         <img src="Images/Logo.png" class="logo">
-        <form action="GCO.html" method="get" class="form">
+        <form action="MainLayout.html" method="get" class="form">
             <div class="form-row title">
                 <label class="form-label">ID Number</label>
                 <input class="form-input" type="text" required>
@@ -234,18 +198,26 @@
             <div class="form-row title">
                 <label class="form-label">Password</label>
                 <div class="form-input out">
-                    <input class="form-input pass" type="password" required>
-                    <div class="toggle-password" onclick="togglePassword('loginPassword','loginEye')">
-                        <svg id="loginEye" xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="#888"
+                    <input class="form-input pass" id="loginPassword" type="password" oninput="toggleEyeVisibility()"
+                        required>
+                    <div class="toggle-password" onclick="togglePassword('loginPassword')">
+                        <svg id="loginEye" class="hidden" xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="#888"
                             viewBox="0 0 24 24" style="transform: translateY(3px);">
                             <path
                                 d="M12 5c-7.633 0-12 7-12 7s4.367 7 12 7 12-7 12-7-4.367-7-12-7zm0 12a5 5 0 1 1 0-10 5 5 0 0 1 0 10z" />
                             <circle cx="12" cy="12" r="2.5" />
                         </svg>
+                        <svg id="loginEyeClosed" xmlns="http://www.w3.org/2000/svg" width="20"
+                            height="20" fill="#888" viewBox="0 0 24 24" style="transform: translateY(3px);">
+                            <path
+                                d="M12 5c-7.633 0-12 7-12 7s4.367 7 12 7 12-7 12-7-4.367-7-12-7zm0 12a5 5 0 1 1 0-10 5 5 0 0 1 0 10z" />
+                            <circle cx="12" cy="12" r="2.5" />
+                            <path d="M3 3L21 21" stroke="#888" stroke-width="2" stroke-linecap="round" fill="none" />
+                        </svg>
                     </div>
                 </div>
             </div>
-            <button class="btn">Publish</button>
+            <button class="btn">Login</button>
             <div class="forgot">
                 <a href="#" onclick="showResetPassword()">Forgot Password?</a>
             </div>
@@ -254,31 +226,21 @@
 
     <!-- ================= RESET PASSWORD ================= -->
     <div id="ITResetPassword" class="login hidden">
-        <div class="left">
-            <div class="logos">
-                <img src="icons/NU FV logo.svg" alt="NU Fairview Logo" class="logo-nufv">
-                <img src="icons/Peers logo.svg" alt="NU Fairview Peers Logo" class="logo-peer">
-            </div>
-
-            <img src="photos/pic_logo2.png" alt="SafeSpace Logo" class="SafeSpaceLogo">
-            <h1>Creating<br>Safe Spaces!</h1>
-        </div>
-
-        <div class="right">
+        <div class="form">
             <div class="header-with-back">
-                <button class="back-btn" onclick="backToSignIn()">&larr;</button>
+                <button class="back-btn" onclick="backToSignIn()">&lt;</button>
+                <h3>Reset Password</h3>
             </div>
-
-            <h3>Reset Password</h3>
 
             <form onsubmit="return sendResetEmail(event)">
-                <div class="input-box2">
-                    <input type="email" id="resetEmail" placeholder="Email" required>
+                <div class="form-row title">
+                    <label class="form-label">Email</label>
+                    <input class="form-input" id="resetEmail" type="email required">
                 </div>
 
-                <button type="submit" class="btn2">Send Reset Email</button>
+                <button type="submit" class="btn">Send Reset Email</button>
 
-                <div class="forgot2">
+                <div class="forgot">
                     <a href="#" onclick="resendEmail()">Resend Email</a>
                 </div>
             </form>
@@ -288,17 +250,38 @@
 
     <!-- ================= JS ================= -->
     <script>
-
-        function togglePassword(inputId, eyeId) {
+        function togglePassword(inputId) {
             const passwordInput = document.getElementById(inputId);
-            const eyeIcon = document.getElementById(eyeId);
+
+            const openEye = document.getElementById("loginEye");
+            const closedEye = document.getElementById("loginEyeClosed");
 
             if (passwordInput.type === "password") {
+                // Show password
                 passwordInput.type = "text";
-                eyeIcon.setAttribute("fill", "#0067c4");
+
+                openEye.classList.remove("hidden");
+                closedEye.classList.add("hidden");
             } else {
+                // Hide password
                 passwordInput.type = "password";
-                eyeIcon.setAttribute("fill", "#888");
+
+                closedEye.classList.remove("hidden");
+                openEye.classList.add("hidden");
+            }
+        }
+
+        function toggleEyeVisibility() {
+            const passwordInput = document.getElementById("loginPassword");
+            const toggleBtn = document.querySelector(".toggle-password");
+
+            if (passwordInput.value.trim() !== "") {
+                toggleBtn.style.display = "block";
+            } else {
+                toggleBtn.style.display = "none";
+                passwordInput.type = "password";
+                document.getElementById("loginEye").classList.remove("hidden");
+                document.getElementById("loginEyeClosed").classList.add("hidden");
             }
         }
 
