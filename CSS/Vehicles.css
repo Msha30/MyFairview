@@ -1,0 +1,22 @@
+@import url("../Styles/Fonts.css");
+@import url("../Styles/Variables.css");
+@import url("Components.css");
+
+body {
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+}
+
+.grid-2 {
+    flex: 1;
+    overflow: auto;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--cardgap);
+}
+
+/* ═════════════════════════════════════════════════════════ */
+/* ═════════════════════════ MEDIA ═════════════════════════ */
+/* ═════════════════════════════════════════════════════════ */
+

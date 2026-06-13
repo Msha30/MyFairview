@@ -37,6 +37,7 @@ btn {
 
 .btn {
     cursor: pointer;
+    user-select: none;
     -webkit-user-select: none;
     -ms-user-select: none;
     -webkit-user-drag: none;
@@ -325,6 +326,7 @@ textarea.form-input {
     flex-shrink: 0;
     -webkit-user-select: none;
     -ms-user-select: none;
+    user-select: none;
     -webkit-user-drag: none;
 }
 

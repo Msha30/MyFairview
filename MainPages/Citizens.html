@@ -66,11 +66,11 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <tr class="tableRow">
+                    <tr class="tableRow" onclick="openCitizenModal()">
                         <td class="user-section">
                             <div class="user-avatar verified">LI</div>
                             <div class="user-info">
-                                <strong>Surname, First Name  M.</strong><br>
+                                <strong>Surname, First Name M.</strong><br>
                                 <span>BFV-2026-00067</span>
                             </div>
                         </td>
@@ -80,11 +80,11 @@
                         <td>0994 123 4567</td>
                         <td><span class="badge verified">● Verified</span></td>
                     </tr>
-                    <tr class="tableRow">
+                    <tr class="tableRow" onclick="openCitizenModal()">
                         <td class="user-section">
                             <div class="user-avatar verified">LI</div>
                             <div class="user-info">
-                                <strong>Surname, First Name  M.</strong><br>
+                                <strong>Surname, First Name M.</strong><br>
                                 <span>BFV-2026-00067</span>
                             </div>
                         </td>
@@ -94,11 +94,11 @@
                         <td>0994 123 4567</td>
                         <td><span class="badge verified">● Verified</span></td>
                     </tr>
-                    <tr class="tableRow">
+                    <tr class="tableRow" onclick="openCitizenModal()">
                         <td class="user-section">
                             <div class="user-avatar unverified">LI</div>
                             <div class="user-info">
-                                <strong>Surname, First Name  M.</strong><br>
+                                <strong>Surname, First Name M.</strong><br>
                                 <span>BFV-2026-00067</span>
                             </div>
                         </td>
@@ -108,11 +108,11 @@
                         <td>0994 123 4567</td>
                         <td><span class="badge unverified">◉ Unverified</span></td>
                     </tr>
-                    <tr class="tableRow">
+                    <tr class="tableRow" onclick="openCitizenModal()">
                         <td class="user-section">
                             <div class="user-avatar invalid">LI</div>
                             <div class="user-info">
-                                <strong>Surname, First Name  M.</strong><br>
+                                <strong>Surname, First Name M.</strong><br>
                                 <span>BFV-2026-00067</span>
                             </div>
                         </td>
@@ -125,8 +125,15 @@
                 </tbody>
             </table>
         </div>
-
     </div>
+    <div id="popup-container"></div>
+    <script>
+        fetch('../Popups/Citizens_Information.html')
+            .then(response => response.text())
+            .then(data => {
+                document.getElementById('popup-container').innerHTML = data;
+            });
+    </script>
+    <script src="../JS/Citizens.js"></script>
 </body>
-
 </html>

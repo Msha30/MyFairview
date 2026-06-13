@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MyFairview</title>
+    <link rel="stylesheet" href="../CSS/Components.css">
+    <link rel="stylesheet" href="../CSS/Reports.css">
+</head>
+
+<body>
+    <div class="grid-report">
+        <div class="cardtable">
+            <!-- ════════════════════════════════════════════════ -->
+            <!-- ════════════════════ HEADER ════════════════════ -->
+            <!-- ════════════════════════════════════════════════ -->
+            <div class="header">
+                <div class="title">
+                    <div class="tabletitle">Incident Reports</div>
+                    <div class="tablesubtitle">Reports submitted by the community</div>
+                </div>
+                <a class="btn export" href="#">Export CSV</a>
+            </div>
+
+            <!-- ════════════════════════════════════════════════ -->
+            <!-- ═══════════════════ SEARCH ROW ═════════════════ -->
+            <!-- ════════════════════════════════════════════════ -->
+            <div class="search-row">
+                <div class="inline-search">
+                    <img src="../Icons/ic_search.svg">
+                    <input id="search" type="text" placeholder="Search...">
+                </div>
+                <div class="form-selectbg">
+                    <select class="form-select" style="width:150px;">
+                        <option>All Reports</option>
+                        <option>Emergency</option>
+                        <option>Community</option>
+                        <option>Public Safety</option>
+                        <option>Feedback</option>
+                    </select>
+                </div>
+                <div class="form-selectbg">
+                    <select class="form-select" style="width:100px;">
+                        <option>Unresolved</option>
+                        <option>Resolved</option>
+                        <option>Invalid</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- ════════════════════════════════════════════════ -->
+            <!-- ════════════════════ TABLE ═════════════════════ -->
+            <!-- ════════════════════════════════════════════════ -->
+            <div class="table-scroll-wrapper">
+                <table class="tableDiv reports">
+                    <thead>
+                        <tr>
+                            <th>REPORT</th>
+                            <th>DETAILS</th>
+                            <th>REPORTED BY</th>
+                            <th>CONTACT NUMBER</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr class="tableRow emergency" onclick="openCitizenModal()">
+                            <td class="user-section">
+                                <div class="dot">●</div>
+                                <div class="user-info">
+                                    <strong>Flood</strong><br>
+                                    <span>Jun 7, 2026 · 11:45 PM</span>
+                                </div>
+                            </td>
+                            <td class="location">Sa Lorem Ipsum sa Lorem Ipsum katabi ng Lorem Ipsum naka Lorem Ipsum
+                            </td>
+                            <td>Lorem Ipsum</td>
+                            <td>0994 123 4567</td>
+                        </tr>
+                        <tr class="tableRow emergency" onclick="openCitizenModal()">
+                            <td class="user-section">
+                                <div class="dot">●</div>
+                                <div class="user-info">
+                                    <strong>Fire</strong><br>
+                                    <span>Jun 7, 2026 · 11:45 PM</span>
+                                </div>
+                            </td>
+                            <td class="location">Sa Lorem Ipsum sa Lorem Ipsum katabi ng Lorem Ipsum naka Lorem Ipsum
+                            </td>
+                            <td>Lorem Ipsum</td>
+                            <td>0994 123 4567</td>
+                        </tr>
+                        <tr class="tableRow safety" onclick="openCitizenModal()">
+                            <td class="user-section">
+                                <div class="dot">●</div>
+                                <div class="user-info">
+                                    <strong>Suspicious Activity</strong><br>
+                                    <span>Jun 7, 2026 · 11:45 PM</span>
+                                </div>
+                            </td>
+                            <td class="location">Sa Lorem Ipsum sa Lorem Ipsum katabi ng Lorem Ipsum naka Lorem Ipsum
+                            </td>
+                            <td>Lorem Ipsum</td>
+                            <td>0994 123 4567</td>
+                        </tr>
+                        <tr class="tableRow community" onclick="openCitizenModal()">
+                            <td class="user-section">
+                                <div class="dot">●</div>
+                                <div class="user-info">
+                                    <strong>Road</strong><br>
+                                    <span>Jun 7, 2026 · 11:45 PM</span>
+                                </div>
+                            </td>
+                            <td class="location">Sa Lorem Ipsum sa Lorem Ipsum katabi ng Lorem Ipsum naka Lorem Ipsum
+                            </td>
+                            <td>Lorem Ipsum</td>
+                            <td>0994 123 4567</td>
+                        </tr>
+
+                        <tr class="tableRow community" onclick="openCitizenModal()">
+                            <td class="user-section">
+                                <div class="dot">●</div>
+                                <div class="user-info">
+                                    <strong>Loud Music</strong><br>
+                                    <span>Jun 7, 2026 · 11:45 PM</span>
+                                </div>
+                            </td>
+                            <td class="location">Sa Lorem Ipsum sa Lorem Ipsum katabi ng Lorem Ipsum naka Lorem Ipsum
+                            </td>
+                            <td>Lorem Ipsum</td>
+                            <td>0994 123 4567</td>
+                        </tr>
+                        <tr class="tableRow feedback" onclick="openCitizenModal()">
+                            <td class="user-section">
+                                <div class="dot">●</div>
+                                <div class="user-info">
+                                    <strong>Feedback</strong><br>
+                                    <span>Jun 7, 2026 · 11:45 PM</span>
+                                </div>
+                            </td>
+                            <td class="location">Sa Lorem Ipsum sa Lorem Ipsum katabi ng Lorem Ipsum naka Lorem Ipsum
+                            </td>
+                            <td>Lorem Ipsum</td>
+                            <td>0994 123 4567</td>
+                        </tr>
+                        <tr class="tableRow invalid" onclick="openCitizenModal()">
+                            <td class="user-section">
+                                <div class="dot">●</div>
+                                <div class="user-info">
+                                    <strong>Spam</strong><br>
+                                    <span>Jun 7, 2026 · 11:45 PM</span>
+                                </div>
+                            </td>
+                            <td class="location">Sa Lorem Ipsum sa Lorem Ipsum katabi ng Lorem Ipsum naka Lorem Ipsum
+                            </td>
+                            <td>Lorem Ipsum</td>
+                            <td>0994 123 4567</td>
+                        </tr>
+                        <tr class="tableRow resolved" onclick="openCitizenModal()">
+                            <td class="user-section">
+                                <div class="dot">●</div>
+                                <div class="user-info">
+                                    <strong>RESOLVED - Loud Music</strong><br>
+                                    <span>Jun 7, 2026 · 11:45 PM</span>
+                                </div>
+                            </td>
+                            <td class="location">Sa Lorem Ipsum sa Lorem Ipsum katabi ng Lorem Ipsum naka Lorem Ipsum
+                            </td>
+                            <td>Lorem Ipsum</td>
+                            <td>0994 123 4567</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <div class="grid">
+            <div class="grid-btn">
+                <button class="btn active" type="button">Unresolved</button>
+                <button class="btn inactive" type="button">Resolved</button>
+            </div>
+            <div class="grid-summary">
+                <div class="info">
+                    <div class="stat-top">
+                        <div class="stat-icon a">
+                            <img src="../Icons/nav_reports.svg" class="iconpic a" alt="" />
+                        </div>
+                        <span class="stat-trend aa">0 This Month</span>
+                    </div>
+                    <div class="stat-val">0,000</div>
+                    <div class="stat-label">Emergency Reports</div>
+                </div>
+                <div class="info">
+                    <div class="stat-top">
+                        <div class="stat-icon b">
+                            <img src="../Icons/nav_reports.svg" class="iconpic b" alt="" />
+                        </div>
+                        <span class="stat-trend bb">0 This Month</span>
+                    </div>
+                    <div class="stat-val">0,000</div>
+                    <div class="stat-label">Public Safety Reports</div>
+                </div>
+                <div class="info">
+                    <div class="stat-top">
+                        <div class="stat-icon c">
+                            <img src="../Icons/nav_reports.svg" class="iconpic c" alt="" />
+                        </div>
+                        <span class="stat-trend cc">0 This Month</span>
+                    </div>
+                    <div class="stat-val">0,000</div>
+                    <div class="stat-label">Community Reports</div>
+                </div>
+                <div class="info">
+                    <div class="stat-top">
+                        <div class="stat-icon d">
+                            <img src="../Icons/nav_reports.svg" class="iconpic d" alt="" />
+                        </div>
+                        <span class="stat-trend dd">0 This Month</span>
+                    </div>
+                    <div class="stat-val">0,000</div>
+                    <div class="stat-label">Feedback</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</body>
+
+</html>

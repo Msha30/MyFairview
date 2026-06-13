@@ -1,0 +1,88 @@
+<!-- Citizens Information Modal -->
+<div id="citizenModal" class="modal-overlay">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h2>Citizen Information</h2>
+            <button class="close-btn" onclick="closeCitizenModal()">
+                ✕
+            </button>
+        </div>
+
+        <div class="modal-body">
+
+            <!-- ===================================== -->
+            <!-- PLACE CONTENT HERE LATER -->
+            <!-- ===================================== -->
+
+        </div>
+    </div>
+</div>
+<style>
+    .modal-overlay {
+        display: flex;
+        position: fixed;
+        inset: 0;
+        background: rgba(0, 0, 0, 0.5);
+        z-index: 9999;
+
+        justify-content: center;
+        align-items: center;
+    }
+
+    .modal-content {
+        width: 90%;
+        max-width: 800px;
+        min-height: 400px;
+
+        background: #ffffff;
+        border-radius: 12px;
+
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+
+        overflow: hidden;
+        animation: modalFadeIn 0.2s ease;
+    }
+
+    .modal-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+
+        padding: 18px 24px;
+
+        border-bottom: 1px solid #e5e5e5;
+    }
+
+    .modal-header h2 {
+        margin: 0;
+        font-size: 20px;
+        font-weight: 600;
+    }
+
+    .close-btn {
+        border: none;
+        background: transparent;
+
+        font-size: 22px;
+        cursor: pointer;
+
+        width: 35px;
+        height: 35px;
+    }
+
+    .modal-body {
+        padding: 24px;
+    }
+
+    @keyframes modalFadeIn {
+        from {
+            opacity: 0;
+            transform: translateY(-10px);
+        }
+
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+</style>
