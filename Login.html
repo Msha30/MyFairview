@@ -1,51 +1,341 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Sign In</title>
-  <link rel="icon" type="image/png" href="Images/Logo.png">
-  <style>
 
-  </style>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sign In</title>
+    <link rel="stylesheet" href="Styles/Fonts.css">
+    <link rel="stylesheet" href="Styles/Variables.css">
+    <link rel="stylesheet" href="CSS/Components.css">
+    <link rel="icon" type="image/png" href="Images/Logo.png">
+    <style>
+        /* --------------------------------------GCO ADMIN-------------------------------------- */
+
+
+        body {
+            margin: 0;
+            font-family: "Inter", sans-serif;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background-image: url("Images/Logo_BG.jpg");
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            background-size: cover;
+            overflow: hidden;
+        }
+
+        .login {
+            display: flex;
+            flex-direction: column;
+            box-sizing: border-box;
+            width: 400px;
+            margin: auto;
+            padding: var(--cardpadding);
+            border-radius: var(--rad);
+            background: white;
+            overflow: hidden;
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2);
+        }
+
+        /* SAFESPACE*/
+        .logo {
+            width: 130px;
+            align-self: center;
+        }
+
+        .form {
+            flex: 1;
+        }
+
+        .form-input.out {
+            display: flex;
+            width: 100%;
+            padding: 0px;
+            background: var(--bg);
+            border: 1px solid var(--border);
+            border-radius: var(--radsmall);
+            outline: none;
+        }
+
+        .form-input.pass {
+            width: 95%;
+            padding: 10px;
+            background: none;
+            border: none;
+            border-radius: var(--radsmall);
+            font-size: var(--textreg);
+            font-family: 'Inter', sans-serif;
+            color: var(--grey);
+            outline: none;
+        }
+
+        .form-input.out:focus-within {
+            border-color: var(--orange);
+        }
+
+        .input-box {
+            margin-bottom: 15px;
+            position: relative;
+            left: 0px;
+            top: -45px;
+        }
+
+        .input-box input {
+            flex: 1;
+            height: 55px;
+            padding: 0 12px;
+            border-radius: 4px;
+            border: none;
+            outline: none;
+            font-family: "RegularPublicSans", sans-serif;
+            font-size: 14px;
+        }
+
+        .toggle-password {
+            align-self: center;
+            padding-right: 10px;
+            cursor: pointer;
+        }
+
+        .btn {
+            height: 45px;
+            width: 100%;
+            background: var(--orangelight);
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: var(--radsmall);
+            font-size: var(--textbig);
+            cursor: pointer;
+            font-family: 'InterBold', sans-serif;
+            align-items: center;
+            gap: 8px;
+            margin-top: 10px;
+        }
+
+        .btn:hover {
+            background: var(--orange);
+            color: white
+        }
+
+        .forgot {
+            margin-top: 20px;
+            text-align: center;
+        }
+
+        .forgot a {
+            text-decoration: none;
+            color: var(--grey);
+            font-size: 14px;
+            position: relative;
+        }
+
+
+        .input-box2 {
+            margin-bottom: 15px;
+            position: relative;
+            left: 0px;
+        }
+
+        .input-box2 input {
+            width: 95%;
+            height: 55px;
+            padding: 0 12px;
+            border-radius: 4px;
+            border: none;
+            outline: none;
+            font-family: "RegularPublicSans", sans-serif;
+            font-size: 14px;
+        }
+
+        .btn2 {
+            width: 100%;
+            height: 55px;
+            padding: 0 12px;
+            background: #c3e1f4;
+            border: none;
+            border-radius: 6px;
+            font-size: 16px;
+            font-weight: bold;
+            color: #0847b2;
+            cursor: pointer;
+            transition: 0.3s;
+            position: relative;
+            left: 0px;
+        }
+
+        .btn2:hover {
+            background: #357ab7;
+            color: white
+        }
+
+        .forgot2 {
+            margin-top: 20px;
+            text-align: center;
+        }
+
+        .forgot2 a {
+            text-decoration: none;
+            color: white;
+            font-size: 14px;
+            position: relative;
+        }
+
+        .header-with-back {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            position: relative;
+            top: -47px;
+        }
+
+        .back-btn {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 25px;
+            cursor: pointer;
+            padding: 0;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .back-btn:hover {
+            color: #c3e1f4;
+        }
+
+        .header-with-back h2 {
+            margin: 0;
+            top: 0;
+        }
+
+        .hidden {
+            display: none !important;
+        }
+    </style>
 </head>
+
 <body>
-  <div class="loginPageBg">
-    <div class="loginCard">
-      <h1 class="loginTitle">Sign In</h1>
-      <div class="loginFieldGroup">
-        <div class="loginInputWrap">
-          <input id="loginInputEmail" class="loginInput" type="email" placeholder="Email" autocomplete="email" />
-        </div>
-        <div class="loginInputWrap">
-          <input id="loginInputPassword" class="loginInput" type="password" placeholder="Password" autocomplete="current-password" />
-          <button id="btnLoginTogglePassword" class="loginPasswordToggleBtn" type="button">👁</button>
-        </div>
-      </div>
-      <button id="btnLoginSubmit" class="btnLoginSubmit" type="button">Log In</button>
-      <a class="loginForgotLink" id="btnLoginGoForgot">Forgot Password</a>
-      <p class="loginSwitchText">Don't have an account? <a class="loginSwitchLink" id="btnLoginGoSignup">Sign up</a></p>
+    <!-- ================= SIGN IN ================= -->
+    <div id="ITLogIn" class="login">
+        <img src="Images/Logo.png" class="logo">
+        <form action="GCO.html" method="get" class="form">
+            <div class="form-row title">
+                <label class="form-label">ID Number</label>
+                <input class="form-input" type="text" required>
+            </div>
+            <div class="form-row title">
+                <label class="form-label">Password</label>
+                <div class="form-input out">
+                    <input class="form-input pass" type="password" required>
+                    <div class="toggle-password" onclick="togglePassword('loginPassword','loginEye')">
+                        <svg id="loginEye" xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="#888"
+                            viewBox="0 0 24 24" style="transform: translateY(3px);">
+                            <path
+                                d="M12 5c-7.633 0-12 7-12 7s4.367 7 12 7 12-7 12-7-4.367-7-12-7zm0 12a5 5 0 1 1 0-10 5 5 0 0 1 0 10z" />
+                            <circle cx="12" cy="12" r="2.5" />
+                        </svg>
+                    </div>
+                </div>
+            </div>
+            <button class="btn">Publish</button>
+            <div class="forgot">
+                <a href="#" onclick="showResetPassword()">Forgot Password?</a>
+            </div>
+        </form>
     </div>
-  </div>
-  <script>
-    document.getElementById('btnLoginTogglePassword').addEventListener('click', function () {
-      var input = document.getElementById('loginInputPassword');
-      var hidden = input.type === 'password';
-      input.type = hidden ? 'text' : 'password';
-      this.textContent = hidden ? '🙈' : '👁';
-    });
-    document.getElementById('btnLoginSubmit').addEventListener('click', function () {
-      window.location.href = 'MainLayout.html';
-    });
-    document.addEventListener('keydown', function (e) {
-      if (e.key === 'Enter') document.getElementById('btnLoginSubmit').click();
-    });
-    document.getElementById('btnLoginGoForgot').addEventListener('click', function () {
-      window.location.href = 'ForgotPassword.html';
-    });
-    document.getElementById('btnLoginGoSignup').addEventListener('click', function () {
-      window.location.href = 'Signup.html';
-    });
-  </script>
+
+    <!-- ================= RESET PASSWORD ================= -->
+    <div id="ITResetPassword" class="login hidden">
+        <div class="left">
+            <div class="logos">
+                <img src="icons/NU FV logo.svg" alt="NU Fairview Logo" class="logo-nufv">
+                <img src="icons/Peers logo.svg" alt="NU Fairview Peers Logo" class="logo-peer">
+            </div>
+
+            <img src="photos/pic_logo2.png" alt="SafeSpace Logo" class="SafeSpaceLogo">
+            <h1>Creating<br>Safe Spaces!</h1>
+        </div>
+
+        <div class="right">
+            <div class="header-with-back">
+                <button class="back-btn" onclick="backToSignIn()">&larr;</button>
+            </div>
+
+            <h3>Reset Password</h3>
+
+            <form onsubmit="return sendResetEmail(event)">
+                <div class="input-box2">
+                    <input type="email" id="resetEmail" placeholder="Email" required>
+                </div>
+
+                <button type="submit" class="btn2">Send Reset Email</button>
+
+                <div class="forgot2">
+                    <a href="#" onclick="resendEmail()">Resend Email</a>
+                </div>
+            </form>
+        </div>
+    </div>
+
+
+    <!-- ================= JS ================= -->
+    <script>
+
+        function togglePassword(inputId, eyeId) {
+            const passwordInput = document.getElementById(inputId);
+            const eyeIcon = document.getElementById(eyeId);
+
+            if (passwordInput.type === "password") {
+                passwordInput.type = "text";
+                eyeIcon.setAttribute("fill", "#0067c4");
+            } else {
+                passwordInput.type = "password";
+                eyeIcon.setAttribute("fill", "#888");
+            }
+        }
+
+        function showResetPassword() {
+            document.getElementById('ITLogIn').classList.add('hidden');
+            document.getElementById('ITResetPassword').classList.remove('hidden');
+            document.getElementById('resetEmail').value = '';
+            document.getElementById('resetEmail').focus();
+        }
+
+        function showLogin() {
+            document.getElementById("ITResetPassword").classList.add("hidden");
+            document.getElementById("ITLogIn").classList.remove("hidden");
+        }
+
+        function backToSignIn() {
+            document.getElementById('ITResetPassword').classList.add('hidden');
+
+            document.getElementById('ITLogIn').classList.remove('hidden');
+        }
+
+        function sendResetEmail(event) {
+            event.preventDefault();
+            const email = document.getElementById('resetEmail').value;
+            alert('A reset password link has been sent to ' + email);
+            return false;
+        }
+
+        function resendEmail() {
+            const email = document.getElementById('resetEmail').value;
+            if (email) {
+                alert('Reset email has been resent to ' + email);
+            } else {
+                alert('Please enter your email address first.');
+            }
+        }
+    </script>
 </body>
+
 </html>
