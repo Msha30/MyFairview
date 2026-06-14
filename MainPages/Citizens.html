@@ -126,12 +126,19 @@
             </table>
         </div>
     </div>
-    <div id="popup-container"></div>
+    <div id="popup-container" class="hidden"></div>
     <script>
         fetch('../Popups/Citizens_Information.html')
             .then(response => response.text())
             .then(data => {
                 document.getElementById('popup-container').innerHTML = data;
+                document.getElementById('popup-container').classList.remove("hidden")
+                document.getElementById('popup-container').classList.add("show")
+                    constructor(parameters) {
+                        
+                    }
+                }
+                
             });
     </script>
     <script src="../JS/Citizens.js"></script>
