@@ -93,13 +93,13 @@ body {
 /* ══════════════════════ USER TABLE ═════════════════════════ */
 /* ═══════════════════════════════════════════════════════════ */
 
-.tableDiv.citizens thead tr {
+.tableDiv.members thead tr {
     position: sticky;
     top: 0;
     z-index: 2;
 }
 
-.tableDiv.citizens thead th {
+.tableDiv.members thead th {
     background: var(--bg);
     font-size: 12px;
     border-bottom: 1px solid var(--border);
@@ -126,21 +126,21 @@ body {
 .user-avatar.admin { background: var(--gradorange); color: white; }
 .user-avatar.none { background: var(--greylight); color: white; }
 
-.tableDiv.citizens tbody td {
+.tableDiv.members tbody td {
     padding: 15px 10px;
     border-bottom: 1px solid var(--border);
 }
 
-.tableDiv.citizens tbody tr:last-child td {
+.tableDiv.members tbody tr:last-child td {
     border-bottom: none;
 }
 
-.tableDiv.citizens thead th:last-child { padding-right: 0px; }
-.tableDiv.citizens tbody td:last-child { padding-right: 5px; }
-.tableDiv.citizens tbody td:first-child { text-align: left; padding-left: 20px; }
+.tableDiv.members thead th:last-child { padding-right: 0px; }
+.tableDiv.members tbody td:last-child { padding-right: 5px; }
+.tableDiv.members tbody td:first-child { text-align: left; padding-left: 20px; }
 
 
-.tableDiv.citizens tbody td:nth-child(3) { width: 250px;}
+.tableDiv.members tbody td:nth-child(3) { width: 250px;}
 
 
 
