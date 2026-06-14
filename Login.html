@@ -190,7 +190,7 @@
     <!-- ================= SIGN IN ================= -->
     <div id="ITLogIn" class="login">
         <img src="Images/Logo.png" class="logo">
-        <form action="MainLayout.html" method="get" class="form">
+        <form class="form" onsubmit="handleLogin(event)">
             <div class="form-row title">
                 <label class="form-label">ID Number</label>
                 <input class="form-input" type="text" required>
@@ -201,14 +201,14 @@
                     <input class="form-input pass" id="loginPassword" type="password" oninput="toggleEyeVisibility()"
                         required>
                     <div class="toggle-password" onclick="togglePassword('loginPassword')">
-                        <svg id="loginEye" class="hidden" xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="#888"
-                            viewBox="0 0 24 24" style="transform: translateY(3px);">
+                        <svg id="loginEye" class="hidden" xmlns="http://www.w3.org/2000/svg" width="20" height="20"
+                            fill="#888" viewBox="0 0 24 24" style="transform: translateY(3px);">
                             <path
                                 d="M12 5c-7.633 0-12 7-12 7s4.367 7 12 7 12-7 12-7-4.367-7-12-7zm0 12a5 5 0 1 1 0-10 5 5 0 0 1 0 10z" />
                             <circle cx="12" cy="12" r="2.5" />
                         </svg>
-                        <svg id="loginEyeClosed" xmlns="http://www.w3.org/2000/svg" width="20"
-                            height="20" fill="#888" viewBox="0 0 24 24" style="transform: translateY(3px);">
+                        <svg id="loginEyeClosed" xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="#888"
+                            viewBox="0 0 24 24" style="transform: translateY(3px);">
                             <path
                                 d="M12 5c-7.633 0-12 7-12 7s4.367 7 12 7 12-7 12-7-4.367-7-12-7zm0 12a5 5 0 1 1 0-10 5 5 0 0 1 0 10z" />
                             <circle cx="12" cy="12" r="2.5" />
@@ -250,6 +250,16 @@
 
     <!-- ================= JS ================= -->
     <script>
+        function handleLogin(event) {
+            event.preventDefault();
+
+            // optional: validate credentials here first
+
+            sessionStorage.setItem("fromLogin", "true");
+
+            window.location.href = "MainLayout.html";
+        }
+
         function togglePassword(inputId) {
             const passwordInput = document.getElementById(inputId);
 

@@ -1,13 +1,36 @@
 <!DOCTYPE html>
 <html lang="en">
-    <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-statale=1.0">
-        <title>MyFairview</title>
-        <link rel="stylesheet" href="../CSS/Components.css">
-        <link rel="stylesheet" href="../CSS/Overview.css">
-    </head>
-    <body>
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-statale=1.0">
+    <title>MyFairview</title>
+    <link rel="stylesheet" href="../CSS/Components.css">
+    <link rel="stylesheet" href="../CSS/Overview.css">
+</head>
+
+<body>
+    <div id="skeleton-loader">
+
+        <!-- stats row -->
+        <div class="skeleton-row-4">
+            <div class="skeleton-card"></div>
+            <div class="skeleton-card"></div>
+            <div class="skeleton-card"></div>
+            <div class="skeleton-card"></div>
+        </div>
+
+        <!-- water section -->
+        <div class="skeleton-row-water">
+            <div class="skeleton-water-card"></div>
+            <div class="skeleton-status-card"></div>
+        </div>
+
+        <!-- table -->
+        <div class="skeleton-table"></div>
+
+    </div>
+    <div id="app-content">
         <!-- ═══════════════════════════════════════════════ -->
         <!-- ════════════════════ STATS ════════════════════ -->
         <!-- ═══════════════════════════════════════════════ -->
@@ -15,7 +38,7 @@
             <div class="card white">
                 <div class="stat-top">
                     <div class="stat-icon a">
-                        <img src="../Icons/nav_reports.svg" class="iconpic a" alt=""/>
+                        <img src="../Icons/nav_reports.svg" class="iconpic a" alt="" />
                     </div>
                     <span class="stat-trend aa">Details ></span>
                 </div>
@@ -25,34 +48,34 @@
             <div class="card white">
                 <div class="stat-top">
                     <div class="stat-icon b">
-                        <img src="../Icons/nav_vehicles.svg" class="iconpic b" alt=""/>
+                        <img src="../Icons/nav_vehicles.svg" class="iconpic b" alt="" />
                     </div>
                     <span class="stat-trend bb">Details ></span>
                 </div>
-                <div class="stat-val">3 / 6</div>
+                <div class="stat-val">0 / 0</div>
                 <div class="stat-label">Available Emergency Vehicles</div>
             </div>
             <div class="card white">
                 <div class="stat-top">
                     <div class="stat-icon c">
-                        <img src="../Icons/nav_citizens.svg" class="iconpic c" alt=""/>
+                        <img src="../Icons/nav_citizens.svg" class="iconpic c" alt="" />
                     </div>
                     <span class="stat-trend cc">Details ></span>
                 </div>
                 <div class="stat-val">0,000</div>
-                <div class="stat-label">Total Registered Citizens</div> 
+                <div class="stat-label">Total Registered Citizens</div>
             </div>
             <div class="card white">
                 <div class="stat-top">
                     <div class="stat-icon d">
-                        <img src="../Icons/nav_water.svg" class="iconpic d" alt=""/>
+                        <img src="../Icons/nav_water.svg" class="iconpic d" alt="" />
                     </div>
                     <span class="stat-trend dd">Details ></span>
                 </div>
                 <div class="stat-val">0.00ft</div>
                 <div class="stat-label">Current Water Level</div>
             </div>
-            
+
         </div>
 
         <!-- ═══════════════════════════════════════════════ -->
@@ -62,7 +85,7 @@
         <div class="row-water">
             <div class="card water">
                 <div class="cardtitle">Water Level</div>
-                <div class="cardsubtitle">Barangay Fairview Bridge</div>                
+                <div class="cardsubtitle">Barangay Fairview Bridge</div>
                 <div class="watercard">
                     <svg id="waterchart" class="chartsvg"></svg>
                 </div>
@@ -170,5 +193,41 @@
                 </tr>
             </tbody>
         </table>
-    </body>
+    </div>
+
+
+</body>
+<!-- SKELETON LOADER -->
+
+<script>
+    document.addEventListener("DOMContentLoaded", () => {
+        const fromLogin = sessionStorage.getItem("fromLogin");
+
+        const loader = document.getElementById("skeleton-loader");
+        const app = document.getElementById("app-content");
+
+        // ALWAYS show app immediately
+        app.classList.add("show");
+        app.style.opacity = "1";
+
+        if (fromLogin) {
+            sessionStorage.removeItem("fromLogin");
+
+            // activate skeleton AFTER DOM is ready (no flash)
+            requestAnimationFrame(() => {
+                loader.classList.add("active");
+            });
+
+            setTimeout(() => {
+                loader.classList.remove("active");
+                loader.classList.add("hide");
+
+                setTimeout(() => {
+                    loader.remove();
+                }, 300);
+            }, 2000);
+        }
+    });
+</script>
+
 </html>
