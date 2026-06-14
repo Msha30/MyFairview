@@ -1,0 +1,90 @@
+@import url("../Styles/Fonts.css");
+@import url("../Styles/Variables.css");
+@import url("Components.css");
+
+body {
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+}
+
+.grid-2 {
+    flex: 1;
+    overflow: auto;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--cardgap);
+}
+
+/* ══════════════════════════════════════════════════════════ */
+/* ══════════════════════════ lIST ══════════════════════════ */
+/* ══════════════════════════════════════════════════════════ */
+
+
+
+.evac-item {
+    background: #fafafa;
+    display: flex;
+    align-items: flex-start;
+    padding-right: 20px;
+    margin-bottom: 15px;
+    border: 1px solid var(--border);
+    border-radius: var(--rad);
+}
+.evac-item:hover { background: var(--bg);}
+
+.line {
+    border-radius: var(--rad) 0 0 var(--rad);
+    width: 8px;
+    margin-right: 14px;
+    background: var(--gradgreen);
+    align-self: stretch;
+}
+
+.content { flex: 1; padding: 20px 6px;}
+
+.title {
+    font-family: 'InterBold', sans-serif;
+    font-size: var(--textbig);
+    margin-bottom: 5px;
+}
+
+.desc {
+    font-size: var(--textreg);
+    color: var(--grey);
+    margin-bottom: 8px;
+}
+
+.meta {
+    font-size: var(--textsmall);
+    color: var(--greylight);
+    display: flex;
+    gap: 15px;
+}
+
+.actions {
+    align-self: stretch;
+    display: flex;
+    padding: 20px 6px;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.btn {
+    padding: 8px 15px;
+    border-radius: var(--radsmall);
+    font-size: var(--textsmall);
+    font-family: 'InterBold', sans-serif;
+    cursor: pointer;
+    border: 1px solid var(--border);
+    background: white;
+    color: var(--greylight);
+    text-decoration: none;
+    text-align: center;
+}
+
+.btn.edit:hover {
+    border-color: var(--orange);
+    background: var(--orangefaded);
+    color: var(--orange);
+}
