@@ -32,6 +32,7 @@
     flex-direction: column;
     overflow: hidden;
     background: white;
+    gap: 15px;
 }
 
 .stat-icon {
@@ -68,7 +69,6 @@
     height: 38px;
     display: flex;
     align-items: center;
-    margin-bottom: 5px;
 }
 
 
@@ -90,16 +90,22 @@
 }
 
 .btn.editinfo:hover {
-    color: var(--orange);
+    font-family: 'InterBold', sans-serif;
+    color: var(--grey);
 }
 
 .btn.attachment {
-    color: var(--orange);
+    color: var(--greylight);
     font-size: var(--textreg);
     font-family: 'InterSemiBold', sans-serif;
     cursor: pointer;
     background: white;
     padding: none;
+}
+
+.btn.attachment:hover {
+    font-family: 'InterBold', sans-serif;
+    color: var(--grey);
 }
 
 .information {
@@ -111,7 +117,12 @@
     display: flex;
 }
 
+.row {
+    align-items: center;
+}
+
 .row td {
+    white-space: nowrap;
     padding: 12px 0px;
     font-size: var(--textreg);
     color: var(--grey);
@@ -119,9 +130,17 @@
     border-bottom: 1px solid var(--border);
 }
 
+.row.wrap td {
+    white-space: pre-wrap;
+}
+
+.row:first-child td {
+    padding-top: 0px;
+}
+
 .row:last-child td {
     border-bottom: none;
-    padding-bottom: 5px;
+    padding-bottom: 0px;
 }
 
 .row td:first-child {

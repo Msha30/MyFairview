@@ -40,38 +40,68 @@
                         <td>Lorem Ipsum</td>
                     </tr>
                     <tr class="row">
+                        <td>Subdivision</td>
+                        <td>Lorem Ipsum</td>
+                    </tr>
+                    <tr class="row wrap">
                         <td>Address</td>
                         <td>Lorem Ipsum</td>
                     </tr>
                 </table>
             </div>
-            <div class="infocard">
-                <table class="information">
-                    <tr class="row">
-                        <td>ID Number</td>
-                        <td>BFV-2026-00067</td>
-                    </tr>
-                    <tr class="row">
-                        <td>Registered on</td>
-                        <td>Lorem Ipsum</td>
-                    </tr>
-                    <tr class="row">
-                        <td>Verified on</td>
-                        <td>Lorem Ipsum</td>
-                    </tr>
-                    <tr class="row">
-                        <td>Verified by</td>
-                        <td>Lorem Ipsum</td>
-                    </tr>
-                    <tr class="row">
-                        <td>Valid ID</td>
-                        <td><a class="btn attachment" href="#">Attachment</a></td>
-                    </tr>
-                    <tr class="row" style="align-items: center;">
-                        <td>Proof of Residiency</td>
-                        <td><a class="btn attachment" href="#">Attachment</a></td>
-                    </tr>
-                </table>
+            <div style="display: flex; flex-direction: column; gap: 15px;">
+                <div class="infocard">
+                    <table class="information">
+                        <tr class="row">
+                            <td>ID Number</td>
+                            <td>BFV-2026-00067</td>
+                        </tr>
+                        <tr class="row">
+                            <td>Registered on</td>
+                            <td>Month 00, 0000</td>
+                        </tr>
+                        <tr class="row">
+                            <td>Verified on</td>
+                            <td>Month 00, 0000</td>
+                        </tr>
+                        <tr class="row">
+                            <td>Verified by</td>
+                            <td>Lorem Ipsum</td>
+                        </tr>
+                        <tr class="row">
+                            <td>Rejected on</td>
+                            <td>Month 00, 0000</td>
+                        </tr>
+                        <tr class="row">
+                            <td>Rejected by</td>
+                            <td>Lorem Ipsum</td>
+                        </tr>
+                        <tr class="row wrap">
+                            <td>Reason</td>
+                            <td>Lorem Ipsum</td>
+                        </tr>
+                    </table>
+                </div>
+                <div class="infocard">
+                    <table class="information">
+                        <tr class="row">
+                            <td>Status</td>
+                            <td><span class="status verified">Verified</span></td>
+                        </tr>
+                        <tr class="row">
+                            <td>Valid ID</td>
+                            <td><a class="btn attachment" href="#">Attachment</a></td>
+                        </tr>
+                        <tr class="row wrap">
+                            <td>Proof of Residiency</td>
+                            <td><a class="btn attachment" href="#">Attachment</a></td>
+                        </tr>
+                    </table>
+                    <div class="buttons">
+                        <button class="button reject">Reject</button>
+                        <button class="button accept">Accept</button>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
@@ -82,34 +112,16 @@
     @import url("../CSS/Popups.css");
 
     .content {
-        max-width: 75%;
+        max-width: 70%;
     }
 
     .grid-2 {
         overflow: auto;
         display: grid;
-        grid-template-columns: 1.6fr 1fr;
+        grid-template-columns: 1.5fr 1fr;
         gap: var(--cardgap);
         align-items: start;
     }
-
-    .infocard {
-        border: 1px solid var(--border);
-        border-radius: var(--rad);
-        padding: var(--cardpadding);
-        display: flex;
-        flex-direction: column;
-        overflow: hidden;
-        background: white;
-    }
-
-    .areaheader {
-        height: 38px;
-        display: flex;
-        align-items: center;
-        margin-bottom: 5px;
-    }
-
 
     .areatitle {
         flex: 1;
@@ -131,6 +143,63 @@
     .row td:last-child {
         text-align: left;
         padding-left: 30px;
+    }
+
+    .buttons {
+        display: flex;
+        gap: 10px;
+    }
+
+    .button {
+        flex: 1;
+        border: none;
+        padding: 10px 15px;
+        border-radius: var(--radsmall);
+        font-size: var(--textreg);
+        cursor: pointer;
+        font-family: 'InterBold', sans-serif;
+        align-items: center;
+        gap: 8px;
+        
+    }
+
+    .button.reject {
+        background: var(--redfaded);
+        color: var(--red);
+        border: 1px solid var(--red);
+    }
+
+    .button.accept {
+        background: var(--greenfaded);
+        color: var(--green);
+        border: 1px solid var(--green);
+    }
+
+    .button.reject:hover {
+        background: var(--red);
+        color: white;
+    }
+
+    .button.accept:hover {
+        background: var(--green);
+        color: white;
+    }
+
+    .status {
+        display: inline-block;
+        font-family: 'InterSemiBold', sans-serif;
+    }
+
+    .status.verified {
+        color: var(--greenlight);
+    }
+
+    .status.unverified {
+        color: var(--orange);
+    }
+
+    .status.invalid {
+        color: var(--greylight);
     }
 
 
