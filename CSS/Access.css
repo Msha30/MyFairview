@@ -34,7 +34,7 @@ body {
     flex: 1;
 }
 
-.btn.export {
+.btn.add {
     margin: 20px;
     color: var(--orange);
     font-size: var(--textreg);
