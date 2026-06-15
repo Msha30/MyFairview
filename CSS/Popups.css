@@ -1,0 +1,120 @@
+@import url("../Styles/Fonts.css");
+@import url("../Styles/Variables.css");
+
+.modal-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 9999;
+    font-family: 'Inter', sans-serif;
+    justify-content: center;
+    align-items: center;
+}
+
+.content {
+    background: var(--bg);
+    border-radius: 12px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+    overflow: hidden;
+    animation: modalFadeIn 0.2s ease;
+    display: flex;
+    flex-direction: column;
+    gap: var(--cardgap);
+    padding: 30px;
+}
+
+.infocard {
+    border: 1px solid var(--border);
+    border-radius: var(--rad);
+    padding: var(--cardpadding);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    background: white;
+}
+
+.stat-icon {
+    margin-right: 20px;
+    width: 38px;
+    height: 38px;
+    border-radius: var(--radbox);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.stat-icon svg {
+    width: 18px;
+    height: 18px;
+    fill: currentColor;
+}
+
+.stat-icon.a {
+    background: var(--redfaded)
+}
+
+.iconpic {
+    width: 18px;
+    height: 18px;
+    flex-shrink: 0;
+}
+
+.iconpic.a {
+    filter: brightness(0) saturate(100%) invert(11%) sepia(96%) saturate(7093%) hue-rotate(6deg) brightness(80%) contrast(112%);
+}
+
+.areaheader {
+    height: 38px;
+    display: flex;
+    align-items: center;
+    margin-bottom: 5px;
+}
+
+
+.areatitle {
+    flex: 1;
+    font-size: var(--textbigger);
+    font-family: 'InterBold', sans-serif;
+    color: var(--black);
+}
+
+.btn.editinfo {
+    color: var(--orange);
+    font-size: var(--textreg);
+    font-family: 'InterSemiBold', sans-serif;
+    cursor: pointer;
+    background: white;
+    text-decoration: none;
+    padding: none;
+}
+
+.information {
+    width: 100%;
+    overflow-x: auto;
+}
+
+.row {
+    display: flex;
+}
+
+.row td {
+    padding: 12px 0px;
+    font-size: var(--textreg);
+    color: var(--grey);
+    text-align: center;
+    border-bottom: 1px solid var(--border);
+}
+
+.row:last-child td {
+    border-bottom: none;
+    padding-bottom: 5px;
+}
+
+.row td:first-child {
+    font-family: 'InterBold', sans-serif;
+}
+
+.row td:last-child {
+    flex: 1;
+}

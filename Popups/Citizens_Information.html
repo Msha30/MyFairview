@@ -4,166 +4,103 @@
 
 <div id="citizenModal" class="modal-overlay">
     <div class="content">
-        <div class="scroll-div">
-            <div class="info">
-                <div class="stat-icon a">
-                    <img src="../Icons/nav_reports.svg" class="iconpic a" alt="" />
+        <div class="grid-2">
+            <div class="infocard">
+                <div class="areaheader">
+                    <div class="areatitle">Personal Information</div>
+                    <a class="btn editinfo" href="#">Edit</a>
                 </div>
-                <div class="infocontent">
-                    <div class="areaheader">
-                        <div class="areatitle">Personal Information</div>
-                        <a class="btn editinfo" href="#">Edit</a>
-                    </div>
-                    <table class="information">
-                        <tr class="row">
-                            <td>Citizen ID Number</td>
-                            <td>BFV-2026-00067</td>
-                        </tr>
-                        <tr class="row">
-                            <td>Surname</td>
-                            <td>Lorem Ipsum</td>
-                        </tr>
-                        <tr class="row">
-                            <td>First Name</td>
-                            <td>Lorem Ipsum</td>
-                        </tr>
-                        <tr class="row">
-                            <td>Middle Name</td>
-                            <td>Lorem Ipsum</td>
-                        </tr>
-                        <tr class="row">
-                            <td>Suffix</td>
-                            <td>Lorem Ipsum</td>
-                        </tr>
-                        <tr class="row">
-                            <td>Main Contact Number</td>
-                            <td>Lorem Ipsum</td>
-                        </tr>
-                        <tr class="row">
-                            <td>2nd Contact Number</td>
-                            <td>Lorem Ipsum</td>
-                        </tr>
-                        <tr class="row">
-                            <td>Date of Birth</td>
-                            <td>Lorem Ipsum</td>
-                        </tr>
-                        <tr class="row">
-                            <td>Valid ID</td>
-                            <td>Lorem Ipsum</td>
-                        </tr>
-                    </table>
-                </div>
+                <table class="information">
+                    <tr class="row">
+                        <td>Surname</td>
+                        <td>Lorem Ipsum</td>
+                    </tr>
+                    <tr class="row">
+                        <td>First Name</td>
+                        <td>Lorem Ipsum</td>
+                    </tr>
+                    <tr class="row">
+                        <td>Middle Name</td>
+                        <td>Lorem Ipsum</td>
+                    </tr>
+                    <tr class="row">
+                        <td>Suffix</td>
+                        <td>Lorem Ipsum</td>
+                    </tr>
+                    <tr class="row">
+                        <td>Main Contact Number</td>
+                        <td>Lorem Ipsum</td>
+                    </tr>
+                    <tr class="row">
+                        <td>2nd Contact Number</td>
+                        <td>Lorem Ipsum</td>
+                    </tr>
+                    <tr class="row">
+                        <td>Date of Birth</td>
+                        <td>Lorem Ipsum</td>
+                    </tr>
+                    <tr class="row">
+                        <td>Address</td>
+                        <td>Lorem Ipsum</td>
+                    </tr>
+                </table>
+            </div>
+            <div class="infocard">
+                <table class="information">
+                    <tr class="row">
+                        <td>ID Number</td>
+                        <td>BFV-2026-00067</td>
+                    </tr>
+                    <tr class="row">
+                        <td>Registered on</td>
+                        <td>Lorem Ipsum</td>
+                    </tr>
+                    <tr class="row">
+                        <td>Verified on</td>
+                        <td>Lorem Ipsum</td>
+                    </tr>
+                    <tr class="row">
+                        <td>Verified by</td>
+                        <td>Lorem Ipsum</td>
+                    </tr>
+                    <tr class="row">
+                        <td>Valid ID</td>
+                        <td>Lorem Ipsum</td>
+                    </tr>
+                    <tr class="row">
+                        <td>Proof of Residiency</td>
+                        <td>Lorem Ipsum</td>
+                    </tr>
+                </table>
             </div>
         </div>
-
     </div>
 </div>
 <style>
     @import url("../Styles/Fonts.css");
     @import url("../Styles/Variables.css");
-    @import url("Components.css");
-
-    .modal-overlay {
-        display: flex;
-        position: fixed;
-        inset: 0;
-        background: rgba(0, 0, 0, 0.5);
-        z-index: 9999;
-        font-family: 'Inter', sans-serif;
-        justify-content: center;
-        align-items: center;
-    }
+    @import url("../CSS/Popups.css");
 
     .content {
-        width: 60%;
-        background: var(--bg);
-        border-radius: 12px;
-        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
-        overflow: hidden;
-        animation: modalFadeIn 0.2s ease;
-        display: flex;
+        max-width: 75%;
+    }
+
+    .grid-2 {
+        overflow: auto;
+        display: grid;
+        grid-template-columns: 1.6fr 1fr;
         gap: var(--cardgap);
-        padding: 30px;
+        align-items: start;
     }
 
-    .scroll-div {
-        flex: 1;
-        overflow-y: auto;
-        position: relative;
-        padding-right: 10px;
-    }
-
-    .scroll-div::before,
-    .scroll-div::after {
-        content: "";
-        position: sticky;
-        left: 0;
-        right: 0;
-        height: 10px;
-        pointer-events: none;
-        z-index: 5;
-        display: block;
-    }
-
-    /* TOP fade */
-    .scroll-div::before {
-        top: 0;
-        background: linear-gradient(to bottom,
-                var(--bg),
-                #f4f5f300);
-    }
-
-    /* BOTTOM fade */
-    .scroll-div::after {
-        bottom: 0;
-        background: linear-gradient(to top,
-                var(--bg),
-                #f4f5f300);
-    }
-
-    
-
-    .info {
+    .infocard {
         border: 1px solid var(--border);
         border-radius: var(--rad);
         padding: var(--cardpadding);
         display: flex;
+        flex-direction: column;
         overflow: hidden;
         background: white;
-    }
-
-    .infocontent {
-        flex: 1;
-        margin-left: 20px;
-    }
-
-    .stat-icon {
-        width: 38px;
-        height: 38px;
-        border-radius: var(--radbox);
-        display: flex;
-        align-items: center;
-        justify-content: center;
-    }
-
-    .stat-icon svg {
-        width: 18px;
-        height: 18px;
-        fill: currentColor;
-    }
-
-    .stat-icon.a {
-        background: var(--redfaded)
-    }
-
-    .iconpic {
-        width: 18px;
-        height: 18px;
-        flex-shrink: 0;
-    }
-
-    .iconpic.a {
-        filter: brightness(0) saturate(100%) invert(11%) sepia(96%) saturate(7093%) hue-rotate(6deg) brightness(80%) contrast(112%);
     }
 
     .areaheader {
@@ -196,31 +133,12 @@
         overflow-x: auto;
     }
 
-    .row {
-        display: flex;
-    }
-
-    .row td {
-        padding: 12px 0px;
-        font-size: var(--textreg);
-        color: var(--grey);
-        text-align: center;
-        border-bottom: 1px solid var(--border);
-    }
-
-    .row:last-child td {
-        border-bottom: none;
-        padding-bottom: 5px;
-    }
-
     .row td:first-child {
-        width: 35%;
+        width: 40%;
         text-align: left;
-        font-family: 'InterBold', sans-serif;
     }
 
-    .row td:nth-child(2) {
-        flex: 1;
+    .row td:last-child {
         text-align: left;
         padding-left: 30px;
     }
