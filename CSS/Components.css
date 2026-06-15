@@ -49,7 +49,7 @@ btn {
 }
 
 ::-webkit-scrollbar-track {
-    background: white;
+    background: none;
 }
 
 ::-webkit-scrollbar-thumb {
