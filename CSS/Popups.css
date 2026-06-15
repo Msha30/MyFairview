@@ -2,7 +2,7 @@
 @import url("../Styles/Variables.css");
 
 .modal-overlay {
-    display: none;
+    display: flex;
     position: fixed;
     inset: 0;
     background: rgba(0, 0, 0, 0.5);
@@ -80,12 +80,25 @@
 }
 
 .btn.editinfo {
-    color: var(--orange);
+    color: var(--greylight);
     font-size: var(--textreg);
     font-family: 'InterSemiBold', sans-serif;
     cursor: pointer;
     background: white;
     text-decoration: none;
+    padding: none;
+}
+
+.btn.editinfo:hover {
+    color: var(--orange);
+}
+
+.btn.attachment {
+    color: var(--orange);
+    font-size: var(--textreg);
+    font-family: 'InterSemiBold', sans-serif;
+    cursor: pointer;
+    background: white;
     padding: none;
 }
 
