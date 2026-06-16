@@ -5,67 +5,43 @@
 <div id="staffModal" class="modal-overlay">
     <div class="content">
         <div class="grid-2">
-            <div class="infocard">
-                <div class="areaheader">
-                    <div class="areatitle">STAFF</div>
-                    <a class="btn editinfo" href="#">Edit</a>
-                </div>
-                <table class="information">
-                    <tr class="row">
-                        <td>Surname</td>
-                        <td>Lorem Ipsum</td>
-                    </tr>
-                    <tr class="row">
-                        <td>First Name</td>
-                        <td>Lorem Ipsum</td>
-                    </tr>
-                    <tr class="row">
-                        <td>Middle Name</td>
-                        <td>Lorem Ipsum</td>
-                    </tr>
-                    <tr class="row">
-                        <td>Suffix</td>
-                        <td>Lorem Ipsum</td>
-                    </tr>
-                    <tr class="row">
-                        <td>Main Contact Number</td>
-                        <td>Lorem Ipsum</td>
-                    </tr>
-                    <tr class="row">
-                        <td>2nd Contact Number</td>
-                        <td>Lorem Ipsum</td>
-                    </tr>
-                    <tr class="row">
-                        <td>Date of Birth</td>
-                        <td>Lorem Ipsum</td>
-                    </tr>
-                    <tr class="row">
-                        <td>Subdivision</td>
-                        <td>Lorem Ipsum</td>
-                    </tr>
-                    <tr class="row wrap">
-                        <td>Address</td>
-                        <td>Lorem Ipsum</td>
-                    </tr>
-                </table>
-            </div>
             <div style="display: flex; flex-direction: column; gap: 15px;">
                 <div class="infocard">
+                    <div class="areaheader">
+                        <div class="areatitle">Personal Information</div>
+                        <a class="btn editinfo" href="#">Edit</a>
+                    </div>
                     <table class="information">
                         <tr class="row">
-                            <td>ID Number</td>
-                            <td>BFV-26-00067</td>
+                            <td>Surname</td>
+                            <td>Lorem Ipsum</td>
                         </tr>
                         <tr class="row">
-                            <td>Registered on</td>
-                            <td>Month 00, 0000</td>
+                            <td>First Name</td>
+                            <td>Lorem Ipsum</td>
                         </tr>
                         <tr class="row">
-                            <td>Verified on</td>
-                            <td>Month 00, 0000</td>
+                            <td>Middle Name</td>
+                            <td>Lorem Ipsum</td>
                         </tr>
                         <tr class="row">
-                            <td>Verified by</td>
+                            <td>Suffix</td>
+                            <td>Lorem Ipsum</td>
+                        </tr>
+                        <tr class="row">
+                            <td>Contact Number</td>
+                            <td>Lorem Ipsum</td>
+                        </tr>
+                        <tr class="row">
+                            <td>Date of Birth</td>
+                            <td>Lorem Ipsum</td>
+                        </tr>
+                        <tr class="row">
+                            <td>Subdivision</td>
+                            <td>Lorem Ipsum</td>
+                        </tr>
+                        <tr class="row wrap">
+                            <td>Address</td>
                             <td>Lorem Ipsum</td>
                         </tr>
                     </table>
@@ -74,8 +50,31 @@
                     <table class="information">
                         <tr class="row">
                             <td>Status</td>
-                            <td><span class="status verified">Verified</span></td>
+                            <td><span class="status verified">● Active</span></td>
                         </tr>
+                        <tr class="row">
+                            <td>ID Number</td>
+                            <td>BFVS-26-00067</td>
+                        </tr>
+                        <tr class="row">
+                            <td>Added on</td>
+                            <td>Month 00, 0000</td>
+                        </tr>
+                        <tr class="row">
+                            <td>Added by</td>
+                            <td>Lorem Ipsum</td>
+                        </tr>
+                    </table>
+                    <div class="buttons">
+                        <button class="button reject">Delete User</button>
+                    </div>
+                </div>
+            </div>
+
+            <div style="display: flex; flex-direction: column; gap: 15px;">
+
+                <div class="infocard">
+                    <table class="information">
                         <tr class="row">
                             <td>Valid ID</td>
                             <td><a class="btn attachment" href="#">Attachment</a></td>
@@ -118,13 +117,14 @@
     .grid-2 {
         overflow: auto;
         display: grid;
-        grid-template-columns: 1.5fr 1fr;
+        grid-template-columns: 1fr 1.5fr;
         gap: var(--cardgap);
         align-items: start;
     }
 
     .areatitle {
         flex: 1;
+        margin-right: 100px;
         font-size: var(--textbigger);
         font-family: 'InterBold', sans-serif;
         color: var(--black);
@@ -136,7 +136,7 @@
     }
 
     .row td:first-child {
-        width: 40%;
+        width: 50%;
         text-align: left;
     }
 
@@ -160,7 +160,7 @@
         font-family: 'InterBold', sans-serif;
         align-items: center;
         gap: 8px;
-        
+
     }
 
     .button.reject {
