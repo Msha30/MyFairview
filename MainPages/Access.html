@@ -10,121 +10,196 @@
 </head>
 
 <body>
-    <div class="cardtable">
-        <!-- ════════════════════════════════════════════════ -->
-        <!-- ════════════════════ HEADER ════════════════════ -->
-        <!-- ════════════════════════════════════════════════ -->
-        <div class="header">
-            <div class="title">
-                <div class="tabletitle">Barangay Staff Access</div>
-                <div class="tablesubtitle">Manage roles and permissions</div>
+    <div class="grid-access">
+        <div class="cardtable">
+            <!-- ════════════════════════════════════════════════ -->
+            <!-- ════════════════════ HEADER ════════════════════ -->
+            <!-- ════════════════════════════════════════════════ -->
+            <div class="header">
+                <div class="title">
+                    <div class="tabletitle">Barangay Staff Access</div>
+                    <div class="tablesubtitle">Manage roles and permissions</div>
+                </div>
+                <a class="btn add" href="#">Add Member</a>
             </div>
-            <a class="btn add" href="#">Add Member</a>
-        </div>
 
-        <!-- ════════════════════════════════════════════════ -->
-        <!-- ═══════════════════ SEARCH ROW ═════════════════ -->
-        <!-- ════════════════════════════════════════════════ -->
-        <div class="search-row">
-            <div class="inline-search">
-                <img src="../Icons/ic_search.svg">
-                <input id="search" type="text" placeholder="Search...">
+            <!-- ════════════════════════════════════════════════ -->
+            <!-- ═══════════════════ SEARCH ROW ═════════════════ -->
+            <!-- ════════════════════════════════════════════════ -->
+            <div class="search-row">
+                <div class="inline-search">
+                    <img src="../Icons/ic_search.svg">
+                    <input id="search" type="text" placeholder="Search...">
+                </div>
+                <div class="form-selectbg">
+                    <select class="form-select" style="width:100px;">
+                        <option>All Status</option>
+                        <option>Active</option>
+                        <option>Inactive</option>
+                    </select>
+                </div>
             </div>
-            <div class="form-selectbg">
-                <select class="form-select" style="width:100px;">
-                    <option>All Status</option>
-                    <option>Active</option>
-                    <option>Inactive</option>
-                </select>
+
+            <!-- ════════════════════════════════════════════════ -->
+            <!-- ════════════════════ TABLE ═════════════════════ -->
+            <!-- ════════════════════════════════════════════════ -->
+            <div class="table-scroll-wrapper">
+                <table class="tableDiv members">
+                    <thead>
+                        <tr>
+                            <th>MEMBER</th>
+                            <th>ID NUMBER</th>
+                            <th>ACCESS LEVEL</th>
+                            <th>STATUS</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr class="tableRow" onclick="openModal('staffModal')">
+                            <td class="user-section">
+                                <div class="user-avatar super">LI</div>
+                                <div class="user-info">
+                                    <strong>Surname, First Name M.</strong><br>
+                                    <span>SUPER ADMIN</span>
+                                </div>
+                            </td>
+                            <td>BFVS-26-00067</td>
+                            <td>Full Access</td>
+                            <td><span class="badge active">● Active</span></td>
+                            <td><a class="btn edit" href="#">Edit</a></td>
+                        </tr>
+                        <tr class="tableRow" onclick="openModal('staffModal')">
+                            <td class="user-section">
+                                <div class="user-avatar admin">LI</div>
+                                <div class="user-info">
+                                    <strong>Surname, First Name M.</strong><br>
+                                    <span>Secretary</span>
+                                </div>
+                            </td>
+                            <td>BFVS-26-00067</td>
+                            <td>Viewing Access</td>
+                            <td><span class="badge active">● Active</span></td>
+                            <td><a class="btn edit" href="#">Edit</a></td>
+                        </tr>
+                        <tr class="tableRow" onclick="openModal('staffModal')">
+                            <td class="user-section">
+                                <div class="user-avatar admin">LI</div>
+                                <div class="user-info">
+                                    <strong>Surname, First Name M.</strong><br>
+                                    <span>Public Officer</span>
+                                </div>
+                            </td>
+                            <td>BFVS-26-00067</td>
+                            <td>Announcement, Citizens, Evacuation Plan</td>
+                            <td><span class="badge active">● Active</span></td>
+                            <td><a class="btn edit" href="#">Edit</a></td>
+                        </tr>
+                        <tr class="tableRow" onclick="openModal('staffModal')">
+                            <td class="user-section">
+                                <div class="user-avatar none">LI</div>
+                                <div class="user-info">
+                                    <strong>Surname, First Name M.</strong><br>
+                                    <span>Staff</span>
+                                </div>
+                            </td>
+                            <td>BFVS-26-00067</td>
+                            <td>No Access</td>
+                            <td><span class="badge inactive">Inactive</span></td>
+                            <td><a class="btn edit" href="#">Edit</a></td>
+                        </tr>
+                    </tbody>
+                </table>
             </div>
         </div>
+        <div class="logs">
+            <!-- ════════════════════════════════════════════════ -->
+            <!-- ════════════════════ HEADER ════════════════════ -->
+            <!-- ════════════════════════════════════════════════ -->
+            <div class="tabletitle">System Logs</div>
+            <div class="tablesubtitle">Manage roles and permissions</div>
+            <div class="card-scroll">
+                <div class="list">
+                    <div class="row">
+                        <div class="logtitle">Verified Citizen — BFV-26-00067</div>
+                        <div class="logdesc">
+                            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut
+                            labore.
+                        </div>
+                        <div class="logmeta">
+                            <span>Jun 8, 2026</span>
+                            <span>12:00 PM</span>
+                            <span>By: Lorem Ipsum</span>
+                        </div>
+                    </div>
+                    <div class="row edit">
+                        <div class="logtitle">Edited Address — BFV-26-00067</div>
+                        <div class="logdesc">
+                            "Lorem ipsum dolor sit amet, consectetur adipiscing elit, Quezon City"
+                        </div>
+                        <div class="logdesc">
+                            <strong>Change :</strong> "Lorem ipsum dolor sit amet, consectetur adipiscing elit, Quezon City"
+                        </div>
+                        <div class="logmeta">
+                            <span>Jun 8, 2026</span>
+                            <span>12:00 PM</span>
+                            <span>By: Lorem Ipsum</span>
+                        </div>
+                    </div>
+                    <div class="row post">
+                        <div class="logtitle">New Announcement — AN26-0006</div>
+                        <div class="logdesc">
+                            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut
+                            labore.
+                        </div>
+                        <div class="logmeta">
+                            <span>Jun 8, 2026</span>
+                            <span>12:00 PM</span>
+                            <span>By: Lorem Ipsum</span>
+                        </div>
+                    </div>
+                    <div class="row remove">
+                        <div class="logtitle">Removed *Evacuation Plan Name*</div>
+                        <div class="logdesc">
+                            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut
+                            labore.
+                        </div>
+                        <div class="logmeta">
+                            <span>Jun 8, 2026</span>
+                            <span>12:00 PM</span>
+                            <span>By: Lorem Ipsum</span>
+                        </div>
+                    </div>
+                    <div class="row edit">
+                        <div class="logtitle">Edited Announcement — AN26-0006</div>
+                        <div class="logdesc">
+                            "Lorem ipsum dolor sit amet,consectetur adipiscing elit."
+                        </div>
+                        <div class="logdesc">
+                            <strong>Change :</strong> "Lorem ipsum dolor sit amet, consectetur adipiscing elit."
+                        </div>
+                        <div class="logmeta">
+                            <span>Jun 8, 2026</span>
+                            <span>12:00 PM</span>
+                            <span>By: Lorem Ipsum</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
 
-        <!-- ════════════════════════════════════════════════ -->
-        <!-- ════════════════════ TABLE ═════════════════════ -->
-        <!-- ════════════════════════════════════════════════ -->
-        <div class="table-scroll-wrapper">
-            <table class="tableDiv members">
-                <thead>
-                    <tr>
-                        <th>MEMBER</th>
-                        <th>ID NUMBER</th>
-                        <th>ACCESS LEVEL</th>
-                        <th>LAST LOGIN</th>
-                        <th>STATUS</th>
-                        <th></th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr class="tableRow" onclick="openCitizenModal()">
-                        <td class="user-section">
-                            <div class="user-avatar super">LI</div>
-                            <div class="user-info">
-                                <strong>Surname, First Name M.</strong><br>
-                                <span>SUPER ADMIN</span>
-                            </div>
-                        </td>
-                        <td>BFV-2026-00067</td>
-                        <td>Full Access</td>
-                        <td>Jun 7, 2026 · 11:45 PM</td>
-                        <td><span class="badge active">● Active</span></td>
-                        <td><a class="btn edit" href="#">Edit</a></td>
-                    </tr>
-                    <tr class="tableRow" onclick="openCitizenModal()">
-                        <td class="user-section">
-                            <div class="user-avatar admin">LI</div>
-                            <div class="user-info">
-                                <strong>Surname, First Name M.</strong><br>
-                                <span>Secretary</span>
-                            </div>
-                        </td>
-                        <td>BFV-2026-00067</td>
-                        <td>Viewing Access</td>
-                        <td>Jun 7, 2026 · 11:45 PM</td>
-                        <td><span class="badge active">● Active</span></td>
-                        <td><a class="btn edit" href="#">Edit</a></td>
-                    </tr>
-                    <tr class="tableRow" onclick="openCitizenModal()">
-                        <td class="user-section">
-                            <div class="user-avatar admin">LI</div>
-                            <div class="user-info">
-                                <strong>Surname, First Name M.</strong><br>
-                                <span>Public Officer</span>
-                            </div>
-                        </td>
-                        <td>BFV-2026-00067</td>
-                        <td>Announcement, Citizens, Evacuation Plan</td>
-                        <td>Jun 7, 2026 · 11:45 PM</td>
-                        <td><span class="badge active">● Active</span></td>
-                        <td><a class="btn edit" href="#">Edit</a></td>
-                    </tr>
-                    <tr class="tableRow" onclick="openCitizenModal()">
-                        <td class="user-section">
-                            <div class="user-avatar none">LI</div>
-                            <div class="user-info">
-                                <strong>Surname, First Name M.</strong><br>
-                                <span>Staff</span>
-                            </div>
-                        </td>
-                        <td>BFV-2026-00067</td>
-                        <td>No Access</td>
-                        <td>—</td>
-                        <td><span class="badge inactive">Inactive</span></td>
-                        <td><a class="btn edit" href="#">Edit</a></td>
-                    </tr>
-                </tbody>
-            </table>
         </div>
     </div>
+
     <div id="popup-container" class="hidden"></div>
     <script>
-        fetch('../Popups/Citizens_Information.html')
+        fetch('../Popups/Staff_Information.html')
             .then(response => response.text())
             .then(data => {
                 document.getElementById('popup-container').innerHTML = data;
                 document.getElementById('popup-container').classList.remove("hidden")
-                
+
             });
     </script>
     <script src="../JS/Citizens.js"></script>
 </body>
+
 </html>

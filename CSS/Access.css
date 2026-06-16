@@ -9,12 +9,32 @@ body {
     overflow: hidden;
 }
 
+.grid-access {
+    display: grid;
+    height: 100%;
+    grid-template-columns: 3fr 1.3fr;
+    gap: var(--cardgap);
+}
+
+.logs {
+    min-height: 0;
+    border-radius: var(--rad);
+    border: 1px solid var(--border);
+    background: white;
+    display: flex;
+    flex-direction: column;
+}
+
+.card-scroll {
+    padding-right: 0px;
+}
+
 /* ═══════════════════════════════════════════════════════════ */
 /* ════════════════════════ CARDTABLE ════════════════════════ */
 /* ═══════════════════════════════════════════════════════════ */
 
 .cardtable {
-    height: 100vh;
+    height: 100%;
     display: flex;
     flex-direction: column;
     overflow: hidden;
@@ -100,10 +120,21 @@ body {
 }
 
 .tableDiv.members thead th {
+    white-space: nowrap;
     background: var(--bg);
     font-size: 12px;
     border-bottom: 1px solid var(--border);
 }
+
+.tableDiv.members tbody td {
+    white-space: nowrap;
+}
+
+.tableDiv.members tbody td:nth-child(3) {
+    white-space: pre-wrap;
+}
+
+
 
 
 .badge {
@@ -161,4 +192,50 @@ body {
     border-color: var(--orange);
     background: var(--orangefaded);
     color: var(--orange);
+}
+
+
+/* ═══════════════════════════════════════════════════════════ */
+/* ═════════════════════════ LOGS ════════════════════════════ */
+/* ═══════════════════════════════════════════════════════════ */
+
+.row {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+    padding: 20px 20px;
+    border-bottom: 1px solid var(--border);
+}
+
+.row.edit {
+    background: var(--redfaded);
+}
+
+.row.post {
+    background: var(--bluefaded);
+}
+
+.row.remove {
+    background: var(--border);
+}
+
+.row:first-child { padding-top: 10px;}
+.row:last-child { border-bottom: none; }
+
+.logtitle {
+    font-family: 'InterBold', sans-serif;
+    font-size: var(--textreg);
+}
+
+.logdesc {
+    font-size: var(--textreg);
+    color: var(--grey);
+}
+
+.logmeta {
+    font-size: var(--textsmall);
+    color: var(--greylight);
+    display: flex;
+    gap: 15px;
 }
