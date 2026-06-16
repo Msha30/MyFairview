@@ -224,7 +224,7 @@ body {
 .row:last-child { border-bottom: none; }
 
 .logtitle {
-    font-family: 'InterBold', sans-serif;
+    font-family: 'InterSemiBold', sans-serif;
     font-size: var(--textreg);
 }
 
