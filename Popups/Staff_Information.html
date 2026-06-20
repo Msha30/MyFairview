@@ -9,9 +9,12 @@
                 <div class="infocard">
                     <div class="areaheader">
                         <div class="areatitle">Personal Information</div>
-                        <a class="btn editinfo" href="#">Edit</a>
                     </div>
                     <table class="information">
+                        <tr class="row">
+                            <td>Position</td>
+                            <td>Lorem Ipsum</td>
+                        </tr>
                         <tr class="row">
                             <td>Surname</td>
                             <td>Lorem Ipsum</td>
@@ -73,32 +76,81 @@
 
             <div style="display: flex; flex-direction: column; gap: 15px;">
 
-                <div class="infocard">
-                    <table class="information">
-                        <tr class="row">
-                            <td>Valid ID</td>
-                            <td><a class="btn attachment" href="#">Attachment</a></td>
-                        </tr>
-                        <tr class="row wrap">
-                            <td>Proof of Residiency</td>
-                            <td><a class="btn attachment" href="#">Attachment</a></td>
-                        </tr>
-                        <tr class="row">
-                            <td>Rejected on</td>
-                            <td>Month 00, 0000</td>
-                        </tr>
-                        <tr class="row">
-                            <td>Rejected by</td>
-                            <td>Lorem Ipsum</td>
-                        </tr>
-                        <tr class="row wrap">
-                            <td>Reason</td>
-                            <td>Lorem Ipsum</td>
-                        </tr>
-                    </table>
-                    <div class="buttons">
-                        <button class="button reject">Reject</button>
-                        <button class="button accept">Accept</button>
+                <div class="infocard access">
+                    <div class="areaheader">
+                        <div class="areatitle">System Access</div>
+                    </div>
+
+                    <div class="access-list">
+
+                        <div class="access-row">
+                            <div class="access-name">Overview</div>
+                            <div class="access-permissions">
+                                <label><input type="checkbox" checked disabled> View</label>
+                            </div>
+                        </div>
+
+                        <div class="access-row">
+                            <div class="access-name">Announcement</div>
+                            <div class="access-permissions">
+                                <label><input type="checkbox"> View</label>
+                                <label><input type="checkbox"> Create Announcement</label>
+                            </div>
+                        </div>
+
+                        <div class="access-row">
+                            <div class="access-name">Citizens</div>
+                            <div class="access-permissions">
+                                <label><input type="checkbox"> View</label>
+                                <label><input type="checkbox"> Verify Users</label>
+                                <label><input type="checkbox"> Edit User Information</label>
+                                <label><input type="checkbox"> Remove User</label>
+                                <label><input type="checkbox"> Export</label>
+                            </div>
+                        </div>
+
+                        <div class="access-row">
+                            <div class="access-name">Emergency Vehicles</div>
+                            <div class="access-permissions">
+                                <label><input type="checkbox"> View</label>
+                                <label><input type="checkbox"> Assign Vehicles</label>
+                                <label><input type="checkbox"> Edit Vehicles</label>
+                            </div>
+                        </div>
+
+                        <div class="access-row">
+                            <div class="access-name">Community Reports</div>
+                            <div class="access-permissions">
+                                <label><input type="checkbox"> View</label>
+                                <label><input type="checkbox"> Resolving Reports</label>
+                            </div>
+                        </div>
+
+                        <div class="access-row">
+                            <div class="access-name">Water Level</div>
+                            <div class="access-permissions">
+                                <label><input type="checkbox"> View</label>
+                                <label><input type="checkbox"> Edit Emergency Signs</label>
+                            </div>
+                        </div>
+
+                        <div class="access-row">
+                            <div class="access-name">Evacuation Plan</div>
+                            <div class="access-permissions">
+                                <label><input type="checkbox"> View</label>
+                                <label><input type="checkbox"> Edit Evacuation Centers</label>
+                            </div>
+                        </div>
+
+                        <div class="access-row">
+                            <div class="access-name">Access Management</div>
+                            <div class="access-permissions">
+                                <label><input type="checkbox"> View</label>
+                                <label><input type="checkbox"> Add Staff</label>
+                                <label><input type="checkbox"> Edit Staff Information</label>
+                                <label><input type="checkbox"> Remove Staff</label>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -119,7 +171,7 @@
         display: grid;
         grid-template-columns: 1fr 1.5fr;
         gap: var(--cardgap);
-        align-items: start;
+        align-items: stretch;
     }
 
     .areatitle {
@@ -200,6 +252,60 @@
 
     .status.invalid {
         color: var(--red);
+    }
+
+    .infocard.access {
+        height: 100%;
+    }
+
+    .access-list {
+        width: 100%;
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .access-row {
+        flex: 1;
+        padding: 10px 0px;
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        align-items: center;
+        border-bottom: 1px solid #ddd;
+    }
+
+    .access-row:first-child {
+        padding: 0px 0px 10px;
+    }
+
+    .access-row:last-child {
+        border-bottom: none;
+    }
+
+    .access-name {
+        font-family: 'InterSemiBold', sans-serif;
+        font-size: var(--textreg);
+        color: var(--grey);
+    }
+
+    .access-permissions {
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+    }
+
+    input[type="checkbox"] {
+        accent-color: var(--green);
+        transform: scale(1.2);
+    }
+
+    .access-permissions label {
+        display: flex;
+        align-items: center;
+        font-family: 'Inter', sans-serif;
+        font-size: var(--textreg);
+        gap: 6px;
+        cursor: pointer;
     }
 
 
