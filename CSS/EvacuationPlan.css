@@ -16,6 +16,28 @@ body {
     gap: var(--cardgap);
 }
 
+.header {
+    display: flex;
+    align-items: start;
+    flex-shrink: 0;
+}
+
+.toptitle {
+    flex: 1;
+}
+
+.btn.add {
+    margin: 0px;
+    padding: 0px;
+    color: var(--orange);
+    font-size: var(--textreg);
+    font-family: 'InterSemiBold', sans-serif;
+    cursor: pointer;
+    background: none;
+    border: none;
+    text-decoration: none;
+}
+
 /* ══════════════════════════════════════════════════════════ */
 /* ══════════════════════════ lIST ══════════════════════════ */
 /* ══════════════════════════════════════════════════════════ */
