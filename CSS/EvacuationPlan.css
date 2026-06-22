@@ -52,6 +52,7 @@ body {
     margin-bottom: 15px;
     border: 1px solid var(--border);
     border-radius: var(--rad);
+    cursor: pointer;
 }
 .evac-item:hover { background: var(--bg);}
 
