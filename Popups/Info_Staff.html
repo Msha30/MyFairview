@@ -39,10 +39,6 @@
                             <td>Date of Birth</td>
                             <td>Lorem Ipsum</td>
                         </tr>
-                        <tr class="row">
-                            <td>Subdivision</td>
-                            <td>Lorem Ipsum</td>
-                        </tr>
                         <tr class="row wrap">
                             <td>Address</td>
                             <td>Lorem Ipsum</td>
@@ -68,8 +64,8 @@
                             <td>Lorem Ipsum</td>
                         </tr>
                     </table>
-                    <div class="buttons">
-                        <button class="button reject">Delete Staff</button>
+                    <div class="buttons col">
+                        <button class="button delete">Remove Staff</button>
                         <button class="button accept">Apply Changes</button>
                     </div>
                 </div>
@@ -148,7 +144,6 @@
                             <div class="access-permissions">
                                 <label><input type="checkbox"> View</label>
                                 <label><input type="checkbox"> Add Staff</label>
-                                <label><input type="checkbox"> Edit Staff Information</label>
                                 <label><input type="checkbox"> Remove Staff</label>
                             </div>
                         </div>
@@ -196,47 +191,6 @@
     .row td:last-child {
         text-align: left;
         padding-left: 30px;
-    }
-
-    .buttons {
-        display: flex;
-        flex-direction: column;
-        gap: 10px;
-    }
-
-    .button {
-        flex: 1;
-        border: none;
-        padding: 10px 15px;
-        border-radius: var(--radsmall);
-        font-size: var(--textreg);
-        cursor: pointer;
-        font-family: 'InterBold', sans-serif;
-        align-items: center;
-        gap: 8px;
-
-    }
-
-    .button.reject {
-        background: var(--redfaded);
-        color: var(--red);
-        border: 1px solid var(--red);
-    }
-
-    .button.accept {
-        background: var(--greenfaded);
-        color: var(--green);
-        border: 1px solid var(--green);
-    }
-
-    .button.reject:hover {
-        background: var(--red);
-        color: white;
-    }
-
-    .button.accept:hover {
-        background: var(--green);
-        color: white;
     }
 
     .status {

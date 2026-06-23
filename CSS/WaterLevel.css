@@ -223,7 +223,7 @@ body {
 /* ═════════════════════════ HISTORY ═════════════════════════ */
 /* ═══════════════════════════════════════════════════════════ */
 
-.level-list {
+.level-item {
     display: flex;
     align-items: center;
     gap: 12px;
@@ -235,7 +235,7 @@ body {
     -webkit-user-drag: none;
 }
 
-.level-list:first-child {
+.level-item:first-child {
     padding-top: 10px;
 }
 

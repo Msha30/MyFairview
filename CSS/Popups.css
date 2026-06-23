@@ -177,7 +177,7 @@
     width: 100%;
     padding: 10px;
     background: var(--bg);
-    
+
     border-radius: var(--radsmall);
     font-size: var(--textreg);
     font-family: 'Inter', sans-serif;
@@ -187,4 +187,70 @@
 
 .form-input:focus {
     border-color: var(--orange);
+}
+
+.buttons {
+    display: flex;
+    gap: 10px;
+}
+
+.buttons.col {
+    flex-direction: column;
+}
+
+
+.button {
+    flex: 1;
+    border: none;
+    padding: 10px 15px;
+    border-radius: var(--radsmall);
+    font-size: var(--textreg);
+    cursor: pointer;
+    font-family: 'InterBold', sans-serif;
+    align-items: center;
+    gap: 8px;
+
+}
+
+.button.reject {
+    background: var(--redfaded);
+    color: var(--red);
+    border: 1px solid var(--red);
+}
+
+.button.reject:hover {
+    background: var(--red);
+    color: white;
+}
+
+.button.accept {
+    background: var(--greenfaded);
+    color: var(--green);
+    border: 1px solid var(--green);
+}
+
+.button.accept:hover {
+    background: var(--green);
+    color: white;
+}
+
+.button.save {
+    background: var(--greenfaded);
+    color: var(--green);
+    border: 1px solid var(--green);
+}
+
+.button.save:hover {
+    background: var(--green);
+    color: white;
+}
+
+.button.delete {
+    background: var(--bg);
+    color: var(--greylight);
+}
+
+.button.delete:hover {
+    background: var(--red);
+    color: white;
 }

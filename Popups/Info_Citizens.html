@@ -48,7 +48,7 @@
                         <td><input class="input edit" type="text" value="Lorem Ipsum"></td>
                     </tr>
                 </table>
-                
+
             </div>
             <div style="display: flex; flex-direction: column; gap: 15px;">
                 <div class="infocard">
@@ -98,13 +98,17 @@
                             <td>Lorem Ipsum</td>
                         </tr>
                     </table>
-                    <div class="buttons">
-                        <button class="button reject">Reject</button>
-                        <button class="button accept">Accept</button>
+                    <div class="buttons col">
+                        <div class="buttons">
+                            <button class="button reject">Reject</button>
+                            <button class="button accept">Accept</button>
+                        </div>
+                        <button class="button delete">Remove User</button>
                     </div>
+
                 </div>
                 <div class="buttons">
-                    <button class="button save">Save Changes</button>
+                    <button class="button save">Apply Changes</button>
                 </div>
             </div>
         </div>
@@ -147,57 +151,6 @@
     .row td:last-child {
         text-align: left;
         padding-left: 30px;
-    }
-
-    .buttons {
-        display: flex;
-        gap: 10px;
-    }
-
-    .button {
-        flex: 1;
-        border: none;
-        padding: 10px 15px;
-        border-radius: var(--radsmall);
-        font-size: var(--textreg);
-        cursor: pointer;
-        font-family: 'InterBold', sans-serif;
-        align-items: center;
-        gap: 8px;
-
-    }
-
-    .button.reject {
-        background: var(--redfaded);
-        color: var(--red);
-        border: 1px solid var(--red);
-    }
-
-    .button.accept {
-        background: var(--greenfaded);
-        color: var(--green);
-        border: 1px solid var(--green);
-    }
-
-    .button.reject:hover {
-        background: var(--red);
-        color: white;
-    }
-
-    .button.accept:hover {
-        background: var(--green);
-        color: white;
-    }
-
-    .button.save {
-        background: var(--greenfaded);
-        color: var(--green);
-        border: 1px solid var(--green);
-    }
-
-    .button.save:hover {
-        background: var(--green);
-        color: white;
     }
 
     .status {
