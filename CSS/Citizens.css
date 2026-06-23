@@ -9,10 +9,6 @@ body {
     overflow: hidden;
 }
 
-/* ═══════════════════════════════════════════════════════════ */
-/* ════════════════════════ CARDTABLE ════════════════════════ */
-/* ═══════════════════════════════════════════════════════════ */
-
 .cardtable {
     height: 100vh;
     display: flex;
@@ -114,18 +110,40 @@ body {
     font-family: 'InterSemiBold', sans-serif;
 }
 
-.badge.verified { background: var(--greenfaded); color: var(--greenlight); }
-.badge.unverified { background: var(--orangefaded); color: var(--orange); }
-.badge.invalid { background: var(--bg); color: var(--greylight); }
+.badge.verified {
+    background: var(--greenfaded);
+    color: var(--greenlight);
+}
+
+.badge.unverified {
+    background: var(--orangefaded);
+    color: var(--orange);
+}
+
+.badge.invalid {
+    background: var(--bg);
+    color: var(--greylight);
+}
 
 .tableRow .user-avatar {
     width: 35px;
     height: 35px;
 }
 
-.user-avatar.verified { background: var(--gradgreen); color: white; }
-.user-avatar.unverified { background: var(--gradorange); color: white; }
-.user-avatar.invalid { background: var(--greylight); color: white; }
+.user-avatar.verified {
+    background: var(--gradgreen);
+    color: white;
+}
+
+.user-avatar.unverified {
+    background: var(--gradorange);
+    color: white;
+}
+
+.user-avatar.invalid {
+    background: var(--greylight);
+    color: white;
+}
 
 .tableDiv.citizens tbody td {
     padding: 15px;
@@ -136,9 +154,15 @@ body {
     border-bottom: none;
 }
 
-.tableDiv.citizens thead th:last-child { padding-right: 0px; }
-.tableDiv.citizens tbody td:last-child { padding-right: 5px; }
-.tableDiv.citizens tbody td:first-child { text-align: left; padding-left: 20px; }
+.tableDiv.citizens thead th:last-child {
+    padding-right: 0px;
+}
 
+.tableDiv.citizens tbody td:last-child {
+    padding-right: 5px;
+}
 
-
+.tableDiv.citizens tbody td:first-child {
+    text-align: left;
+    padding-left: 20px;
+}

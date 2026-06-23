@@ -54,7 +54,10 @@ body {
     border-radius: var(--rad);
     cursor: pointer;
 }
-.evac-item:hover { background: var(--bg);}
+
+.evac-item:hover {
+    background: var(--bg);
+}
 
 .line {
     border-radius: var(--rad) 0 0 var(--rad);
@@ -64,7 +67,10 @@ body {
     align-self: stretch;
 }
 
-.content { flex: 1; padding: 20px 6px;}
+.content {
+    flex: 1;
+    padding: 20px 6px;
+}
 
 .title {
     font-family: 'InterBold', sans-serif;

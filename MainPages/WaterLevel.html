@@ -11,15 +11,15 @@
 
 <body>
     <div class="grid-2">
-        <!-- ════════════════════════════════════════════════ -->
-        <!-- ════════════════════ CREATE ════════════════════ -->
-        <!-- ════════════════════════════════════════════════ -->
+        <!-- ═══════════════════════════════════════════════ -->
+        <!-- ════════════════════ STATS ════════════════════ -->
+        <!-- ═══════════════════════════════════════════════ -->
         <div class="grid-3">
             <div class="row-4">
                 <div class="card blue">
                     <div class="stat-top">
                         <div class="stat-icon">
-                            <img src="../Icons/nav_water.svg" class="iconpic d" alt="" />
+                            <img src="../Icons/nav_water.svg" class="iconpic" alt="" />
                         </div>
                     </div>
                     <div class="stat-val">00ft</div>
@@ -28,7 +28,7 @@
                 <div class="card white">
                     <div class="stat-top">
                         <div class="stat-icon">
-                            <img src="../Icons/ic_trend_up.svg" class="iconpic d" alt="" />
+                            <img src="../Icons/ic_trend_up.svg" class="iconpic" alt="" />
                         </div>
                     </div>
                     <div class="stat-val">– ft</div>
@@ -37,7 +37,7 @@
                 <div class="card white">
                     <div class="stat-top">
                         <div class="stat-icon">
-                            <img src="../Icons/ic_trend_down.svg" class="iconpic d" alt="" />
+                            <img src="../Icons/ic_trend_down.svg" class="iconpic" alt="" />
                         </div>
                     </div>
                     <div class="stat-val">– ft</div>
@@ -45,12 +45,12 @@
                 </div>
             </div>
             <div class="cardtable">
-                <!-- ════════════════════════════════════════════════ -->
-                <!-- ════════════════════ HEADER ════════════════════ -->
-                <!-- ════════════════════════════════════════════════ -->
+                <!-- ═════════════════════════════════════════════════ -->
+                <!-- ═══════════════════ THRESHOLD ═══════════════════ -->
+                <!-- ═════════════════════════════════════════════════ -->
                 <div class="header">
                     <div class="tabletitle">Water Level Threshold</div>
-                    <a class="btn export" href="#">Edit</a>
+                    <a class="btn edit" href="#">Edit</a>
                 </div>
                 <table class="tableDiv reports">
                     <thead>
@@ -61,32 +61,28 @@
                         </tr>
                     </thead>
                     <tbody>
-                        <tr class="tableRow safe" 
-                        onclick="openCitizenModal()">
+                        <tr class="tableRow safe" onclick="openCitizenModal()">
                             <td>
                                 <span class="dot">●</span><strong>Safe</strong>
                             </td>
                             <td>00ft - 00ft</td>
                             <td>—</td>
                         </tr>
-                        <tr class="tableRow monitor" 
-                        onclick="openCitizenModal()">
+                        <tr class="tableRow monitor" onclick="openCitizenModal()">
                             <td>
                                 <span class="dot">●</span><strong>Monitor</strong>
                             </td>
                             <td>00ft - 00ft</td>
                             <td>BRIDGE OPEN - PROCEED WITH CAUTION</td>
                         </tr>
-                        <tr class="tableRow warning" 
-                        onclick="openCitizenModal()">
+                        <tr class="tableRow warning" onclick="openCitizenModal()">
                             <td>
                                 <span class="dot">●</span><strong>Warning</strong>
                             </td>
                             <td>00ft - 00ft</td>
                             <td>HIGH WATER LEVEL - USE CAUTION</td>
                         </tr>
-                        <tr class="tableRow critical" 
-                        onclick="openCitizenModal()">
+                        <tr class="tableRow critical" onclick="openCitizenModal()">
                             <td>
                                 <span class="dot">●</span><strong>Critical</strong>
                             </td>
@@ -96,6 +92,9 @@
                     </tbody>
                 </table>
             </div>
+            <!-- ══════════════════════════════════════════════════ -->
+            <!-- ═══════════════════ WATERCHART ═══════════════════ -->
+            <!-- ══════════════════════════════════════════════════ -->
             <div class="card water">
                 <div class="cardtitle">Water Level</div>
                 <div class="cardsubtitle">Barangay Fairview Bridge</div>
@@ -113,8 +112,8 @@
             <div class="cardtitle">Past 30 days</div>
             <div class="cardsubtitle">Water Level History</div>
             <div class="card-scroll">
-                <div class="announce-list">
-                    <div class="announce-item">
+                <div class="level-list">
+                    <div class="level-list">
                         <div class="history-icon">
                             <img src="../Icons/ic_water_1.svg" class="svg" alt="" />
                         </div>
@@ -131,7 +130,7 @@
                             <div class="desc">Lowest : 00ft</div>
                         </div>
                     </div>
-                    <div class="announce-item">
+                    <div class="level-list">
                         <div class="history-icon">
                             <img src="../Icons/ic_water_1.svg" class="svg" alt="" />
                         </div>
@@ -148,7 +147,7 @@
                             <div class="desc">Lowest : 00ft</div>
                         </div>
                     </div>
-                    <div class="announce-item">
+                    <div class="level-list">
                         <div class="history-icon">
                             <img src="../Icons/ic_water_2.svg" class="svg" alt="" />
                         </div>
@@ -165,7 +164,7 @@
                             <div class="desc">Lowest : 00ft</div>
                         </div>
                     </div>
-                    <div class="announce-item">
+                    <div class="level-list">
                         <div class="history-icon">
                             <img src="../Icons/ic_water_3.svg" class="svg" alt="" />
                         </div>
@@ -182,7 +181,7 @@
                             <div class="desc">Lowest : 00ft</div>
                         </div>
                     </div>
-                    <div class="announce-item">
+                    <div class="level-list">
                         <div class="history-icon">
                             <img src="../Icons/ic_water_4.svg" class="svg" alt="" />
                         </div>

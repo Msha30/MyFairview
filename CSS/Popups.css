@@ -118,16 +118,18 @@
 }
 
 .row {
-    align-items: center;
+    align-items: stretch;
 }
 
 .row td {
     white-space: nowrap;
-    padding: 12px 0px;
+    padding: 6px 0px;
     font-size: var(--textreg);
     color: var(--grey);
     text-align: center;
     border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
 }
 
 .row.wrap td {
@@ -149,4 +151,40 @@
 
 .row td:last-child {
     flex: 1;
+}
+
+.input {
+    width: 100%;
+    box-sizing: border-box;
+    padding: 5px;
+    color: var(--grey);
+    font-family: inherit;
+    font-size: inherit;
+    outline: none;
+    border: none;
+    background: none;
+}
+
+.input.edit {
+    color: var(--black);
+    background: var(--bg);
+    border: 1px solid var(--grey);
+}
+
+
+
+.form-input {
+    width: 100%;
+    padding: 10px;
+    background: var(--bg);
+    
+    border-radius: var(--radsmall);
+    font-size: var(--textreg);
+    font-family: 'Inter', sans-serif;
+    color: var(--grey);
+    outline: none;
+}
+
+.form-input:focus {
+    border-color: var(--orange);
 }
