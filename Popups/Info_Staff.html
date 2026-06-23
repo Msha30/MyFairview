@@ -13,35 +13,35 @@
                     <table class="information">
                         <tr class="row">
                             <td>Position</td>
-                            <td>Lorem Ipsum</td>
+                            <td><input class="input" type="text" value="Lorem Ipsum" disabled></td>
                         </tr>
                         <tr class="row">
                             <td>Surname</td>
-                            <td>Lorem Ipsum</td>
+                            <td><input class="input" type="text" value="Lorem Ipsum" disabled></td>
                         </tr>
                         <tr class="row">
                             <td>First Name</td>
-                            <td>Lorem Ipsum</td>
+                            <td><input class="input" type="text" value="Lorem Ipsum" disabled></td>
                         </tr>
                         <tr class="row">
                             <td>Middle Name</td>
-                            <td>Lorem Ipsum</td>
+                            <td><input class="input" type="text" value="Lorem Ipsum" disabled></td>
                         </tr>
                         <tr class="row">
                             <td>Suffix</td>
-                            <td>Lorem Ipsum</td>
+                            <td><input class="input" type="text" value="Lorem Ipsum" disabled></td>
                         </tr>
                         <tr class="row">
                             <td>Contact Number</td>
-                            <td>Lorem Ipsum</td>
+                            <td><input class="input" type="text" value="Lorem Ipsum" disabled></td>
                         </tr>
                         <tr class="row">
                             <td>Date of Birth</td>
-                            <td>Lorem Ipsum</td>
+                            <td><input class="input" type="text" value="Lorem Ipsum" disabled></td>
                         </tr>
                         <tr class="row wrap">
                             <td>Address</td>
-                            <td>Lorem Ipsum</td>
+                            <td><input class="input" type="text" value="Lorem Ipsum" disabled></td>
                         </tr>
                     </table>
                 </div>
@@ -64,10 +64,11 @@
                             <td>Lorem Ipsum</td>
                         </tr>
                     </table>
-                    <div class="buttons col">
-                        <button class="button delete">Remove Staff</button>
-                        <button class="button accept">Apply Changes</button>
-                    </div>
+
+                </div>
+                <div class="buttons col">
+                    <button class="button delete">Remove Staff</button>
+                    <button class="button accept">Apply Changes</button>
                 </div>
             </div>
 
@@ -112,6 +113,7 @@
                                 <label><input type="checkbox"> View</label>
                                 <label><input type="checkbox"> Add Vehicles</label>
                                 <label><input type="checkbox"> Deploy Vehicles</label>
+                                <label><input type="checkbox"> Remove Vehicles</label>
                             </div>
                         </div>
 
@@ -136,6 +138,7 @@
                             <div class="access-permissions">
                                 <label><input type="checkbox"> View</label>
                                 <label><input type="checkbox"> Edit Evacuation Centers</label>
+                                <label><input type="checkbox"> Remove Evacuation Centers</label>
                             </div>
                         </div>
 
@@ -144,6 +147,7 @@
                             <div class="access-permissions">
                                 <label><input type="checkbox"> View</label>
                                 <label><input type="checkbox"> Add Staff</label>
+                                <label><input type="checkbox"> Edit Staff</label>
                                 <label><input type="checkbox"> Remove Staff</label>
                             </div>
                         </div>
@@ -165,7 +169,7 @@
     .grid-2 {
         overflow: auto;
         display: grid;
-        grid-template-columns: 1fr 1.5fr;
+        grid-template-columns: 0.9fr 1.3fr;
         gap: var(--cardgap);
         align-items: stretch;
     }
@@ -184,7 +188,7 @@
     }
 
     .row td:first-child {
-        width: 50%;
+        width: 40%;
         text-align: left;
     }
 
@@ -259,9 +263,8 @@
         display: flex;
         align-items: center;
         font-family: 'Inter', sans-serif;
-        font-size: var(--textreg);
+        font-size: var(--textsmall);
         gap: 6px;
         cursor: pointer;
     }
-
 </style>

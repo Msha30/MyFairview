@@ -47,6 +47,16 @@
     gap: 15px;
 }
 
+.card {
+    border: 1px solid var(--border);
+    border-radius: var(--rad);
+    padding: var(--cardpadding);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    gap: 15px;
+}
+
 .stat-icon {
     margin-right: 20px;
     width: 38px;
@@ -258,7 +268,7 @@
 }
 
 .button.delete {
-    background: var(--bg);
+    background: var(--border);
     color: var(--greylight);
 }
 
