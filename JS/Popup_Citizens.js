@@ -1,13 +1,13 @@
-function openCitizenModal() {
-    const modal = document.getElementById("citizenModal");
+function openInfoCitizens() {
+    const modal = document.getElementById("infoCitizens");
 
     if (modal) {
         modal.style.display = "flex";
     }
 }
 
-function closeCitizenModal() {
-    const modal = document.getElementById("citizenModal");
+function closeInfoCitizens() {
+    const modal = document.getElementById("infoCitizens");
 
     if (modal) {
         modal.style.display = "none";
@@ -16,11 +16,11 @@ function closeCitizenModal() {
 
 // Close when clicking outside modal
 document.addEventListener("click", function (e) {
-    const modal = document.getElementById("citizenModal");
+    const modal = document.getElementById("infoCitizens");
 
     if (!modal) return;
 
     if (e.target === modal) {
-        closeCitizenModal();
+        closeInfoCitizens();
     }
 });
