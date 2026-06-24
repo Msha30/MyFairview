@@ -3,9 +3,29 @@
 <link rel="stylesheet" href="../CSS/Popups.css">
 
 <div id="addEvacCenter" class="modal-overlay">
-    <div class="content">
-
-        addEvacCenter
+    <div class="contentadd">
+        <div class="areaheader">
+            <div class="areatitle">New Evacuation Center</div>
+        </div>
+        <div class="form-row add">
+            <label class="form-label">Place Name</label>
+            <input class="form-input" type="text" placeholder="Enter Name...">
+        </div>
+        <div class="form-row add">
+            <label class="form-label">Full Address</label>
+            <input class="form-input" type="text" placeholder="Enter Address...">
+        </div>
+        <div class="form-row add">
+            <label class="form-label">Capacity</label>
+            <input class="form-input" type="number" placeholder="Enter Capacity...">
+        </div>
+        <div class="card">
+            *MAP HERE*
+        </div>
+        <div class="buttons">
+            <button class="button delete">Cancel</button>
+            <button class="button confirm">Create</button>
+        </div>
 
     </div>
 </div>
@@ -13,9 +33,10 @@
     @import url("../Styles/Fonts.css");
     @import url("../Styles/Variables.css");
     @import url("../CSS/Popups.css");
-
-    .content {
-        max-width: 70%;
+    
+    .card {
+        width: 400px;
+        height: 220px;
     }
-
+    
 </style>

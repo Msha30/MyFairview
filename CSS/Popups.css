@@ -1,6 +1,16 @@
 @import url("../Styles/Fonts.css");
 @import url("../Styles/Variables.css");
 
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+input[type=number] {
+    -moz-appearance: textfield;
+}
+
 .modal-overlay {
     display: flex;
     position: fixed;
@@ -22,6 +32,19 @@
     flex-direction: column;
     gap: var(--cardgap);
     padding: 30px;
+}
+
+.contentadd {
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+    overflow: hidden;
+    animation: modalFadeIn 0.2s ease;
+    display: flex;
+    flex-direction: column;
+    gap: var(--cardgap);
+    padding: 30px;
+    border: 1px solid var(--border);
 }
 
 @keyframes modalFadeIn {
@@ -193,6 +216,13 @@
     border: 1px solid var(--grey);
 }
 
+.form-row.add {
+    margin-bottom: 1px;
+}
+
+.form-row.add .form-label {
+    margin-bottom: 5px;
+}
 
 
 .form-input {
@@ -275,4 +305,24 @@
 .button.delete:hover {
     background: var(--red);
     color: white;
+}
+
+.button.confirm {
+    background: var(--orangelight);
+    color: white;
+}
+
+.button.confirm:hover {
+    background: var(--orange);
+    color: white;
+}
+
+.button.delete {
+    background: var(--bg);
+    color: var(--greylight);
+}
+
+.button.delete:hover {
+    background: var(--border);
+    color: var(--grey);
 }
