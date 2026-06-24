@@ -32,12 +32,16 @@ body {
 
 .btn.export {
     margin: 20px;
-    color: var(--orange);
+    color: var(--greylight);
     font-size: var(--textreg);
     font-family: 'InterSemiBold', sans-serif;
     cursor: pointer;
     background: white;
     text-decoration: none;
+}
+
+.btn.export:hover {
+    color: var(--orange);
 }
 
 /* ═══════════════════════════════════════════════════════════ */

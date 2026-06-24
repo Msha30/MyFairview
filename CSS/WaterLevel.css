@@ -111,12 +111,16 @@ body {
 
 .btn.edit {
     margin: 20px;
-    color: var(--orange);
+    color: var(--greylight);
     font-size: var(--textreg);
     font-family: 'InterSemiBold', sans-serif;
     cursor: pointer;
     background: white;
     text-decoration: none;
+}
+
+.btn.edit:hover {
+    color: var(--orange);
 }
 
 .tableDiv.reports {

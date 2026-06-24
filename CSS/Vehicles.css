@@ -33,13 +33,16 @@ body {
 .btn.add {
     margin: 0px;
     padding: 0px;
-    color: var(--orange);
+    color: var(--greylight);
     font-size: var(--textreg);
     font-family: 'InterSemiBold', sans-serif;
     cursor: pointer;
-    background: none;
-    border: none;
+    background: white;
     text-decoration: none;
+}
+
+.btn.add:hover {
+    color: var(--orange);
 }
 
 .vehicle {
