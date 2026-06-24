@@ -1,0 +1,126 @@
+<!-- Citizens Information Modal -->
+<link rel="stylesheet" href="../CSS/Components.css">
+<link rel="stylesheet" href="../CSS/Popups.css">
+
+<div id="deployVehicle" class="modal-overlay">
+    <div class="content">
+        <div class="grid-2">
+            <div class="infocard">
+                <div class="areaheader">
+                    <div class="areatitle">Deployed Barangay Vehicle</div>
+                </div>
+                <table class="information">
+                    <tr class="row">
+                        <td>Plate Number</td>
+                        <td>Lorem Ipsum</td>
+                    </tr>
+                    <tr class="row">
+                        <td>Vehicle Model</td>
+                        <td>Lorem Ipsum</td>
+                    </tr>
+                    <tr class="row">
+                        <td>Color</td>
+                        <td>Lorem Ipsum</td>
+                    </tr>
+                    <tr class="row">
+                        <td>Capacity</td>
+                        <td>Lorem Ipsum</td>
+                    </tr>
+                    <tr class="row">
+                        <td>Contact Person</td>
+                        <td>Lorem Ipsum</td>
+                    </tr>
+                    <tr class="row">
+                        <td>Contact Person</td>
+                        <td>Lorem Ipsum</td>
+                    </tr>
+                    <tr class="row">
+                        <td>Location</td>
+                        <td>Lorem Ipsum</td>
+                    </tr>
+                    <tr class="row wrap">
+                        <td>Address</td>
+                        <td>Lorem Ipsum</td>
+                    </tr>
+                    <tr class="row wrap">
+                        <td>Details</td>
+                        <td>Lorem Ipsum</td>
+                    </tr>
+                </table>
+                <button class="button accept">Done</button>
+            </div>
+            <script src="../JS/Search-Dropdown.js"></script>
+            <div class="infocard loc">
+                <div class="card">
+                    *MAP HERE*
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+<style>
+    @import url("../Styles/Fonts.css");
+    @import url("../Styles/Variables.css");
+    @import url("../CSS/Popups.css");
+
+    .grid-2 {
+        overflow: auto;
+        display: grid;
+        grid-template-columns: 1.3fr 1.5fr;
+        gap: var(--cardgap);
+        align-items: start;
+    }
+
+    .infocard.loc {
+        height: 100%;
+    }
+
+    .row td:first-child {
+        width: 40%;
+        text-align: left;
+    }
+
+    .row td:last-child {
+        width: 70%;
+        text-align: left;
+        padding-left: 30px;
+    }
+
+    .card {
+        width: 400px;
+    }
+
+    .dropdown {
+        position: absolute;
+        width: 253px;
+        background: white;
+        border: 1px solid var(--border);
+        border-top: none;
+        max-height: 180px;
+        overflow-y: auto;
+        display: none;
+        z-index: 10;
+        font-size: var(--textreg);
+    }
+
+    .dropdown div {
+        padding: 10px;
+        border-bottom: 1px solid var(--border);
+        cursor: pointer;
+    }
+
+    .dropdown div:hover {
+        background: var(--orangefaded);
+    }
+
+    .item .title {
+        display: block;
+    }
+
+    .item .sub {
+        margin-top: 5px;
+        font-size: var(--textsmall);
+        color: #777;
+    }
+</style>

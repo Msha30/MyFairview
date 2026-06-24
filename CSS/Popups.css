@@ -177,7 +177,7 @@ input::-webkit-inner-spin-button {
 
 .row td {
     white-space: nowrap;
-    padding: 6px 0px;
+    padding: 10px 0px;
     font-size: var(--textreg);
     color: var(--grey);
     text-align: center;
@@ -238,11 +238,10 @@ input::-webkit-inner-spin-button {
     width: 100%;
     padding: 10px;
     background: var(--bg);
-
     border-radius: var(--radsmall);
     font-size: var(--textreg);
     font-family: 'Inter', sans-serif;
-    color: var(--grey);
+    color: var(--black);
     outline: none;
 }
 

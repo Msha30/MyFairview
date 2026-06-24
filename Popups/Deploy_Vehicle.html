@@ -1,0 +1,136 @@
+<!-- Citizens Information Modal -->
+<link rel="stylesheet" href="../CSS/Components.css">
+<link rel="stylesheet" href="../CSS/Popups.css">
+
+<div id="deployVehicle" class="modal-overlay">
+    <div class="content">
+        <div class="grid-2">
+            <div class="infocard">
+                <div class="areaheader">
+                    <div class="areatitle">Deploy Barangay Vehicle</div>
+                </div>
+                <div class="form-row add">
+                    <label class="form-label">Vehicle</label>
+                    <div class="form-selectbg">
+                        <select class="form-select">
+                            <option>PLT 0000 | Vehicle 1</option>
+                            <option>PLT 0000 | Vehicle 2</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-row add">
+                    <label class="form-label">Type</label>
+                    <div class="form-selectbg">
+                        <select class="form-select">
+                            <option>Barangay Use</option>
+                            <option>Request</option>
+                            <option>Emergency</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-row add">
+                    <label class="form-label">Contact Person</label>
+
+                    <div class="search-box" id="callerSearchBox">
+                        <input type="text" class="form-input search-input" placeholder="Search name..."
+                            id="callerInput">
+                        <div class="dropdown" id="callerDropdown"></div>
+                    </div>
+                </div>
+                <div class="form-row add">
+                    <label class="form-label">Location</label>
+                    <div class="form-selectbg">
+                        <select class="form-select">
+                            <option>Custom</option>
+                            <option>Contact Person Location</option>
+                            <option>Contact Person Address</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-row add">
+                    <label class="form-label">Address</label>
+                    <textarea class="form-input big" placeholder="Enter Address..."></textarea>
+                </div>
+                <div class="form-row add">
+                    <label class="form-label">Details</label>
+                    <textarea class="form-input big" placeholder="Enter Details..."></textarea>
+                </div>
+                <div class="buttons">
+                    <button class="button delete">Cancel</button>
+                    <button class="button confirm">Deploy</button>
+                </div>
+            </div>
+            <script src="../JS/Search-Dropdown.js"></script>
+            <div class="infocard loc">
+                <div class="card">
+                    *MAP HERE*
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+<style>
+    @import url("../Styles/Fonts.css");
+    @import url("../Styles/Variables.css");
+    @import url("../CSS/Popups.css");
+
+    .grid-2 {
+        overflow: auto;
+        display: grid;
+        grid-template-columns: 1fr 1.5fr;
+        gap: var(--cardgap);
+        align-items: start;
+    }
+
+    .infocard.loc {
+        height: 100%;
+    }
+
+    .row td:first-child {
+        width: 40%;
+        text-align: left;
+    }
+
+    .row td:last-child {
+        text-align: left;
+        padding-left: 30px;
+    }
+
+    .card {
+        width: 400px;
+    }
+
+    .dropdown {
+        position: absolute;
+        width: 253px;
+        background: white;
+        border: 1px solid var(--border);
+        border-top: none;
+        max-height: 180px;
+        overflow-y: auto;
+        display: none;
+        z-index: 10;
+        font-size: var(--textreg);
+    }
+
+    .dropdown div {
+        padding: 10px;
+        border-bottom: 1px solid var(--border);
+        cursor: pointer;
+    }
+
+    .dropdown div:hover {
+        background: var(--orangefaded);
+    }
+
+    .item .title {
+        display: block;
+    }
+
+    .item .sub {
+        margin-top: 5px;
+        font-size: var(--textsmall);
+        color: #777;
+    }
+</style>

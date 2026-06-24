@@ -3,9 +3,30 @@
 <link rel="stylesheet" href="../CSS/Popups.css">
 
 <div id="addVehicle" class="modal-overlay">
-    <div class="content">
-
-        addVehicle
+    <div class="contentadd">
+        <div class="areaheader">
+            <div class="areatitle">New Barangay Vehicle</div>
+        </div>
+        <div class="form-row add">
+            <label class="form-label">Plate Number</label>
+            <input class="form-input" type="text" placeholder="Enter Name...">
+        </div>
+        <div class="form-row add">
+            <label class="form-label">Vehicle Model</label>
+            <input class="form-input" type="text" placeholder="Enter Address...">
+        </div>
+        <div class="form-row add">
+            <label class="form-label">Color</label>
+            <input class="form-input" type="text" placeholder="Enter Address...">
+        </div>
+        <div class="form-row add">
+            <label class="form-label">Capacity</label>
+            <input class="form-input" type="number" placeholder="Enter Capacity...">
+        </div>
+        <div class="buttons">
+            <button class="button delete">Cancel</button>
+            <button class="button confirm">Add Vehicle</button>
+        </div>
 
     </div>
 </div>
@@ -14,8 +35,7 @@
     @import url("../Styles/Variables.css");
     @import url("../CSS/Popups.css");
 
-    .content {
-        max-width: 70%;
+    .contentadd {
+        width: 400px;
     }
-
 </style>

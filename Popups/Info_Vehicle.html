@@ -4,9 +4,45 @@
 
 <div id="infoVehicle" class="modal-overlay">
     <div class="content">
-
-        infoVehicle
-
+        <div style="display: flex; flex-direction: column; gap: 15px;">
+            <div class="infocard">
+                <div class="areaheader">
+                    <div class="areatitle">Barangay Vehicle Information</div>
+                </div>
+                <table class="information">
+                    <tr class="row">
+                        <td>Plate Number</td>
+                        <td><input class="input" type="text" value="Lorem Ipsum" disabled></td>
+                    </tr>
+                    <tr class="row">
+                        <td>Vehicle Model</td>
+                        <td><input class="input" type="text" value="Lorem Ipsum" disabled></td>
+                    </tr>
+                    <tr class="row">
+                        <td>Color</td>
+                        <td><input class="input" type="text" value="Lorem Ipsum" disabled></td>
+                    </tr>
+                    <tr class="row">
+                        <td>Capacity</td>
+                        <td><input class="input" type="text" value="Lorem Ipsum" disabled></td>
+                    </tr>
+                </table>
+            </div>
+            <div class="infocard">
+                <table class="information">
+                    <tr class="row">
+                        <td>Added on</td>
+                        <td>Month 00, 0000</td>
+                    </tr>
+                    <tr class="row">
+                        <td>Added by</td>
+                        <td>Lorem Ipsum</td>
+                    </tr>
+                </table>
+                <button class="button delete">Remove Vehicle</button>
+            </div>
+            <button class="button save">Apply Changes</button>
+        </div>
     </div>
 </div>
 <style>
@@ -14,8 +50,25 @@
     @import url("../Styles/Variables.css");
     @import url("../CSS/Popups.css");
 
-    .content {
-        max-width: 70%;
+    .grid-2 {
+        overflow: auto;
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: var(--cardgap);
+        align-items: start;
     }
 
+    .infocard.loc {
+        height: 100%;
+    }
+
+    .row td:first-child {
+        width: 40%;
+        text-align: left;
+    }
+
+    .row td:last-child {
+        text-align: left;
+        padding-left: 30px;
+    }
 </style>
