@@ -7,10 +7,6 @@ input::-webkit-inner-spin-button {
     margin: 0;
 }
 
-input[type=number] {
-    -moz-appearance: textfield;
-}
-
 .modal-overlay {
     display: flex;
     position: fixed;
@@ -45,6 +41,19 @@ input[type=number] {
     gap: var(--cardgap);
     padding: 30px;
     border: 1px solid var(--border);
+}
+
+.contentadd.in {
+    background: white;
+    border-radius: 12px;
+    box-shadow: none;
+    overflow: hidden;
+    animation: modalFadeIn 0.2s ease;
+    display: flex;
+    flex-direction: column;
+    gap: var(--cardgap);
+    padding: 0px;
+    border: none;
 }
 
 @keyframes modalFadeIn {
@@ -217,7 +226,7 @@ input[type=number] {
 }
 
 .form-row.add {
-    margin-bottom: 1px;
+    margin-bottom: 5px;
 }
 
 .form-row.add .form-label {
@@ -239,6 +248,16 @@ input[type=number] {
 
 .form-input:focus {
     border-color: var(--orange);
+}
+
+.form-input.big {
+    height: 70px;
+    resize: none;
+    padding: 10px;
+    white-space: pre-wrap;
+    overflow-wrap: break-word;
+    text-align: left;
+    vertical-align: top;
 }
 
 .buttons {

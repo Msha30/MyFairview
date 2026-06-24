@@ -3,9 +3,130 @@
 <link rel="stylesheet" href="../CSS/Popups.css">
 
 <div id="addStaff" class="modal-overlay">
-    <div class="content">
-
-        addStaff
+    <div class="contentadd">
+        <div class="grid-2">
+            <div class="contentadd in">
+                <div class="areaheader">
+                    <div class="areatitle">Personal Information</div>
+                </div>
+                <div class="grid-2">
+                    <div class="form-row add">
+                        <label class="form-label">Surname</label>
+                        <input class="form-input" type="text" placeholder="Enter Name...">
+                    </div>
+                    <div class="form-row add">
+                        <label class="form-label">First Name</label>
+                        <input class="form-input" type="text" placeholder="Enter Name...">
+                    </div>
+                </div>
+                <div class="grid-2">
+                    <div class="form-row add">
+                        <label class="form-label">Middle Name</label>
+                        <input class="form-input" type="text" placeholder="Enter Name...">
+                    </div>
+                    <div class="form-row add">
+                        <label class="form-label">Suffix</label>
+                        <input class="form-input" type="text" placeholder="Enter Name...">
+                    </div>
+                </div>
+                <div class="grid-2">
+                    <div class="form-row add">
+                        <label class="form-label">Date of Birth</label>
+                        <input class="form-input" type="text" placeholder="Enter Name...">
+                    </div>
+                    <div class="form-row add">
+                        <label class="form-label">Contact Number</label>
+                        <input class="form-input" type="text" placeholder="Enter Name...">
+                    </div>
+                </div>
+                <div class="form-row add">
+                    <label class="form-label">Barangay Position</label>
+                    <input class="form-input" type="text" placeholder="Enter Name...">
+                </div>
+                <div class="form-row add">
+                    <label class="form-label">Address</label>
+                    <textarea class="form-input big" placeholder="Enter Name..."></textarea>
+                </div>
+            </div>
+            <div class="top">
+                <div class="access">
+                    <div class="areaheader">
+                        <div class="areatitle">System Access</div>
+                    </div>
+                    <div class="card-scroll">
+                        <div class="access-list">
+                            <div class="access-row">
+                                <div class="access-name">Overview</div>
+                                <div class="access-permissions">
+                                    <label><input type="checkbox" checked disabled> View</label>
+                                </div>
+                            </div>
+                            <div class="access-row">
+                                <div class="access-name">Announcement</div>
+                                <div class="access-permissions">
+                                    <label><input type="checkbox"> View</label>
+                                    <label><input type="checkbox"> Create Announcement</label>
+                                </div>
+                            </div>
+                            <div class="access-row">
+                                <div class="access-name">Citizens</div>
+                                <div class="access-permissions">
+                                    <label><input type="checkbox"> View</label>
+                                    <label><input type="checkbox"> Verify Users</label>
+                                    <label><input type="checkbox"> Edit User Information</label>
+                                    <label><input type="checkbox"> Remove User</label>
+                                    <label><input type="checkbox"> Export</label>
+                                </div>
+                            </div>
+                            <div class="access-row">
+                                <div class="access-name">Emergency Vehicles</div>
+                                <div class="access-permissions">
+                                    <label><input type="checkbox"> View</label>
+                                    <label><input type="checkbox"> Add Vehicles</label>
+                                    <label><input type="checkbox"> Deploy Vehicles</label>
+                                    <label><input type="checkbox"> Remove Vehicles</label>
+                                </div>
+                            </div>
+                            <div class="access-row">
+                                <div class="access-name">Community Reports</div>
+                                <div class="access-permissions">
+                                    <label><input type="checkbox"> View</label>
+                                    <label><input type="checkbox"> Resolving Reports</label>
+                                </div>
+                            </div>
+                            <div class="access-row">
+                                <div class="access-name">Water Level</div>
+                                <div class="access-permissions">
+                                    <label><input type="checkbox"> View</label>
+                                    <label><input type="checkbox"> Edit Water Level Threshold</label>
+                                </div>
+                            </div>
+                            <div class="access-row">
+                                <div class="access-name">Evacuation Plan</div>
+                                <div class="access-permissions">
+                                    <label><input type="checkbox"> View</label>
+                                    <label><input type="checkbox"> Edit Evacuation Centers</label>
+                                    <label><input type="checkbox"> Remove Evacuation Centers</label>
+                                </div>
+                            </div>
+                            <div class="access-row">
+                                <div class="access-name">Access Management</div>
+                                <div class="access-permissions">
+                                    <label><input type="checkbox"> View</label>
+                                    <label><input type="checkbox"> Add Staff</label>
+                                    <label><input type="checkbox"> Edit Staff</label>
+                                    <label><input type="checkbox"> Remove Staff</label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="buttons">
+                    <button class="button delete">Cancel</button>
+                    <button class="button confirm">Create</button>
+                </div>
+            </div>
+        </div>
 
     </div>
 </div>
@@ -15,7 +136,84 @@
     @import url("../CSS/Popups.css");
 
     .content {
-        max-width: 70%;
+        max-width: 100%;
     }
 
+    .grid-2 {
+        overflow: auto;
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 30px;
+        align-items: stretch;
+    }
+
+    .top {
+        display: flex;
+        flex-direction: column;
+        gap: 15px;
+    }
+
+    .areatitle {
+        margin-right: 100px;
+    }
+
+
+    .access {
+        display: flex;
+        flex-direction: column;
+        height: 390px;
+    }
+
+    .card-scroll {
+        flex: 1;
+        overflow-y: auto;
+    }
+
+    .access-list {
+        width: 100%;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .access-row {
+        padding: 10px 0px;
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        align-items: center;
+        border-bottom: 1px solid #ddd;
+    }
+
+    .access-row:first-child {
+        padding: 0px 0px 10px;
+    }
+
+    .access-row:last-child {
+        border-bottom: none;
+    }
+
+    .access-name {
+        font-family: 'InterSemiBold', sans-serif;
+        font-size: var(--textreg);
+        color: var(--grey);
+    }
+
+    .access-permissions {
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+    }
+
+    input[type="checkbox"] {
+        accent-color: var(--green);
+        transform: scale(1.2);
+    }
+
+    .access-permissions label {
+        display: flex;
+        align-items: center;
+        font-family: 'Inter', sans-serif;
+        font-size: var(--textsmall);
+        gap: 6px;
+        cursor: pointer;
+    }
 </style>
