@@ -3,10 +3,22 @@
 <link rel="stylesheet" href="../CSS/Popups.css">
 
 <div id="editAnnouncement" class="modal-overlay">
-    <div class="content">
-
-        editAnnouncement
-
+    <div class="contentadd">
+        <div class="diatitle">Edit Announcement</div>
+        <label class="form-label dia">Note: Only the title and message are editable.</label>
+        <div class="form-row add">
+            <label class="form-label">Title</label>
+            <input class="form-input" type="text" value="Lorem Ipsum">
+        </div>
+        <div class="form-row add">
+            <label class="form-label">Message</label>
+            <textarea
+                class="form-input big">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore.</textarea>
+        </div>
+        <div class="buttons">
+            <button class="button delete">Cancel</button>
+            <button class="button confirm">Save</button>
+        </div>
     </div>
 </div>
 <style>
@@ -14,8 +26,7 @@
     @import url("../Styles/Variables.css");
     @import url("../CSS/Popups.css");
 
-    .content {
-        max-width: 70%;
+    .contentadd {
+        width: 400px;
     }
-
 </style>

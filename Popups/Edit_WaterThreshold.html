@@ -3,10 +3,114 @@
 <link rel="stylesheet" href="../CSS/Popups.css">
 
 <div id="editWaterThreshold" class="modal-overlay">
-    <div class="content">
+    <div class="contentadd">
+        <div class="diatitle">Edit Water Level Threshold</div>
+        <div class="grid">
+            <div class="item safe">
+                <span class="dot">●</span><label class="type">Safe</label>
+                <div class="form">
+                    <div>
+                        <label class="form-label top">Threshold</label>
+                        <div class="thres">
 
-        editWaterThreshold
+                            <div class="thres-item">
+                                <input class="form-input" type="number" value="00">
+                                <label class="ft">ft</label>
+                            </div>
 
+                            <label class="dash">–</label>
+                            <div class="thres-item">
+                                <input class="form-input" type="number" value="00">
+                                <label class="ft">ft</label>
+                            </div>
+                        </div>
+                    </div>
+                    <div>
+                        <label class="form-label top">Bridge Message</label>
+                        <input class="form-input message" type="text" value="—">
+                    </div>
+                </div>
+            </div>
+            <div class="item monitor">
+                <span class="dot">●</span><label class="type">Monitor</label>
+                <div class="form">
+                    <div>
+                        <label class="form-label top">Threshold</label>
+                        <div class="thres">
+
+                            <div class="thres-item">
+                                <input class="form-input" type="number" value="00">
+                                <label class="ft">ft</label>
+                            </div>
+
+                            <label class="dash">–</label>
+                            <div class="thres-item">
+                                <input class="form-input" type="number" value="00">
+                                <label class="ft">ft</label>
+                            </div>
+                        </div>
+                    </div>
+                    <div>
+                        <label class="form-label top">Bridge Message</label>
+                        <input class="form-input message" type="text" value="BRIDGE OPEN - PROCEED WITH CAUTION">
+                    </div>
+                </div>
+            </div>
+            <div class="item warning">
+                <span class="dot">●</span><label class="type">Warning</label>
+                <div class="form">
+                    <div>
+                        <label class="form-label top">Threshold</label>
+                        <div class="thres">
+
+                            <div class="thres-item">
+                                <input class="form-input" type="number" value="00">
+                                <label class="ft">ft</label>
+                            </div>
+
+                            <label class="dash">–</label>
+                            <div class="thres-item">
+                                <input class="form-input" type="number" value="00">
+                                <label class="ft">ft</label>
+                            </div>
+                        </div>
+                    </div>
+                    <div>
+                        <label class="form-label top">Bridge Message</label>
+                        <input class="form-input message" type="text" value="HIGH WATER LEVEL - USE CAUTION">
+                    </div>
+                </div>
+            </div>
+            <div class="item critical">
+                <span class="dot">●</span><label class="type">Critical</label>
+                <div class="form">
+                    <div>
+                        <label class="form-label top">Threshold</label>
+                        <div class="thres">
+
+                            <div class="thres-item">
+                                <input class="form-input" type="number" value="00">
+                                <label class="ft">ft</label>
+                            </div>
+
+                            <label class="dash">–</label>
+                            <div class="thres-item">
+                                <input class="form-input" type="number" value="00">
+                                <label class="ft">ft</label>
+                            </div>
+                        </div>
+                    </div>
+                    <div>
+                        <label class="form-label top">Bridge Message</label>
+                        <input class="form-input message" type="text" value="BRIDGE FLOODED - DO NOT CROSS">
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="buttons">
+            <button class="button delete">Cancel</button>
+            <button class="button confirm">Save</button>
+        </div>
     </div>
 </div>
 <style>
@@ -14,8 +118,133 @@
     @import url("../Styles/Variables.css");
     @import url("../CSS/Popups.css");
 
-    .content {
-        max-width: 70%;
+    .contentadd {
+        width: 700px;
     }
 
+    .grid {
+        display: grid;
+        grid-template-rows: 1fr 1fr 1fr 1fr;
+        gap: 10px;
+    }
+
+    .item {
+        padding: 15px;
+        border-radius: var(--radsmall);
+        border: 1px solid var(--border);
+    }
+
+    .dot {
+        display: inline-flex;
+        align-items: center;
+        font-size: 12px;
+        font-weight: 700;
+        flex-shrink: 0;
+        margin-right: 10px;
+        -webkit-user-select: none;
+        -ms-user-select: none;
+        user-select: none;
+        -webkit-user-drag: none;
+    }
+
+    .form-input {
+        background: white;
+    }
+
+    .form-label.top {
+        margin-top: 15px;
+    }
+
+    .type {
+        font-family: 'InterSemiBold', sans-serif;
+        font-size: var(--textbig);
+    }
+
+    .item.safe .dot,
+    .item.safe .type {
+        color: var(--greenlight);
+    }
+
+    .item.monitor .dot,
+    .item.monitor .type {
+        color: var(--orange);
+    }
+
+    .item.warning .dot,
+    .item.warning .type {
+        color: var(--red);
+    }
+
+    .item.critical .dot,
+    .item.critical .type {
+        color: var(--bluedark);
+    }
+
+    .item.safe {
+        background: var(--greenfaded);
+    }
+
+    .item.monitor {
+        background: var(--orangefaded);
+    }
+
+    .item.warning {
+        background: var(--redfaded);
+    }
+
+    .item.critical {
+        background: var(--bluefaded);
+    }
+
+    .form {
+        display: grid;
+        grid-template-columns: 0.6fr 1fr;
+        gap: 20px;
+    }
+
+    .thres {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        gap: 5px;
+    }
+
+    .thres-item {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        padding-right: 30px;
+        width: 100%;
+        background: white;
+        border: 1px solid var(--border);
+        border-radius: var(--radsmall);
+        outline: none;
+    }
+
+    .form-input {
+        border: none;
+        text-align: end;
+        padding: 10px 5px 10px;
+    }
+
+    .message {
+        border: 1px solid var(--border);
+        padding: 10px;
+        text-align: start;
+    }
+
+    .ft {
+        font-size: var(--textbig);
+        font-family: 'Inter', sans-serif;
+        color: var(--grey);
+        display: block;
+    }
+
+    .dash {
+        font-size: var(--textbig);
+        font-family: 'InterSemiBold', sans-serif;
+        color: var(--black);
+        display: block;
+        margin: 0px 5px;
+    }
 </style>
