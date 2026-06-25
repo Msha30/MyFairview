@@ -133,6 +133,14 @@ input::-webkit-inner-spin-button {
     color: var(--black);
 }
 
+.diatitle {
+    height: 10px;
+    font-size: var(--textbigger);
+    font-family: 'InterBold', sans-serif;
+    color: var(--black);
+    margin-bottom: 10px;
+}
+
 .btn.editinfo {
     color: var(--greylight);
     font-size: var(--textreg);
@@ -233,6 +241,10 @@ input::-webkit-inner-spin-button {
     margin-bottom: 5px;
 }
 
+.form-label.dia {
+    font-size: var(--textreg);
+    color: var(--grey);
+}
 
 .form-input {
     width: 100%;

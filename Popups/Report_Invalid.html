@@ -1,0 +1,34 @@
+<!-- Citizens Information Modal -->
+<link rel="stylesheet" href="../CSS/Components.css">
+<link rel="stylesheet" href="../CSS/Popups.css">
+
+<div id="reportInvalid" class="modal-overlay">
+    <div class="contentadd">
+        <div class="diatitle">Close R26-0000?</div>
+        <div class="form-row add">
+            <label class="form-label dia">Reason for Closing</label>
+            <div class="form-selectbg">
+                <select class="form-select">
+                    <option>Spam</option>
+                    <option>False Information</option>
+                    <option>Outside Jurisdiction</option>
+                    <option>Malicious Report</option>
+                    <option>Submitted by Mistake</option>
+                </select>
+            </div>
+        </div>
+        <div class="buttons">
+            <button class="button delete">Cancel</button>
+            <button class="button confirm">Close</button>
+        </div>
+    </div>
+</div>
+<style>
+    @import url("../Styles/Fonts.css");
+    @import url("../Styles/Variables.css");
+    @import url("../CSS/Popups.css");
+
+    .contentadd {
+        width: 400px;
+    }
+</style>
