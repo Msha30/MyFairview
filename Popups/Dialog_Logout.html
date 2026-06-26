@@ -1,12 +1,17 @@
-<!-- Citizens Information Modal -->
 <link rel="stylesheet" href="../CSS/Components.css">
 <link rel="stylesheet" href="../CSS/Popups.css">
 
 <div id="dialogLogout" class="modal-overlay">
-    <div class="content">
+    <div class="contentadd">
+        <div class="diatitle mid">Confirm Logout</div>
+        <div class="form-row dia mid">
+            <label class="form-label dia1">Are you sure you want to log out of your account?</label>
+        </div>
 
-        dialogLogout
-
+        <div class="buttons">
+            <button class="button delete">Cancel</button>
+            <button class="button red">Logout</button>
+        </div>
     </div>
 </div>
 <style>
@@ -14,8 +19,7 @@
     @import url("../Styles/Variables.css");
     @import url("../CSS/Popups.css");
 
-    .content {
-        max-width: 70%;
+    .contentadd {
+        width: 300px;
     }
-
 </style>

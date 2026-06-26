@@ -241,9 +241,40 @@ input::-webkit-inner-spin-button {
     margin-bottom: 5px;
 }
 
+.form-row.dia {
+    margin-bottom: 0px;
+}
+
+.form-row.dia .form-label {
+    margin-bottom: 10px;
+}
+
 .form-label.dia {
     font-size: var(--textreg);
     color: var(--grey);
+}
+
+.form-label.dia1 {
+    font-family: 'InterSemiBold', sans-serif;
+    font-size: var(--textreg);
+    color: var(--black);
+}
+
+.form-label.dia2 {
+    font-family: 'Inter', sans-serif;
+    font-size: var(--textreg);
+    color: var(--grey);
+}
+
+.form-label.dia3 {
+    font-family: 'InterSemiBold', sans-serif;
+    font-size: var(--textreg);
+    color: var(--grey);
+}
+
+.mid {
+    text-align: center;
+    align-items: center;
 }
 
 .form-input {
@@ -316,17 +347,6 @@ input::-webkit-inner-spin-button {
     color: white;
 }
 
-.button.save {
-    background: var(--greenfaded);
-    color: var(--green);
-    border: 1px solid var(--green);
-}
-
-.button.save:hover {
-    background: var(--green);
-    color: white;
-}
-
 .button.delete {
     background: var(--border);
     color: var(--greylight);
@@ -355,4 +375,24 @@ input::-webkit-inner-spin-button {
 .button.delete:hover {
     background: var(--border);
     color: var(--grey);
+}
+
+.button.red {
+    background: var(--red);
+    color: white;
+}
+
+.button.red:hover {
+    background: #a50000;
+    color: white;
+}
+
+.button.green {
+    background: var(--green);
+    color: white;
+}
+
+.button.green:hover {
+    background: #15622c;
+    color: white;
 }

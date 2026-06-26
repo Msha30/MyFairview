@@ -1,12 +1,18 @@
-<!-- Citizens Information Modal -->
 <link rel="stylesheet" href="../CSS/Components.css">
 <link rel="stylesheet" href="../CSS/Popups.css">
 
 <div id="dialogDelete" class="modal-overlay">
-    <div class="content">
+    <div class="contentadd">
+        <div class="diatitle mid">Delete {ID}</div>
+        <div class="form-row dia mid">
+            <label class="form-label dia1">Are you sure you want to permanently delete {name} from {type}?</label>
+            <label class="form-label dia2">This action cannot be undone.</label>
+        </div>
 
-        dialogDelete
-
+        <div class="buttons">
+            <button class="button delete">Cancel</button>
+            <button class="button red">Delete</button>
+        </div>
     </div>
 </div>
 <style>
@@ -14,8 +20,7 @@
     @import url("../Styles/Variables.css");
     @import url("../CSS/Popups.css");
 
-    .content {
-        max-width: 70%;
+    .contentadd {
+        width: 350px;
     }
-
 </style>

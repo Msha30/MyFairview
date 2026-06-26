@@ -1,12 +1,17 @@
-<!-- Citizens Information Modal -->
 <link rel="stylesheet" href="../CSS/Components.css">
 <link rel="stylesheet" href="../CSS/Popups.css">
 
 <div id="dialogChanges" class="modal-overlay">
-    <div class="content">
-
-        dialogChanges
-
+    <div class="contentadd">
+        <div class="diatitle mid">Apply Changes</div>
+        <div class="form-row dia mid">
+            <label class="form-label dia1">Are you sure you want to save the changes to this {itemType}?</label>
+            <label class="form-label dia2">Your updates will be applied once you confirm.</label>
+        </div>
+        <div class="buttons dia">
+            <button class="button delete">Cancel</button>
+            <button class="button confirm">Confirm</button>
+        </div>
     </div>
 </div>
 <style>
@@ -14,8 +19,8 @@
     @import url("../Styles/Variables.css");
     @import url("../CSS/Popups.css");
 
-    .content {
-        max-width: 70%;
+    .contentadd {
+        width: 400px;
     }
 
 </style>

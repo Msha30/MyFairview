@@ -1,12 +1,28 @@
-<!-- Citizens Information Modal -->
 <link rel="stylesheet" href="../CSS/Components.css">
 <link rel="stylesheet" href="../CSS/Popups.css">
 
 <div id="userInvalid" class="modal-overlay">
-    <div class="content">
-
-        userInvalid
-
+    <div class="contentadd">
+        <div class="diatitle mid">Confirm Rejection</div>
+        <div class="form-row dia mid">
+            <label class="form-label dia1">By confirming, the account will be marked as Invalid and the verification request will be rejected.</label>
+            <label class="form-label dia2">Please select the reason for rejection before continuing.</label>
+        </div>
+        <div class="form-row add">
+            <div class="form-selectbg">
+                <select class="form-select">
+                    <option>Spam</option>
+                    <option>False Information</option>
+                    <option>Duplicate Account</option>
+                    <option>Invalid or Expired Document</option>
+                    <option>Blurry or Unreadable Document</option>
+                </select>
+            </div>
+        </div>
+        <div class="buttons">
+            <button class="button delete">Cancel</button>
+            <button class="button red">Confirm</button>
+        </div>
     </div>
 </div>
 <style>
@@ -14,8 +30,7 @@
     @import url("../Styles/Variables.css");
     @import url("../CSS/Popups.css");
 
-    .content {
-        max-width: 70%;
+    .contentadd {
+        width: 350px;
     }
-
 </style>

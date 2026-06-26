@@ -1,12 +1,18 @@
-<!-- Citizens Information Modal -->
 <link rel="stylesheet" href="../CSS/Components.css">
 <link rel="stylesheet" href="../CSS/Popups.css">
 
 <div id="dialogExport" class="modal-overlay">
-    <div class="content">
-
-        dialogExport
-
+    <div class="contentadd">
+        <div class="diatitle mid">Export {Type}</div>
+        <div class="form-row dia mid">
+            <label class="form-label dia1">This will generate and download a CSV file containing the available {Type} data.</label>
+            <label class="form-label dia2">Only records matching these filters will be included in the exported file.</label>
+            <label class="form-label dia2">{dropdown1}, {dropdown2}</label>
+        </div>
+        <div class="buttons dia">
+            <button class="button delete">Cancel</button>
+            <button class="button confirm">Export</button>
+        </div>
     </div>
 </div>
 <style>
@@ -14,8 +20,7 @@
     @import url("../Styles/Variables.css");
     @import url("../CSS/Popups.css");
 
-    .content {
-        max-width: 70%;
+    .contentadd {
+        width: 350px;
     }
-
 </style>
