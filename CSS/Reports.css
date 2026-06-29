@@ -243,7 +243,20 @@ body {
 /* ═════════════════════════ STATS ═════════════════════════ */
 /* ═════════════════════════════════════════════════════════ */
 
+.grid .btn.map {
+    border: 1px solid var(--red);
+    border-radius: var(--radbox);
+    margin-bottom: 15px;
+    background: var(--redfaded);
+    color: var(--red);
+}
 
+.grid .btn.map:hover {
+    border: 1px solid var(--red);
+    margin-bottom: 15px;
+    background: var(--red);
+    color: white;
+}
 
 .grid .btn {
     display: inline-flex;

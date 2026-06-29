@@ -8,7 +8,7 @@ input::-webkit-inner-spin-button {
 }
 
 .modal-overlay {
-    display: none;
+    display: flex;
     position: fixed;
     inset: 0;
     background: rgba(0, 0, 0, 0.5);

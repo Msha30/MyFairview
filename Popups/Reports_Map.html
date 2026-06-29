@@ -1,0 +1,57 @@
+<link rel="stylesheet" href="../CSS/Components.css">
+<link rel="stylesheet" href="../CSS/Popups.css">
+
+<div id="addEvacCenter" class="modal-overlay">
+    <div class="contentadd">
+        <div class="areaheader">
+            <div class="areatitle">Reports Map</div>
+        </div>
+        <div class="row">
+            <span class="badge b1">Emergency</span>
+            <span class="badge b2">Public Safety</span>
+            <span class="badge b3">Community Report</span>
+        </div>
+        <div class="card">
+            *MAP HERE*
+        </div>
+    </div>
+</div>
+<style>
+    @import url("../Styles/Fonts.css");
+    @import url("../Styles/Variables.css");
+    @import url("../CSS/Popups.css");
+
+    .card {
+        width: 800px;
+        height: 400px;
+    }
+
+    .row {
+        display: flex;
+        flex-direction: row;
+        gap: 10px;
+    }
+
+    .badge {
+        display: inline-block;
+        padding: 5px 15px;
+        border-radius: 20px;
+        font-size: var(--textreg);
+        font-family: 'InterSemiBold', sans-serif;
+    }
+
+    .badge.b1 {
+        background: var(--redfaded);
+        color: var(--red);
+    }
+
+    .badge.b2 {
+        background: var(--orangefaded);
+        color: var(--orange);
+    }
+
+    .badge.b3 {
+        background: var(--bluefaded);
+        color: var(--blue);
+    }
+</style>
