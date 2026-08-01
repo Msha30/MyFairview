@@ -166,6 +166,62 @@
             background: var(--bg);
         }
 
+        /* Container for relative positioning */
+        .user-wrapper {
+            position: relative;
+            margin: 20px;
+            margin-bottom: 15px;
+        }
+
+        /* Override user-section margin since it's now inside the wrapper */
+        .user-wrapper .user-section {
+            margin: 0;
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        /* The Drop-up Card */
+        .user-dropdown {
+            position: absolute;
+            bottom: calc(100% + 8px); /* Forces menu to open UPWARDS with a 8px gap */
+            left: 0;
+            right: 0;
+            background: white;
+            border: 1px solid var(--border);
+            border-radius: var(--radbox);
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+            padding: 6px;
+            z-index: 100;
+        }
+
+        /* Menu Item Button */
+        .dropdown-item {
+            width: 100%;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px 12px;
+            border: none;
+            background: transparent;
+            border-radius: var(--radsmall);
+            cursor: pointer;
+            font-size: var(--textreg);
+            font-weight: 500;
+            color: #e53935; /* Red accent for log out */
+            transition: 0.2s;
+        }
+
+        .dropdown-item:hover {
+            background: #ffebee;
+        }
+
+        .dropdown-icon {
+            width: 18px;
+            height: 18px;
+        }
+
         .user-avatar {
             width: 32px;
             height: 32px;
@@ -229,6 +285,7 @@
             border: none;
         }
     </style>
+    <script type="module" src="JS/main_layout.js"></script>
 </head>
 
 <body>
@@ -274,11 +331,26 @@
                 Access Management
             </div>
         </div>
-        <div class="user-section">
-            <div class="user-avatar super">LI</div>
-            <div class="user-info">
-                <strong>Lorem Ipsum</strong><br>
-                <span>SUPER ADMIN</span>
+        <div class="user-wrapper">
+            <!-- Drop-up Menu -->
+            <div id="userDropdown" class="user-dropdown hidden">
+                <button id="logoutBtn" class="dropdown-item logout">
+                    <svg class="dropdown-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+                        <polyline points="16 17 21 12 16 7"></polyline>
+                        <line x1="21" y1="12" x2="9" y2="12"></line>
+                    </svg>
+                    <span>Log Out</span>
+                </button>
+            </div>
+
+            <!-- User Profile Trigger -->
+            <div class="user-section" id="userSection">
+                <div class="user-avatar super">LI</div>
+                <div class="user-info">
+                    <strong>Lorem Ipsum</strong><br>
+                    <span>SUPER ADMIN</span>
+                </div>
             </div>
         </div>
     </div>

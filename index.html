@@ -12,6 +12,9 @@
     <style>
         /* --------------------------------------GCO ADMIN-------------------------------------- */
 
+        .login-container {
+            display: none;
+        }
 
         body {
             margin: 0;
@@ -184,16 +187,17 @@
             display: none;
         }
     </style>
+    <script type="module" src="JS/login.js"></script>
 </head>
 
 <body>
     <!-- ================= SIGN IN ================= -->
-    <div id="ITLogIn" class="login">
+    <div id="ITLogIn" class="login login-container">
         <img src="Images/Logo.png" class="logo">
-        <form class="form" onsubmit="handleLogin(event)">
+        <form class="form" id="loginForm">
             <div class="form-row title">
                 <label class="form-label">ID Number</label>
-                <input class="form-input" type="text" required>
+                <input class="form-input" id="loginId" type="text" required>
             </div>
             <div class="form-row title">
                 <label class="form-label">Password</label>
@@ -247,17 +251,20 @@
         </div>
     </div>
 
-
     <!-- ================= JS ================= -->
     <script>
-        function handleLogin(event) {
-            event.preventDefault();
+        function toggleEyeVisibility() {
+            const passwordInput = document.getElementById("loginPassword");
+            const toggleBtn = document.querySelector(".toggle-password");
 
-            // optional: validate credentials here first
-
-            sessionStorage.setItem("fromLogin", "true");
-
-            window.location.href = "MainLayout.html";
+            if (passwordInput.value.trim() !== "") {
+                toggleBtn.style.display = "block";
+            } else {
+                toggleBtn.style.display = "none";
+                passwordInput.type = "password";
+                document.getElementById("loginEye").classList.remove("hidden");
+                document.getElementById("loginEyeClosed").classList.add("hidden");
+            }
         }
 
         function togglePassword(inputId) {
@@ -281,18 +288,31 @@
             }
         }
 
-        function toggleEyeVisibility() {
-            const passwordInput = document.getElementById("loginPassword");
-            const toggleBtn = document.querySelector(".toggle-password");
+        function sendResetEmail(event) {
+            event.preventDefault();
+            const email = document.getElementById('resetEmail').value;
+            alert('A reset password link has been sent to ' + email);
+            return false;
+        }
 
-            if (passwordInput.value.trim() !== "") {
-                toggleBtn.style.display = "block";
+        function resendEmail() {
+            const email = document.getElementById('resetEmail').value;
+            if (email) {
+                alert('Reset email has been resent to ' + email);
             } else {
-                toggleBtn.style.display = "none";
-                passwordInput.type = "password";
-                document.getElementById("loginEye").classList.remove("hidden");
-                document.getElementById("loginEyeClosed").classList.add("hidden");
+                alert('Please enter your email address first.');
             }
+        }
+
+        /*
+        function handleLogin(event) {
+            event.preventDefault();
+
+            // optional: validate credentials here first
+
+            sessionStorage.setItem("fromLogin", "true");
+
+            window.location.href = "MainLayout.html";
         }
 
         function showResetPassword() {
@@ -311,24 +331,9 @@
             document.getElementById('ITResetPassword').classList.add('hidden');
 
             document.getElementById('ITLogIn').classList.remove('hidden');
-        }
-
-        function sendResetEmail(event) {
-            event.preventDefault();
-            const email = document.getElementById('resetEmail').value;
-            alert('A reset password link has been sent to ' + email);
-            return false;
-        }
-
-        function resendEmail() {
-            const email = document.getElementById('resetEmail').value;
-            if (email) {
-                alert('Reset email has been resent to ' + email);
-            } else {
-                alert('Please enter your email address first.');
-            }
-        }
+        }*/
     </script>
+    
 </body>
 
 </html>
