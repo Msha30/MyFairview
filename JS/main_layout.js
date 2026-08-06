@@ -1,19 +1,44 @@
-import { auth, logout } from "./auth.js";
+import { auth, firestore, logout } from "./auth.js";
 import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.17.0/firebase-auth.js";
+import { collection, query, where, getDocs } from "https://www.gstatic.com/firebasejs/12.17.0/firebase-firestore.js";
 
 const userSection = document.getElementById("userSection");
 const userDropdown = document.getElementById("userDropdown");
 const logoutBtn = document.getElementById("logoutBtn");
 
-// Parse URL parameters when MainLayout loads
-const urlParams = new URLSearchParams(window.location.search);
-const requestedPage = urlParams.get("page");
-
-onAuthStateChanged(auth, (user) => {
+// 1. Auth Guard & Profile Fetcher
+onAuthStateChanged(auth, async (user) => {
     if (!user) {
         window.location.replace("index.html");
+        return;
+    }
+
+    // Fetch user details from Firestore Info_Staff collection
+    try {
+        const staffRef = collection(firestore, "Info_Staff");
+        const q = query(staffRef, where("uid", "==", user.uid));
+        const querySnapshot = await getDocs(q);
+
+        if (!querySnapshot.empty) {
+            const userData = querySnapshot.docs[0].data();
+            
+            // Targets elements inside userSection
+            const userNameEl = document.querySelector(".user-name") || document.getElementById("userName");
+            const userRoleEl = document.querySelector(".user-role") || document.getElementById("userRole");
+
+            const fullName = `${userData.fName || ""} ${userData.lName || ""}`.trim() || "Administrator";
+
+            if (userNameEl) userNameEl.textContent = fullName;
+            if (userRoleEl) userRoleEl.textContent = userData.role || "Staff";
+        }
+    } catch (err) {
+        console.error("Error fetching staff profile:", err);
     }
 });
+
+// 2. Parse URL parameters for iframe navigation
+const urlParams = new URLSearchParams(window.location.search);
+const requestedPage = urlParams.get("page");
 
 if (requestedPage) {
     const iframe = document.getElementById("contentFrame");
@@ -22,14 +47,13 @@ if (requestedPage) {
     }
 }
 
-// 1. Toggle dropdown when clicking user profile
+// 3. User Dropdown Toggle
 if (userSection && userDropdown) {
     userSection.addEventListener("click", (e) => {
-        e.stopPropagation(); // Prevents click from immediately reaching document
+        e.stopPropagation();
         userDropdown.classList.toggle("hidden");
     });
 
-    // 2. Close dropdown automatically if user clicks anywhere outside
     document.addEventListener("click", (e) => {
         if (!userDropdown.contains(e.target) && !userSection.contains(e.target)) {
             userDropdown.classList.add("hidden");
@@ -37,7 +61,7 @@ if (userSection && userDropdown) {
     });
 }
 
-// 3. Attach logout functionality
+// 4. Logout Action
 if (logoutBtn) {
     logoutBtn.addEventListener("click", async () => {
         await logout();
