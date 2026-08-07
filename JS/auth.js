@@ -4,7 +4,7 @@ import { getFirestore, collection, addDoc, doc, getDoc, setDoc } from "https://w
 import { getDatabase } from "https://www.gstatic.com/firebasejs/12.17.0/firebase-database.js";
 import { getAnalytics } from "https://www.gstatic.com/firebasejs/12.17.0/firebase-analytics.js";
 
-const firebaseConfig = {
+export const firebaseConfig = {
     apiKey: "AIzaSyBnTP-6SDiJU5gjBx7OFfOiyczQLQjE_Xs",
     authDomain: "myfairview-46d11.firebaseapp.com",
     projectId: "myfairview-46d11",
