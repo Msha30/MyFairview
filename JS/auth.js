@@ -8,6 +8,7 @@ export const firebaseConfig = {
     apiKey: "AIzaSyBnTP-6SDiJU5gjBx7OFfOiyczQLQjE_Xs",
     authDomain: "myfairview-46d11.firebaseapp.com",
     projectId: "myfairview-46d11",
+    databaseURL: "https://myfairview-46d11-default-rtdb.asia-southeast1.firebasedatabase.app",
     storageBucket: "myfairview-46d11.firebasestorage.app",
     messagingSenderId: "924890795291",
     appId: "1:924890795291:web:f5ea837dc50f575925d7be",

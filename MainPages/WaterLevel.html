@@ -23,7 +23,7 @@
                             <img src="../Icons/nav_water.svg" class="iconpic" alt="" />
                         </div>
                     </div>
-                    <div class="stat-val">00ft</div>
+                    <div class="stat-val" id="currentWaterLevel">-- ft</div>
                     <div class="stat-label">Current Water Level</div>
                 </div>
                 <div class="card white">
@@ -32,7 +32,7 @@
                             <img src="../Icons/ic_trend_up.svg" class="iconpic" alt="" />
                         </div>
                     </div>
-                    <div class="stat-val">– ft</div>
+                    <div class="stat-val" id="highestWaterLevel">-- ft</div>
                     <div class="stat-label">Highest Water Level Today</div>
                 </div>
                 <div class="card white">
@@ -41,7 +41,7 @@
                             <img src="../Icons/ic_trend_down.svg" class="iconpic" alt="" />
                         </div>
                     </div>
-                    <div class="stat-val">– ft</div>
+                    <div class="stat-val" id="lowestWaterLevel">-- ft</div>
                     <div class="stat-label">Lowest Water Level Today</div>
                 </div>
             </div>
@@ -103,7 +103,8 @@
                     <svg id="waterchart" class="chartsvg"></svg>
                 </div>
             </div>
-            <script src="../JS/WaterChart.js"></script>
+            <script type="module" src="../JS/WaterChart.js"></script>
+            <script type="module" src="../JS/WaterLevel.js"></script>
         </div>
 
         <!-- ═════════════════════════════════════════════════ -->
@@ -113,93 +114,7 @@
             <div class="cardtitle">Past 30 days</div>
             <div class="cardsubtitle">Water Level History</div>
             <div class="card-scroll">
-                <div class="level-list">
-                    <div class="level-item">
-                        <div class="history-icon">
-                            <img src="../Icons/ic_water_1.svg" class="svg" alt="" />
-                        </div>
-                        <div class="content1">
-                            <div class="status">Safe</div>
-                            <div class="date">September 00</div>
-                        </div>
-                        <div class="ave">
-                            <strong>00</strong>
-                            <span>ft</span>
-                        </div>
-                        <div class="content2">
-                            <div class="desc">Highest : 00ft</div>
-                            <div class="desc">Lowest : 00ft</div>
-                        </div>
-                    </div>
-                    <div class="level-item">
-                        <div class="history-icon">
-                            <img src="../Icons/ic_water_1.svg" class="svg" alt="" />
-                        </div>
-                        <div class="content1">
-                            <div class="status">Safe</div>
-                            <div class="date">September 00</div>
-                        </div>
-                        <div class="ave">
-                            <strong>00</strong>
-                            <span>ft</span>
-                        </div>
-                        <div class="content2">
-                            <div class="desc">Highest : 00ft</div>
-                            <div class="desc">Lowest : 00ft</div>
-                        </div>
-                    </div>
-                    <div class="level-item">
-                        <div class="history-icon">
-                            <img src="../Icons/ic_water_2.svg" class="svg" alt="" />
-                        </div>
-                        <div class="content1">
-                            <div class="status">Monitor</div>
-                            <div class="date">September 00</div>
-                        </div>
-                        <div class="ave">
-                            <strong>00</strong>
-                            <span>ft</span>
-                        </div>
-                        <div class="content2">
-                            <div class="desc">Highest : 00ft</div>
-                            <div class="desc">Lowest : 00ft</div>
-                        </div>
-                    </div>
-                    <div class="level-item">
-                        <div class="history-icon">
-                            <img src="../Icons/ic_water_3.svg" class="svg" alt="" />
-                        </div>
-                        <div class="content1">
-                            <div class="status">Warning</div>
-                            <div class="date">September 00</div>
-                        </div>
-                        <div class="ave">
-                            <strong>00</strong>
-                            <span>ft</span>
-                        </div>
-                        <div class="content2">
-                            <div class="desc">Highest : 00ft</div>
-                            <div class="desc">Lowest : 00ft</div>
-                        </div>
-                    </div>
-                    <div class="level-item">
-                        <div class="history-icon">
-                            <img src="../Icons/ic_water_4.svg" class="svg" alt="" />
-                        </div>
-                        <div class="content1">
-                            <div class="status">Critical</div>
-                            <div class="date">September 00</div>
-                        </div>
-                        <div class="ave">
-                            <strong>00</strong>
-                            <span>ft</span>
-                        </div>
-                        <div class="content2">
-                            <div class="desc">Highest : 00ft</div>
-                            <div class="desc">Lowest : 00ft</div>
-                        </div>
-                    </div>
-                </div>
+                <div class="level-list" id="waterHistory"></div>
             </div>
         </div>
     </div>

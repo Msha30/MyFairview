@@ -1,7 +1,7 @@
 import { auth, firestore, firebaseConfig } from "./auth.js"; // Ensure firebaseConfig is exported from auth.js
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.17.0/firebase-app.js";
 import { getAuth, createUserWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/12.17.0/firebase-auth.js";
-import { collection, doc, setDoc, getDocs } from "https://www.gstatic.com/firebasejs/12.17.0/firebase-firestore.js";
+import { collection, doc, setDoc, getDocs, getDoc, updateDoc, deleteDoc } from "https://www.gstatic.com/firebasejs/12.17.0/firebase-firestore.js";
 
 // 1. Initialize a Secondary App for Secure Account Creation
 // Prevents the Super Admin from being logged out when creating a new staff member.
@@ -71,6 +71,16 @@ async function loadStaffTable() {
             `;
             tbody.insertAdjacentHTML("beforeend", row);
         });
+
+        const editButtons = tbody.querySelectorAll(".btn.edit");
+        editButtons.forEach(btn => {
+            btn.addEventListener("click", (e) => {
+                e.preventDefault();
+                const staffID = e.target.getAttribute("data-id");
+                openEditModal(staffID);
+            });
+        });
+
     } catch (err) {
         console.error("Error loading staff table:", err);
     }
@@ -172,3 +182,146 @@ document.addEventListener("DOMContentLoaded", () => {
     // Load initial table data
     loadStaffTable();
 });
+
+// 8. Open Edit Staff Modal
+async function openEditModal(staffID) {
+    try {
+        const response = await fetch('../Popups/Info_Staff.html');
+        const html = await response.text();
+        popupContainer.innerHTML = html;
+        
+        popupContainer.classList.remove("hidden");
+        const overlay = document.querySelector(".modal-overlay");
+        if (overlay) {
+            overlay.style.display = "flex";
+            // Close modal when clicking outside the popup content
+            overlay.addEventListener("click", (e) => {
+                if(e.target === overlay) closeModal();
+            });
+        }
+
+        // Fetch staff data from Firestore
+        const staffDoc = await getDoc(doc(firestore, "Info_Staff", staffID));
+        if (!staffDoc.exists()) {
+            alert("Staff member not found.");
+            return;
+        }
+        
+        const staff = staffDoc.data();
+
+        // Populate Text Fields
+        document.getElementById("edit-position").value = staff.role || "";
+        document.getElementById("edit-lName").value = staff.lName || "";
+        document.getElementById("edit-fName").value = staff.fName || "";
+        document.getElementById("edit-mName").value = staff.mName || "";
+        document.getElementById("edit-suffix").value = staff.suffix || "";
+        document.getElementById("edit-contact").value = staff.contact || "";
+        document.getElementById("edit-dob").value = staff.birthDate || "";
+        document.getElementById("edit-email").value = staff.email || "";
+        document.getElementById("edit-address").value = staff.address || "";
+        document.getElementById("display-staffID").innerText = staff.staffID || "";
+
+        // Populate Checkboxes
+        setEditCheckboxes("announcement", staff.p_announcement);
+        setEditCheckboxes("citizens", staff.p_citizens);
+        setEditCheckboxes("vehicles", staff.p_vehicles);
+        setEditCheckboxes("reports", staff.p_reports);
+        setEditCheckboxes("water", staff.p_waterLevel);
+        setEditCheckboxes("evacuation", staff.p_evacPlan);
+        setEditCheckboxes("management", staff.p_access);
+
+        // Attach Button Listeners
+        document.querySelector(".button.accept").addEventListener("click", () => saveStaffChanges(staffID));
+        document.querySelector(".button.delete").addEventListener("click", () => removeStaff(staffID));
+
+    } catch (err) {
+        console.error("Error opening edit modal:", err);
+    }
+}
+
+// 9. Save Staff Changes
+async function saveStaffChanges(staffID) {
+    try {
+        const updatedData = {
+            role: document.getElementById("edit-position").value,
+            lName: document.getElementById("edit-lName").value,
+            fName: document.getElementById("edit-fName").value,
+            mName: document.getElementById("edit-mName").value,
+            suffix: document.getElementById("edit-suffix").value,
+            contact: document.getElementById("edit-contact").value,
+            birthDate: document.getElementById("edit-dob").value,
+            address: document.getElementById("edit-address").value,
+            
+            p_announcement: determineEditAccessLevel("announcement"),
+            p_citizens: determineEditAccessLevel("citizens"),
+            p_vehicles: determineEditAccessLevel("vehicles"),
+            p_reports: determineEditAccessLevel("reports"),
+            p_waterLevel: determineEditAccessLevel("water"),
+            p_evacPlan: determineEditAccessLevel("evacuation"),
+            p_access: determineEditAccessLevel("management")
+        };
+
+        await updateDoc(doc(firestore, "Info_Staff", staffID), updatedData);
+        alert("Changes applied successfully!");
+        closeModal();
+        loadStaffTable(); // Refresh table automatically
+    } catch (error) {
+        console.error("Error updating staff:", error);
+        alert("Failed to update staff.");
+    }
+}
+
+// 10. Remove Staff
+async function removeStaff(staffID) {
+    if(!confirm("Are you sure you want to permanently remove this staff member's access?")) return;
+    try {
+        await deleteDoc(doc(firestore, "Info_Staff", staffID));
+        alert("Staff member removed successfully.");
+        closeModal();
+        loadStaffTable();
+    } catch (error) {
+        console.error("Error deleting staff:", error);
+        alert("Failed to delete staff.");
+    }
+}
+
+// Helper: Checks the boxes based on the Firestore string data
+function setEditCheckboxes(category, accessString) {
+    if (!accessString || accessString === "No Access") return;
+    const checkboxes = document.querySelectorAll(`input[id^="edit-access-${category}-"]`);
+    
+    if (accessString === "All Access") {
+        checkboxes.forEach(cb => cb.checked = true);
+        return;
+    }
+    if (accessString === "Viewing Access") {
+        const viewCb = document.getElementById(`edit-access-${category}-view`);
+        if (viewCb) viewCb.checked = true;
+        return;
+    }
+    
+    // Parse combined actions (e.g., "View, Create")
+    const actions = accessString.split(",").map(a => a.trim().toLowerCase());
+    checkboxes.forEach(cb => {
+        const action = cb.id.split('-').pop(); // gets 'view', 'create', etc.
+        if (actions.includes(action)) {
+            cb.checked = true;
+        }
+    });
+}
+
+// Helper: Converts checkbox states back to strings (specific to the edit modal IDs)
+function determineEditAccessLevel(category) {
+    const checkboxes = document.querySelectorAll(`input[id^="edit-access-${category}-"]`);
+    if (checkboxes.length === 0) return "No Access";
+
+    const checked = Array.from(checkboxes).filter(cb => cb.checked);
+    if (checked.length === checkboxes.length) return "All Access";
+    if (checked.length === 0) return "No Access";
+    if (checked.length === 1 && checked[0].id.includes("view")) return "Viewing Access";
+    
+    return checked.map(cb => {
+        const action = cb.id.split('-').pop();
+        return action.charAt(0).toUpperCase() + action.slice(1);
+    }).join(", ");
+}

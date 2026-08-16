@@ -12,39 +12,40 @@
                     <table class="information">
                         <tr class="row smol">
                             <td>Position</td>
-                            <td><input class="input" type="text" value="Lorem Ipsum" disabled></td>
+                            <td><input id="edit-position" class="input" type="text" placeholder="Position"></td>
                         </tr>
                         <tr class="row smol">
                             <td>Surname</td>
-                            <td><input class="input" type="text" value="Lorem Ipsum" disabled></td>
+                            <td><input id="edit-lName" class="input" type="text" placeholder="Surname"></td>
                         </tr>
                         <tr class="row smol">
                             <td>First Name</td>
-                            <td><input id="edit-fName" class="input" type="text" disabled></td>
+                            <td><input id="edit-fName" class="input" type="text" placeholder="First Name"></td>
                         </tr>
                         <tr class="row smol">
                             <td>Middle Name</td>
-                            <td><input class="input" type="text" value="Lorem Ipsum" disabled></td>
+                            <td><input id="edit-mName" class="input" type="text" placeholder="Middle Name"></td>
                         </tr>
                         <tr class="row smol">
                             <td>Suffix</td>
-                            <td><input class="input" type="text" value="Lorem Ipsum" disabled></td>
+                            <td><input id="edit-suffix" class="input" type="text" placeholder="Suffix (e.g., Jr)"></td>
                         </tr>
                         <tr class="row smol">
                             <td>Contact Number</td>
-                            <td><input class="input" type="text" value="Lorem Ipsum" disabled></td>
+                            <td><input id="edit-contact" class="input" type="text" placeholder="Contact"></td>
                         </tr>
                         <tr class="row smol">
                             <td>Date of Birth</td>
-                            <td><input class="input" type="text" value="Lorem Ipsum" disabled></td>
+                            <td><input id="edit-dob" class="input" type="text" placeholder="YYYY-MM-DD"></td>
                         </tr>
                         <tr class="row smol">
                             <td>Email</td>
-                            <td><input class="input" type="text" value="Lorem Ipsum" disabled></td>
+                            <!-- Email is kept disabled as changing it requires Firebase Auth verification updates -->
+                            <td><input id="edit-email" class="input" type="text" disabled></td>
                         </tr>
                         <tr class="row wrap smol">
                             <td>Address</td>
-                            <td><input class="input" type="text" value="Lorem Ipsum" disabled></td>
+                            <td><input id="edit-address" class="input" type="text" placeholder="Full Address"></td>
                         </tr>
                     </table>
                 </div>
@@ -52,15 +53,7 @@
                     <table class="information">
                         <tr class="row smol">
                             <td>ID Number</td>
-                            <td>BFVS-26-00067</td>
-                        </tr>
-                        <tr class="row smol">
-                            <td>Added on</td>
-                            <td>Month 00, 0000</td>
-                        </tr>
-                        <tr class="row smol">
-                            <td>Added by</td>
-                            <td>Lorem Ipsum</td>
+                            <td id="display-staffID">Loading...</td>
                         </tr>
                     </table>
                     <div class="buttons col">
@@ -76,78 +69,80 @@
                     <div class="areatitle">System Access</div>
                 </div>
 
-                <div class="access-list">
+                <!-- ADD THIS SCROLL WRAPPER -->
+                <div class="card-scroll">
+                    <div class="access-list">
 
-                    <div class="access-row">
-                        <div class="access-name">Overview</div>
-                        <div class="access-permissions">
-                            <label><input type="checkbox" checked disabled> View</label>
+                        <div class="access-row">
+                            <div class="access-name">Overview</div>
+                            <div class="access-permissions">
+                                <label><input type="checkbox" checked disabled> View</label>
+                            </div>
                         </div>
-                    </div>
 
                     <div class="access-row">
                         <div class="access-name">Announcement</div>
                         <div class="access-permissions">
-                            <label><input type="checkbox"> View</label>
-                            <label><input type="checkbox"> Create Announcement</label>
-                            <label><input type="checkbox"> Edit Announcement</label>
-                            <label><input type="checkbox"> Remove Announcement</label>
+                            <label><input id="edit-access-announcement-view" type="checkbox"> View</label>
+                            <label><input id="edit-access-announcement-create" type="checkbox"> Create Announcement</label>
+                            <label><input id="edit-access-announcement-edit" type="checkbox"> Edit Announcement</label>
+                            <label><input id="edit-access-announcement-remove" type="checkbox"> Remove Announcement</label>
                         </div>
                     </div>
 
                     <div class="access-row">
                         <div class="access-name">Citizens</div>
                         <div class="access-permissions">
-                            <label><input type="checkbox"> View</label>
-                            <label><input type="checkbox"> Verify Users</label>
-                            <label><input type="checkbox"> Edit User Information</label>
-                            <label><input type="checkbox"> Remove User</label>
-                            <label><input type="checkbox"> Export</label>
+                            <label><input id="edit-access-citizens-view" type="checkbox"> View</label>
+                            <label><input id="edit-access-citizens-verify" type="checkbox"> Verify Users</label>
+                            <label><input id="edit-access-citizens-edit" type="checkbox"> Edit User Information</label>
+                            <label><input id="edit-access-citizens-remove" type="checkbox"> Remove User</label>
+                            <label><input id="edit-access-citizens-export" type="checkbox"> Export</label>
                         </div>
                     </div>
 
                     <div class="access-row">
                         <div class="access-name">Barangay Vehicles</div>
                         <div class="access-permissions">
-                            <label><input type="checkbox"> View</label>
-                            <label><input type="checkbox"> Add Vehicles</label>
-                            <label><input type="checkbox"> Deploy Vehicles</label>
-                            <label><input type="checkbox"> Remove Vehicles</label>
+                            <label><input id="edit-access-vehicles-view" type="checkbox"> View</label>
+                            <label><input id="edit-access-vehicles-add" type="checkbox"> Add Vehicles</label>
+                            <label><input id="edit-access-vehicles-deploy" type="checkbox"> Deploy Vehicles</label>
+                            <label><input id="edit-access-vehicles-remove" type="checkbox"> Remove Vehicles</label>
                         </div>
                     </div>
 
                     <div class="access-row">
                         <div class="access-name">Community Reports</div>
                         <div class="access-permissions">
-                            <label><input type="checkbox"> View</label>
-                            <label><input type="checkbox"> Resolving Reports</label>
+                            <label><input id="edit-access-reports-view" type="checkbox"> View</label>
+                            <label><input id="edit-access-reports-resolve" type="checkbox"> Resolving Reports</label>
                         </div>
                     </div>
 
                     <div class="access-row">
                         <div class="access-name">Water Level</div>
                         <div class="access-permissions">
-                            <label><input type="checkbox"> View</label>
-                            <label><input type="checkbox"> Edit Water Level Threshold</label>
+                            <label><input id="edit-access-water-view" type="checkbox"> View</label>
+                            <label><input id="edit-access-water-edit" type="checkbox"> Edit Water Level Threshold</label>
                         </div>
                     </div>
 
                     <div class="access-row">
                         <div class="access-name">Evacuation Plan</div>
                         <div class="access-permissions">
-                            <label><input type="checkbox"> View</label>
-                            <label><input type="checkbox"> Edit Evacuation Centers</label>
-                            <label><input type="checkbox"> Remove Evacuation Centers</label>
+                            <label><input id="edit-access-evacuation-view" type="checkbox"> View</label>
+                            <label><input id="edit-access-evacuation-edit" type="checkbox"> Edit Evacuation Centers</label>
+                            <label><input id="edit-access-evacuation-remove" type="checkbox"> Remove Evacuation Centers</label>
                         </div>
                     </div>
 
                     <div class="access-row">
                         <div class="access-name">Access Management</div>
                         <div class="access-permissions">
-                            <label><input type="checkbox"> View</label>
-                            <label><input type="checkbox"> Add Staff</label>
-                            <label><input type="checkbox"> Edit Staff</label>
-                            <label><input type="checkbox"> Remove Staff</label>
+                            <label><input id="edit-access-management-view" type="checkbox"> View</label>
+                            <label><input id="edit-access-management-add" type="checkbox"> Add Staff</label>
+                            <label><input id="edit-access-management-edit" type="checkbox"> Edit Staff</label>
+                            <label><input id="edit-access-management-remove" type="checkbox"> Remove Staff</label>
                         </div>
                     </div>
                 </div>
@@ -162,14 +157,15 @@
 
     .content {
         max-width: 100%;
+        max-height: 90vh; /* Ensures the modal never exceeds the screen height */
+        overflow-y: auto; /* Adds a scrollbar to the whole modal if viewed on very small screens */
     }
 
     .grid-2 {
-        overflow: auto;
         display: grid;
         grid-template-columns: 1fr 1.3fr;
         gap: var(--cardgap);
-        align-items: stretch;
+        align-items: start; /* FIXED: Prevents the left column from stretching to match the right */
     }
 
     .areatitle {
@@ -186,13 +182,22 @@
         padding-left: 30px;
     }
 
+    /* FIXED: Set a specific height so the scrollbar activates */
     .infocard.access {
-        height: 100%;
+        display: flex;
+        flex-direction: column;
+        height: 600px; /* Adjust this to match your desired modal height */
+    }
+
+    /* NEW: Matches the scroll behavior from Add_Staff.html */
+    .card-scroll {
+        flex: 1;
+        overflow-y: auto;
+        padding-right: 10px; /* Prevents scrollbar from overlapping text */
     }
 
     .access-list {
         width: 100%;
-        flex: 1;
         display: flex;
         flex-direction: column;
     }

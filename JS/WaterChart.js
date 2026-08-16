@@ -1,86 +1,842 @@
-const svg = document.getElementById("waterchart");
+import {
+    ref,
+    onValue
+} from
+"https://www.gstatic.com/firebasejs/12.17.0/firebase-database.js";
 
-svg.setAttribute("viewBox", "0 0 735 120");
-svg.setAttribute("preserveAspectRatio", "none");
+import {
+    database
+} from "./auth.js";
 
-const leftMargin = 20;
 
-const points = [
-    [34 + leftMargin,30],
-    [94 + leftMargin,32],
-    [154 + leftMargin,38],
-    [214 + leftMargin,42],
-    [274 + leftMargin,40],
-    [334 + leftMargin,35],
-    [394 + leftMargin,28],
-    [454 + leftMargin,33],
-    [514 + leftMargin,36],
-    [574 + leftMargin,38],
-    [634 + leftMargin,34],
-    [694 + leftMargin,33]
-];
+// ============================================================
+// CONFIGURATION
+// ============================================================
 
-// Create polyline string
-const polyline = document.createElementNS("http://www.w3.org/2000/svg", "polyline");
+const HISTORY_PATH =
+    "history/UL800";
 
-polyline.setAttribute(
-    "points",
-    points.map(p => p.join(",")).join(" ")
+const CURRENT_PATH =
+    "sensors/UL800";
+
+const MAX_POINTS =
+    12;
+
+
+// ============================================================
+// SAMPLE DATA (placeholder for past days)
+// ============================================================
+
+const SAMPLE_VALUES =
+    [
+        3.2,
+        3.0,
+        2.5,
+        2.1,
+        2.3,
+        2.8,
+        3.5,
+        2.9,
+        2.6,
+        2.4,
+        2.7
+    ];
+
+
+// ============================================================
+// SVG SETUP
+// ============================================================
+
+const svg =
+    document.getElementById(
+        "waterchart"
+    );
+
+svg.setAttribute(
+    "viewBox",
+    "0 0 735 120"
 );
 
-polyline.setAttribute("fill", "none");
-polyline.setAttribute("stroke", "var(--blue)");
-polyline.setAttribute("stroke-width", "3");
-polyline.setAttribute("stroke-linejoin", "round");
+svg.setAttribute(
+    "preserveAspectRatio",
+    "xMidYMid meet"
+);
 
-svg.appendChild(polyline);
+const NS =
+    "http://www.w3.org/2000/svg";
 
-// Create dots
-points.forEach(p => {
-    const circle = document.createElementNS("http://www.w3.org/2000/svg", "circle");
-    circle.setAttribute("cx", p[0]);
-    circle.setAttribute("cy", p[1]);
-    circle.setAttribute("r", "4");
-    circle.setAttribute("fill", "var(--blue)");
-    svg.appendChild(circle);
-});
+const leftMargin =
+    20;
 
-// Y-axis labels
-const yLabels = [
-    { text: "30 ft", y: 10 },
-    { text: "20 ft", y: 42 },
-    { text: "10 ft", y: 74 },
-    { text: "0 ft",  y: 106 }
-];
+const chartLeft =
+    34 + leftMargin;
 
-yLabels.forEach(label => {
-    const t = document.createElementNS("http://www.w3.org/2000/svg", "text");
-    t.setAttribute("x", 0);
-    t.setAttribute("y", label.y);
-    t.setAttribute("fill", "var(--blue)");
-    t.setAttribute("font-size", "var(--textsmall)");
-    t.setAttribute("x", 30);
-    t.setAttribute("text-anchor", "end");
-    t.textContent = label.text;
-    svg.appendChild(t);
-});
+const chartRight =
+    694 + leftMargin;
 
-// X-axis labels
-const xLabels = [
-    "Jan 1","Jan 8","Jan 15","Jan 22","Jan 29",
-    "Feb 5","Feb 12","Feb 19","Feb 26","Mar 5","Mar 12","Mar 19"
-];
+const chartWidth =
+    chartRight -
+    chartLeft;
 
-xLabels.forEach((label, i) => {
-    const t = document.createElementNS("http://www.w3.org/2000/svg", "text");
+const topY =
+    10;
 
-    t.setAttribute("x", points[i][0]); // same x as circle
-    t.setAttribute("y", 115);
+const bottomY =
+    106;
 
-    t.setAttribute("text-anchor", "middle"); // center text horizontally
-    t.setAttribute("fill", "var(--blue)");
-    t.setAttribute("font-size", "var(--textsmall)");
+const chartHeight =
+    bottomY -
+    topY;
 
-    t.textContent = label;
-    svg.appendChild(t);
-});
+
+// ============================================================
+// METERS → FEET
+// ============================================================
+
+function metersToFeet(
+    meters
+)
+{
+    return (
+        Number(meters) *
+        3.28084
+    );
+}
+
+
+// ============================================================
+// CURRENT READING (from real-time sensor)
+// ============================================================
+
+let currentReading =
+    null;
+
+
+// ============================================================
+// GET TODAY DATE
+// ============================================================
+
+function getCurrentDate()
+{
+    const now =
+        new Date();
+
+    const year =
+        now.getFullYear();
+
+    const month =
+        String(
+            now.getMonth() +
+            1
+        ).padStart(
+            2,
+            "0"
+        );
+
+    const day =
+        String(
+            now.getDate()
+        ).padStart(
+            2,
+            "0"
+        );
+
+    return (
+        `${year}-${month}-${day}`
+    );
+}
+
+
+// ============================================================
+// GET LAST N DATES
+// ============================================================
+
+function getLastNDates(
+    n
+)
+{
+    const dates =
+        [];
+
+    const now =
+        new Date();
+
+    for (
+        let i =
+            n;
+        i >= 1;
+        i--
+    )
+    {
+        const d =
+            new Date(
+                now
+            );
+
+        d.setDate(
+            d.getDate() -
+            i
+        );
+
+        const year =
+            d.getFullYear();
+
+        const month =
+            String(
+                d.getMonth() +
+                1
+            ).padStart(
+                2,
+                "0"
+            );
+
+        const day =
+            String(
+                d.getDate()
+            ).padStart(
+                2,
+                "0"
+            );
+
+        dates.push(
+            `${year}-${month}-${day}`
+        );
+    }
+
+    return dates;
+}
+
+
+// ============================================================
+// PROCESS HISTORY
+// ============================================================
+
+function processHistory(
+    data
+)
+{
+    const dailyData =
+        {};
+
+    Object.entries(
+        data
+    ).forEach(
+        (
+            [
+                date,
+                readings
+            ]
+        ) =>
+        {
+            if (!readings)
+            {
+                return;
+            }
+
+            const values =
+                [];
+
+            Object.values(
+                readings
+            ).forEach(
+                reading =>
+                {
+                    if (
+                        !reading ||
+                        reading.level ===
+                        undefined
+                    )
+                    {
+                        return;
+                    }
+
+                    const feet =
+                        metersToFeet(
+                            reading.level
+                        );
+
+                    if (
+                        feet > 0
+                    )
+                    {
+                        values.push(
+                            feet
+                        );
+                    }
+                }
+            );
+
+            if (
+                values.length === 0
+            )
+            {
+                return;
+            }
+
+            const average =
+                values.reduce(
+                    (
+                        sum,
+                        v
+                    ) =>
+                        sum + v,
+                    0
+                )
+                /
+                values.length;
+
+            dailyData[
+                date
+            ] =
+            {
+                average:
+                    average
+            };
+        }
+    );
+
+    return dailyData;
+}
+
+
+// ============================================================
+// FORMAT DATE
+// ============================================================
+
+function formatDate(
+    dateString
+)
+{
+    const date =
+        new Date(
+            dateString +
+            "T00:00:00"
+        );
+
+    return date.toLocaleDateString(
+        "en-US",
+        {
+            month:
+                "short",
+
+            day:
+                "numeric"
+        }
+    );
+}
+
+
+// ============================================================
+// CLEAR SVG
+// ============================================================
+
+function clearChart()
+{
+    while (
+        svg.firstChild
+    )
+    {
+        svg.removeChild(
+            svg.firstChild
+        );
+    }
+}
+
+
+// ============================================================
+// Y-AXIS STEP
+// ============================================================
+
+function getYStep(
+    yMax
+)
+{
+    if (
+        yMax <= 40
+    )
+    {
+        return 10;
+    }
+
+    if (
+        yMax <= 80
+    )
+    {
+        return 20;
+    }
+
+    return 50;
+}
+
+
+// ============================================================
+// RENDER Y-AXIS
+// ============================================================
+
+function renderYAxis(
+    yMax
+)
+{
+    const step =
+        getYStep(
+            yMax
+        );
+
+    for (
+        let val = 0;
+        val <= yMax;
+        val += step
+    )
+    {
+        const ratio =
+            val / yMax;
+
+        const y =
+            bottomY -
+            (
+                chartHeight *
+                ratio
+            );
+
+        const t =
+            document.createElementNS(
+                NS,
+                "text"
+            );
+
+        t.setAttribute(
+            "x",
+            30
+        );
+
+        t.setAttribute(
+            "y",
+            y + 4
+        );
+
+        t.setAttribute(
+            "fill",
+            "var(--blue)"
+        );
+
+        t.setAttribute(
+            "font-size",
+            "9px"
+        );
+
+        t.setAttribute(
+            "text-anchor",
+            "end"
+        );
+
+        t.textContent =
+            val +
+            " ft";
+
+        svg.appendChild(
+            t
+        );
+    }
+}
+
+
+// ============================================================
+// RENDER CHART
+// ============================================================
+
+function renderChart(
+    dailyData,
+    isSample
+)
+{
+    clearChart();
+
+    const dates =
+        Object.keys(
+            dailyData
+        )
+        .sort()
+        .slice(
+            -MAX_POINTS
+        );
+
+
+    // ========================================================
+    // INSUFFICIENT DATA — SHOW SAMPLE + CURRENT READING
+    // ========================================================
+
+    if (
+        dates.length <
+        MAX_POINTS &&
+        !isSample
+    )
+    {
+        const pastDates =
+            getLastNDates(
+                MAX_POINTS -
+                1
+            );
+
+        const todayDate =
+            getCurrentDate();
+
+        const sampleData =
+            {};
+
+        pastDates.forEach(
+            (
+                date,
+                i
+            ) =>
+            {
+                sampleData[
+                    date
+                ] =
+                {
+                    average:
+                        SAMPLE_VALUES[
+                            i
+                        ]
+                };
+            }
+        );
+
+        if (
+            currentReading !==
+            null
+        )
+        {
+            sampleData[
+                todayDate
+            ] =
+            {
+                average:
+                    currentReading
+            };
+        }
+
+        renderChart(
+            sampleData,
+            true
+        );
+
+        return;
+    }
+
+
+    // ========================================================
+    // COMPUTE AVERAGES
+    // ========================================================
+
+    const averages =
+        dates.map(
+            d =>
+                dailyData[
+                    d
+                ].average
+        );
+
+    const maxVal =
+        Math.max(
+            ...averages
+        );
+
+
+    // ========================================================
+    // DYNAMIC Y-AXIS MAX
+    // ========================================================
+
+    const yMax =
+        Math.max(
+            30,
+            Math.ceil(
+                maxVal /
+                10
+            ) *
+            10
+        );
+
+
+    // ========================================================
+    // Y-AXIS LABELS
+    // ========================================================
+
+    renderYAxis(
+        yMax
+    );
+
+
+    // ========================================================
+    // COMPUTE POINTS
+    // ========================================================
+
+    const points =
+        averages.map(
+            (
+                val,
+                i
+            ) =>
+            {
+                const x =
+                    dates.length ===
+                    1
+                        ?
+                        367
+                        :
+                        chartLeft +
+                        (
+                            chartWidth *
+                            i
+                        ) /
+                        (
+                            dates.length -
+                            1
+                        );
+
+                const y =
+                    topY +
+                    chartHeight *
+                    (
+                        1 -
+                        val /
+                        yMax
+                    );
+
+                return [
+                    x,
+                    y
+                ];
+            }
+        );
+
+
+    // ========================================================
+    // POLYLINE
+    // ========================================================
+
+    const polyline =
+        document.createElementNS(
+            NS,
+            "polyline"
+        );
+
+    polyline.setAttribute(
+        "points",
+        points
+            .map(
+                p =>
+                    p.join(
+                        ","
+                    )
+            )
+            .join(
+                " "
+            )
+    );
+
+    polyline.setAttribute(
+        "fill",
+        "none"
+    );
+
+    polyline.setAttribute(
+        "stroke",
+        "var(--blue)"
+    );
+
+    polyline.setAttribute(
+        "stroke-width",
+        "3"
+    );
+
+    polyline.setAttribute(
+        "stroke-linejoin",
+        "round"
+    );
+
+    svg.appendChild(
+        polyline
+    );
+
+
+    // ========================================================
+    // DOTS
+    // ========================================================
+
+    points.forEach(
+        p =>
+        {
+            const circle =
+                document.createElementNS(
+                    NS,
+                    "circle"
+                );
+
+            circle.setAttribute(
+                "cx",
+                p[
+                    0
+                ]
+            );
+
+            circle.setAttribute(
+                "cy",
+                p[
+                    1
+                ]
+            );
+
+            circle.setAttribute(
+                "r",
+                "4"
+            );
+
+            circle.setAttribute(
+                "fill",
+                "var(--blue)"
+            );
+
+            svg.appendChild(
+                circle
+            );
+        }
+    );
+
+
+    // ========================================================
+    // X-AXIS LABELS
+    // ========================================================
+
+    dates.forEach(
+        (
+            date,
+            i
+        ) =>
+        {
+            const t =
+                document.createElementNS(
+                    NS,
+                    "text"
+                );
+
+            t.setAttribute(
+                "x",
+                points[
+                    i
+                ][
+                    0
+                ]
+            );
+
+            t.setAttribute(
+                "y",
+                115
+            );
+
+            t.setAttribute(
+                "text-anchor",
+                "middle"
+            );
+
+            t.setAttribute(
+                "fill",
+                "var(--blue)"
+            );
+
+            t.setAttribute(
+                "font-size",
+                "9px"
+            );
+
+            t.textContent =
+                formatDate(
+                    date
+                );
+
+            svg.appendChild(
+                t
+            );
+        }
+    );
+}
+
+
+// ============================================================
+// FIREBASE LISTENER — HISTORY
+// ============================================================
+
+const historyRef =
+    ref(
+        database,
+        HISTORY_PATH
+    );
+
+onValue(
+    historyRef,
+    snapshot =>
+    {
+        const data =
+            snapshot.val();
+
+        if (!data)
+        {
+            renderChart(
+                {}
+            );
+
+            return;
+        }
+
+        const dailyData =
+            processHistory(
+                data
+            );
+
+        renderChart(
+            dailyData
+        );
+    }
+);
+
+
+// ============================================================
+// FIREBASE LISTENER — CURRENT SENSOR
+// ============================================================
+
+const currentRef =
+    ref(
+        database,
+        CURRENT_PATH
+    );
+
+onValue(
+    currentRef,
+    snapshot =>
+    {
+        const data =
+            snapshot.val();
+
+        if (
+            !data ||
+            data.level ===
+            undefined
+        )
+        {
+            return;
+        }
+
+        const levelMeters =
+            Number(
+                data.level
+            );
+
+        currentReading =
+            metersToFeet(
+                levelMeters
+            );
+
+        renderChart(
+            {}
+        );
+    }
+);
