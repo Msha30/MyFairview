@@ -5,7 +5,7 @@ import { getDatabase } from "https://www.gstatic.com/firebasejs/12.17.0/firebase
 import { getAnalytics } from "https://www.gstatic.com/firebasejs/12.17.0/firebase-analytics.js";
 
 export const firebaseConfig = {
-    apiKey: "AIzaSyBnTP-6SDiJU5gjBx7OFfOiyczQLQjE_Xs",
+    apiKey: "AIzaSyADZ7D4nZfcHsWo1MDXgyjBU15xmuKMnIQ",
     authDomain: "myfairview-46d11.firebaseapp.com",
     projectId: "myfairview-46d11",
     databaseURL: "https://myfairview-46d11-default-rtdb.asia-southeast1.firebasedatabase.app",
