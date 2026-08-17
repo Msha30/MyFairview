@@ -1,8 +1,8 @@
 @import url("../Styles/Fonts.css");
 @import url("../Styles/Variables.css");
 
-input::-webkit-outer-spin-button,
-input::-webkit-inner-spin-button {
+.modal-overlay input::-webkit-outer-spin-button,
+.modal-overlay input::-webkit-inner-spin-button {
     -webkit-appearance: none;
     margin: 0;
 }
@@ -18,7 +18,7 @@ input::-webkit-inner-spin-button {
     align-items: center;
 }
 
-.content {
+.modal-overlay .content {
     background: var(--bg);
     border-radius: 12px;
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
@@ -30,7 +30,7 @@ input::-webkit-inner-spin-button {
     padding: 30px;
 }
 
-.contentadd {
+.modal-overlay .contentadd {
     background: white;
     border-radius: 12px;
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
@@ -43,7 +43,7 @@ input::-webkit-inner-spin-button {
     border: 1px solid var(--border);
 }
 
-.contentadd.in {
+.modal-overlay .contentadd.in {
     background: white;
     border-radius: 12px;
     box-shadow: none;
@@ -68,7 +68,7 @@ input::-webkit-inner-spin-button {
     }
 }
 
-.infocard {
+.modal-overlay .infocard {
     border: 1px solid var(--border);
     border-radius: var(--rad);
     padding: var(--cardpadding);
@@ -79,7 +79,7 @@ input::-webkit-inner-spin-button {
     gap: 15px;
 }
 
-.card {
+.modal-overlay .card {
     border: 1px solid var(--border);
     border-radius: var(--rad);
     padding: var(--cardpadding);
@@ -89,7 +89,7 @@ input::-webkit-inner-spin-button {
     gap: 15px;
 }
 
-.stat-icon {
+.modal-overlay .stat-icon {
     margin-right: 20px;
     width: 38px;
     height: 38px;
@@ -99,41 +99,40 @@ input::-webkit-inner-spin-button {
     justify-content: center;
 }
 
-.stat-icon svg {
+.modal-overlay .stat-icon svg {
     width: 18px;
     height: 18px;
     fill: currentColor;
 }
 
-.stat-icon.a {
-    background: var(--redfaded)
+.modal-overlay .stat-icon.a {
+    background: var(--redfaded);
 }
 
-.iconpic {
+.modal-overlay .iconpic {
     width: 18px;
     height: 18px;
     flex-shrink: 0;
 }
 
-.iconpic.a {
+.modal-overlay .iconpic.a {
     filter: brightness(0) saturate(100%) invert(11%) sepia(96%) saturate(7093%) hue-rotate(6deg) brightness(80%) contrast(112%);
 }
 
-.areaheader {
+.modal-overlay .areaheader {
     height: 38px;
     display: flex;
     align-items: center;
 }
 
-
-.areatitle {
+.modal-overlay .areatitle {
     flex: 1;
     font-size: var(--textbigger);
     font-family: 'InterBold', sans-serif;
     color: var(--black);
 }
 
-.diatitle {
+.modal-overlay .diatitle {
     height: 10px;
     font-size: var(--textbigger);
     font-family: 'InterBold', sans-serif;
@@ -141,49 +140,46 @@ input::-webkit-inner-spin-button {
     margin-bottom: 10px;
 }
 
-.btn.editinfo {
+.modal-overlay .btn.editinfo {
     color: var(--greylight);
     font-size: var(--textreg);
     font-family: 'InterSemiBold', sans-serif;
     cursor: pointer;
     background: white;
     text-decoration: none;
-    padding: none;
+    padding: 0;
 }
 
-.btn.editinfo:hover {
+.modal-overlay .btn.editinfo:hover {
     font-family: 'InterBold', sans-serif;
     color: var(--grey);
 }
 
-.btn.attachment {
+.modal-overlay .btn.attachment {
     color: var(--greylight);
     font-size: var(--textreg);
     font-family: 'InterSemiBold', sans-serif;
     cursor: pointer;
     background: white;
-    padding: none;
+    padding: 0;
 }
 
-.btn.attachment:hover {
+.modal-overlay .btn.attachment:hover {
     font-family: 'InterBold', sans-serif;
     color: var(--grey);
 }
 
-.information {
+.modal-overlay .information {
     width: 100%;
     overflow-x: auto;
 }
 
-.row {
+.modal-overlay .row {
     display: flex;
-}
-
-.row {
     align-items: stretch;
 }
 
-.row td {
+.modal-overlay .row td {
     white-space: nowrap;
     padding: 10px 0px;
     font-size: var(--textreg);
@@ -194,28 +190,28 @@ input::-webkit-inner-spin-button {
     align-items: center;
 }
 
-.row.wrap td {
+.modal-overlay .row.wrap td {
     white-space: pre-wrap;
 }
 
-.row:first-child td {
+.modal-overlay .row:first-child td {
     padding-top: 0px;
 }
 
-.row:last-child td {
+.modal-overlay .row:last-child td {
     border-bottom: none;
     padding-bottom: 0px;
 }
 
-.row td:first-child {
+.modal-overlay .row td:first-child {
     font-family: 'InterBold', sans-serif;
 }
 
-.row td:last-child {
+.modal-overlay .row td:last-child {
     flex: 1;
 }
 
-.input {
+.modal-overlay .input {
     width: 100%;
     box-sizing: border-box;
     padding: 5px;
@@ -227,57 +223,57 @@ input::-webkit-inner-spin-button {
     background: none;
 }
 
-.input.edit {
+.modal-overlay .input.edit {
     color: var(--black);
     background: var(--bg);
     border: 1px solid var(--grey);
 }
 
-.form-row.add {
+.modal-overlay .form-row.add {
     margin-bottom: 5px;
 }
 
-.form-row.add .form-label {
+.modal-overlay .form-row.add .form-label {
     margin-bottom: 5px;
 }
 
-.form-row.dia {
+.modal-overlay .form-row.dia {
     margin-bottom: 0px;
 }
 
-.form-row.dia .form-label {
+.modal-overlay .form-row.dia .form-label {
     margin-bottom: 10px;
 }
 
-.form-label.dia {
+.modal-overlay .form-label.dia {
     font-size: var(--textreg);
     color: var(--grey);
 }
 
-.form-label.dia1 {
+.modal-overlay .form-label.dia1 {
     font-family: 'InterSemiBold', sans-serif;
     font-size: var(--textreg);
     color: var(--black);
 }
 
-.form-label.dia2 {
+.modal-overlay .form-label.dia2 {
     font-family: 'Inter', sans-serif;
     font-size: var(--textreg);
     color: var(--grey);
 }
 
-.form-label.dia3 {
+.modal-overlay .form-label.dia3 {
     font-family: 'InterSemiBold', sans-serif;
     font-size: var(--textreg);
     color: var(--grey);
 }
 
-.mid {
+.modal-overlay .mid {
     text-align: center;
     align-items: center;
 }
 
-.form-input {
+.modal-overlay .form-input {
     width: 100%;
     padding: 10px;
     background: var(--bg);
@@ -288,11 +284,11 @@ input::-webkit-inner-spin-button {
     outline: none;
 }
 
-.form-input:focus {
+.modal-overlay .form-input:focus {
     border-color: var(--orange);
 }
 
-.form-input.big {
+.modal-overlay .form-input.big {
     height: 70px;
     resize: none;
     padding: 10px;
@@ -302,17 +298,16 @@ input::-webkit-inner-spin-button {
     vertical-align: top;
 }
 
-.buttons {
+.modal-overlay .buttons {
     display: flex;
     gap: 10px;
 }
 
-.buttons.col {
+.modal-overlay .buttons.col {
     flex-direction: column;
 }
 
-
-.button {
+.modal-overlay .button {
     flex: 1;
     border: none;
     padding: 10px 15px;
@@ -322,77 +317,66 @@ input::-webkit-inner-spin-button {
     font-family: 'InterBold', sans-serif;
     align-items: center;
     gap: 8px;
-
 }
 
-.button.reject {
+.modal-overlay .button.reject {
     background: var(--redfaded);
     color: var(--red);
     border: 1px solid var(--red);
 }
 
-.button.reject:hover {
+.modal-overlay .button.reject:hover {
     background: var(--red);
     color: white;
 }
 
-.button.accept {
+.modal-overlay .button.accept {
     background: var(--greenfaded);
     color: var(--green);
     border: 1px solid var(--green);
 }
 
-.button.accept:hover {
+.modal-overlay .button.accept:hover {
     background: var(--green);
     color: white;
 }
 
-.button.delete {
-    background: var(--border);
-    color: var(--greylight);
-}
-
-.button.delete:hover {
-    background: var(--red);
-    color: white;
-}
-
-.button.confirm {
-    background: var(--orangelight);
-    color: white;
-}
-
-.button.confirm:hover {
-    background: var(--orange);
-    color: white;
-}
-
-.button.delete {
+.modal-overlay .button.delete {
     background: var(--bg);
     color: var(--greylight);
 }
 
-.button.delete:hover {
+.modal-overlay .button.delete:hover {
     background: var(--border);
     color: var(--grey);
 }
 
-.button.red {
+.modal-overlay .button.confirm {
+    background: var(--orangelight);
+    color: white;
+}
+
+.modal-overlay .button.confirm:hover {
+    background: var(--orange);
+    color: white;
+}
+
+.modal-overlay .button.red {
     background: var(--red);
     color: white;
 }
 
-.button.red:hover {
+.modal-overlay .button.red:hover {
     background: #a50000;
     color: white;
 }
 
-.button.green {
+.modal-overlay .button.green {
     background: var(--green);
     color: white;
 }
 
-.button.green:hover {
+.modal-overlay .button.green:hover {
     background: #15622c;
     color: white;
 }

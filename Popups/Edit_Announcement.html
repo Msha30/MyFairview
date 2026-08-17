@@ -7,25 +7,15 @@
         <label class="form-label dia">Note: Only the title and message are editable.</label>
         <div class="form-row add">
             <label class="form-label">Title</label>
-            <input class="form-input" type="text" value="Lorem Ipsum">
+            <input id="editAnnTitle" class="form-input" type="text">
         </div>
         <div class="form-row add">
             <label class="form-label">Message</label>
-            <textarea
-                class="form-input big">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore.</textarea>
+            <textarea id="editAnnMessage" class="form-input big"></textarea>
         </div>
         <div class="buttons">
-            <button class="button delete">Cancel</button>
-            <button class="button confirm">Save</button>
+            <button id="cancelEditAnnBtn" class="button delete">Cancel</button>
+            <button id="saveEditAnnBtn" class="button confirm">Save</button>
         </div>
     </div>
 </div>
-<style>
-    @import url("../Styles/Fonts.css");
-    @import url("../Styles/Variables.css");
-    @import url("../CSS/Popups.css");
-
-    .contentadd {
-        width: 400px;
-    }
-</style>
