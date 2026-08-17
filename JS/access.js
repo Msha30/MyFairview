@@ -50,15 +50,28 @@ async function loadStaffTable() {
         
         querySnapshot.forEach((docSnap) => {
             const staff = docSnap.data();
-            const mNameInitial = staff.mName ? staff.mName.charAt(0) + '.' : '';
-            const fullName = `${staff.lName}, ${staff.fName} ${mNameInitial}`.trim();
-            
+
+            // Clean inputs and handle spaces/blank strings
+            const fName = (staff.fName || "").trim();
+            const lName = (staff.lName || "").trim();
+            const mName = (staff.mName || "").trim();
+            const mNameInitial = mName ? `${mName.charAt(0)}.` : "";
+
+            // Omit comma if middle name or last name is missing/blank
+            const fullName = (lName && mName)
+                ? `${lName}, ${fName} ${mNameInitial}`.trim()
+                : [fName, mNameInitial, lName].filter(Boolean).join(" ");
+
+            // Safe avatar initials fallback
+            const fInitial = fName ? fName.charAt(0) : "";
+            const lInitial = lName ? lName.charAt(0) : "";
+
             // Added data-id to the tr and an inline pointer cursor for UX
             const row = `
                 <tr class="tableRow" data-id="${staff.staffID}" style="cursor: pointer;">
                     <td class="user-section">
                         <div class="user-avatar ${staff.role === 'Super Admin' ? 'super' : (staff.role ? 'admin' : 'none')}">
-                            ${staff.fName.charAt(0)}${staff.lName.charAt(0)}
+                            ${fInitial}${lInitial}
                         </div>
                         <div class="user-info">
                             <strong>${fullName}</strong><br>
@@ -77,11 +90,10 @@ async function loadStaffTable() {
         const rows = tbody.querySelectorAll(".tableRow");
         rows.forEach(row => {
             row.addEventListener("click", (e) => {
-                // Prevent row click if the user specifically clicked the 'Edit' button
                 if (e.target.classList.contains("edit")) return;
                 
                 const staffID = row.getAttribute("data-id");
-                openStaffModal(staffID, false); // false = View Mode
+                openStaffModal(staffID, false);
             });
         });
 
@@ -90,9 +102,9 @@ async function loadStaffTable() {
         editButtons.forEach(btn => {
             btn.addEventListener("click", (e) => {
                 e.preventDefault();
-                e.stopPropagation(); // Stops the row click event from firing simultaneously
+                e.stopPropagation();
                 const staffID = e.target.getAttribute("data-id");
-                openStaffModal(staffID, true); // true = Edit Mode
+                openStaffModal(staffID, true);
             });
         });
 

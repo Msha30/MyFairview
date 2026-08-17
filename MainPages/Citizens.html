@@ -8,6 +8,7 @@
     <link rel="stylesheet" href="../CSS/Components.css">
     <link rel="stylesheet" href="../CSS/Citizens.css">
     <script type="module" src="../JS/subpage_guard.js"></script>
+    <script type="module" src="../JS/Popup_Citizens.js"></script>
 </head>
 
 <body>
@@ -32,21 +33,22 @@
                 <input id="search" type="text" placeholder="Search...">
             </div>
             <div class="form-selectbg">
-                <select class="form-select" style="width:150px;">
-                    <option>All Subdivision</option>
-                    <option>Subdivision 1</option>
-                    <option>Subdivision 2</option>
-                    <option>Subdivision 3</option>
-                    <option>No Subdivision</option>
-                    <option>Condominium</option>
+                <select id="areaFilter" class="form-select" style="width:150px;">
+                    <option value="all">All Subdivision</option>
+                    <option value="subdivision 1">Subdivision 1</option>
+                    <option value="subdivision 2">Subdivision 2</option>
+                    <option value="subdivision 3">Subdivision 3</option>
+                    <option value="no subdivision">No Subdivision</option>
+                    <option value="condominium">Condominium</option>
+                    <option value="other">Other</option>
                 </select>
             </div>
             <div class="form-selectbg">
-                <select class="form-select" style="width:100px;">
-                    <option>All Users</option>
-                    <option>Verified</option>
-                    <option>Unverified</option>
-                    <option>Invalid</option>
+                <select id="statusFilter" class="form-select" style="width:100px;">
+                    <option value="all">All Users</option>
+                    <option value="verified">Verified</option>
+                    <option value="unverified">Unverified</option>
+                    <option value="invalid">Invalid</option>
                 </select>
             </div>
         </div>
@@ -67,62 +69,7 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <tr class="tableRow" onclick="openInfoCitizens()">
-                        <td class="user-section">
-                            <div class="user-avatar verified">LI</div>
-                            <div class="user-info">
-                                <strong>Surname, First Name M.</strong><br>
-                                <span>BFV-26-00067</span>
-                            </div>
-                        </td>
-                        <td>Subdivision</td>
-                        <td>Female</td>
-                        <td>Mar 14, 1990</td>
-                        <td>0994 123 4567</td>
-                        <td><span class="badge verified">● Verified</span></td>
-                    </tr>
-                    <tr class="tableRow" onclick="openInfoCitizens()">
-                        <td class="user-section">
-                            <div class="user-avatar verified">LI</div>
-                            <div class="user-info">
-                                <strong>Surname, First Name M.</strong><br>
-                                <span>BFV-26-00067</span>
-                            </div>
-                        </td>
-                        <td>Subdivision</td>
-                        <td>Female</td>
-                        <td>Mar 14, 1990</td>
-                        <td>0994 123 4567</td>
-                        <td><span class="badge verified">● Verified</span></td>
-                    </tr>
-                    <tr class="tableRow" onclick="openInfoCitizens()">
-                        <td class="user-section">
-                            <div class="user-avatar unverified">LI</div>
-                            <div class="user-info">
-                                <strong>Surname, First Name M.</strong><br>
-                                <span>BFV-26-00067</span>
-                            </div>
-                        </td>
-                        <td>Subdivision</td>
-                        <td>Female</td>
-                        <td>Mar 14, 1990</td>
-                        <td>0994 123 4567</td>
-                        <td><span class="badge unverified">◉ Unverified</span></td>
-                    </tr>
-                    <tr class="tableRow" onclick="openInfoCitizens()">
-                        <td class="user-section">
-                            <div class="user-avatar invalid">LI</div>
-                            <div class="user-info">
-                                <strong>Surname, First Name M.</strong><br>
-                                <span>BFV-26-00067</span>
-                            </div>
-                        </td>
-                        <td>Subdivision</td>
-                        <td>Female</td>
-                        <td>Mar 14, 1990</td>
-                        <td>0994 123 4567</td>
-                        <td><span class="badge invalid">● Invalid</span></td>
-                    </tr>
+                    <!-- Rows -->
                 </tbody>
             </table>
         </div>
@@ -138,6 +85,7 @@
             });
     </script>
     <script src="../JS/Popup_Citizens.js"></script>
+    <script type="module" src="../JS/Citizens.js"></script>
 </body>
 
 </html>

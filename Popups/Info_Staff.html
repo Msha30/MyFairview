@@ -153,32 +153,30 @@
     @import url("../Styles/Variables.css");
     @import url("../CSS/Popups.css");
 
-    .information {
-    width: 100%;
-    border-collapse: collapse;
+    /* Scoped strictly to #staffModal to avoid breaking global/background elements */
+    #staffModal .information {
+        width: 100%;
+        border-collapse: collapse;
     }
 
-    /* Restore native table row display */
-    .row {
+    #staffModal .row {
         display: table-row; 
     }
 
-    /* Restore native table cell display */
-    .row td {
+    #staffModal .row td {
         display: table-cell; 
         vertical-align: middle;
         padding: 6px 0;
         border-bottom: 1px solid var(--border);
     }
 
-    /* Cell column distribution */
-    .row td:first-child {
+    #staffModal .row td:first-child {
         width: 35%;
         font-family: 'InterBold', sans-serif;
         text-align: left;
     }
 
-    .row td:last-child {
+    #staffModal .row td:last-child {
         width: 65%;
         text-align: left;
         padding-left: 15px;

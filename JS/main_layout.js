@@ -68,6 +68,34 @@ if (logoutBtn) {
     });
 }
 
+// 5. Live Alert Timestamp
+function updateLiveTime() {
+    const timeEl = document.getElementById("currentTime");
+    if (!timeEl) return;
+
+    const now = new Date();
+
+    // Format date: "Jun 8, 2026"
+    const dateStr = now.toLocaleDateString("en-US", {
+        month: "short",
+        day: "numeric",
+        year: "numeric"
+    });
+
+    // Format time: "10:42 AM"
+    const timeStr = now.toLocaleTimeString("en-US", {
+        hour: "numeric",
+        minute: "2-digit",
+        hour12: true
+    });
+
+    timeEl.textContent = `${dateStr} · ${timeStr}`;
+}
+
+// Run immediately on page load, then refresh every second
+updateLiveTime();
+setInterval(updateLiveTime, 1000);
+
 /*
 export async function registerUser(fullname, email, password) {
     try {

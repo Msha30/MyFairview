@@ -9,64 +9,66 @@
                     <div class="areatitle">Personal Information</div>
                     <a class="btn editinfo" href="#">Edit</a>
                 </div>
+                <!-- Left Column: Personal Information -->
                 <table class="information">
                     <tr class="row">
                         <td>Surname</td>
-                        <td><input class="input" type="text" value="Lorem Ipsum" disabled></td>
+                        <td><input id="pop-lName" class="input" type="text" value="" disabled></td>
                     </tr>
                     <tr class="row">
                         <td>First Name</td>
-                        <td><input class="input" type="text" value="Lorem Ipsum" disabled></td>
+                        <td><input id="pop-fName" class="input" type="text" value="" disabled></td>
                     </tr>
                     <tr class="row">
                         <td>Middle Name</td>
-                        <td><input class="input" type="text" value="Lorem Ipsum" disabled></td>
+                        <td><input id="pop-mName" class="input" type="text" value="" disabled></td>
                     </tr>
                     <tr class="row">
                         <td>Suffix</td>
-                        <td><input class="input" type="text" value="Lorem Ipsum" disabled></td>
+                        <td><input id="pop-suffix" class="input" type="text" value="" disabled></td>
                     </tr>
                     <tr class="row">
                         <td>Main Contact Number</td>
-                        <td><input class="input edit" type="text" value="Lorem Ipsum"></td>
+                        <td><input id="pop-contactMain" class="input edit" type="text" value=""></td>
                     </tr>
                     <tr class="row">
                         <td>2nd Contact Number</td>
-                        <td><input class="input edit" type="text" value="Lorem Ipsum"></td>
+                        <td><input id="pop-contact2" class="input edit" type="text" value=""></td>
                     </tr>
                     <tr class="row">
                         <td>Date of Birth</td>
-                        <td><input class="input edit" type="text" value="Lorem Ipsum"></td>
+                        <td><input id="pop-birthdate" class="input edit" type="text" value=""></td>
                     </tr>
                     <tr class="row">
                         <td>Area</td>
-                        <td><input class="input edit" type="text" value="Lorem Ipsum"></td>
+                        <td><input id="pop-area" class="input edit" type="text" value=""></td>
                     </tr>
                     <tr class="row wrap">
                         <td>Address</td>
-                        <td><input class="input edit" type="text" value="Lorem Ipsum"></td>
+                        <td><input id="pop-address" class="input edit" type="text" value=""></td>
                     </tr>
                 </table>
 
             </div>
             <div style="display: flex; flex-direction: column; gap: 15px;">
+                <!-- Right Column: Verification Information -->
                 <div class="infocard">
                     <table class="information">
                         <tr class="row">
                             <td>ID Number</td>
-                            <td>BFV-26-00067</td>
+                            <td id="pop-userID">Loading...</td>
                         </tr>
                         <tr class="row">
                             <td>Registered on</td>
-                            <td>Month 00, 0000</td>
+                            <td id="pop-regDate">Loading...</td>
                         </tr>
                         <tr class="row">
                             <td>Verified on</td>
-                            <td>Month 00, 0000</td>
+                            <td id="pop-verifiedOn">N/A</td> <!-- pendins -->
                         </tr>
                         <tr class="row">
                             <td>Verified by</td>
-                            <td>Lorem Ipsum</td>
+                            <td id="pop-verifiedBy">N/A</td> <!-- pendins -->
                         </tr>
                     </table>
                 </div>
@@ -74,30 +76,30 @@
                     <table class="information">
                         <tr class="row">
                             <td>Status</td>
-                            <td><span class="status verified">Verified</span></td>
+                            <td><span id="pop-status" class="status">Loading...</span></td>
                         </tr>
                         <tr class="row">
                             <td>Valid ID</td>
-                            <td><a class="btn attachment" href="#">Attachment</a></td>
+                            <td><a id="pop-validID" class="btn attachment" href="#" target="_blank">View File</a></td>
                         </tr>
                         <tr class="row wrap">
                             <td>Proof of Residiency</td>
-                            <td><a class="btn attachment" href="#">Attachment</a></td>
+                            <td><a id="pop-residency" class="btn attachment" href="#" target="_blank">View File</a></td>
                         </tr>
                         <tr class="row">
                             <td>Rejected on</td>
-                            <td>Month 00, 0000</td>
+                            <td id="pop-rejectedOn">N/A</td> <!-- pendins -->
                         </tr>
                         <tr class="row">
                             <td>Rejected by</td>
-                            <td>Lorem Ipsum</td>
+                            <td id="pop-rejectedBy">N/A</td> <!-- pendins -->
                         </tr>
                         <tr class="row wrap">
                             <td>Reason</td>
-                            <td>Lorem Ipsum</td>
+                            <td id="pop-reason">N/A</td> <!-- pendins -->
                         </tr>
                     </table>
-                    <div class="buttons">
+                    <div id="pop-verification-btns" class="buttons">
                         <button class="button reject">Reject</button>
                         <button class="button accept">Accept</button>
                     </div>
@@ -105,7 +107,7 @@
                         <button class="button delete">Remove User</button>
                     </div>
                 </div>
-                <button class="button accept">Apply Changes</button>
+                <button id="btn-apply-changes" class="button accept" onclick="applyCitizenChanges()">Apply Changes</button>
             </div>
         </div>
     </div>
