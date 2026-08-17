@@ -41,7 +41,7 @@
                         <tr class="row smol">
                             <td>Email</td>
                             <!-- Email is kept disabled as changing it requires Firebase Auth verification updates -->
-                            <td><input id="edit-email" class="input" type="text" disabled></td>
+                            <td><input id="edit-email" class="input" type="text" disabled placeholder="Email"></td>
                         </tr>
                         <tr class="row wrap smol">
                             <td>Address</td>
@@ -69,9 +69,7 @@
                     <div class="areatitle">System Access</div>
                 </div>
 
-                <!-- ADD THIS SCROLL WRAPPER -->
-                <div class="card-scroll">
-                    <div class="access-list">
+                <div class="access-list">
 
                         <div class="access-row">
                             <div class="access-name">Overview</div>
@@ -155,17 +153,48 @@
     @import url("../Styles/Variables.css");
     @import url("../CSS/Popups.css");
 
+    .information {
+    width: 100%;
+    border-collapse: collapse;
+    }
+
+    /* Restore native table row display */
+    .row {
+        display: table-row; 
+    }
+
+    /* Restore native table cell display */
+    .row td {
+        display: table-cell; 
+        vertical-align: middle;
+        padding: 6px 0;
+        border-bottom: 1px solid var(--border);
+    }
+
+    /* Cell column distribution */
+    .row td:first-child {
+        width: 35%;
+        font-family: 'InterBold', sans-serif;
+        text-align: left;
+    }
+
+    .row td:last-child {
+        width: 65%;
+        text-align: left;
+        padding-left: 15px;
+    }
+
+
     .content {
         max-width: 100%;
-        max-height: 90vh; /* Ensures the modal never exceeds the screen height */
-        overflow-y: auto; /* Adds a scrollbar to the whole modal if viewed on very small screens */
     }
 
     .grid-2 {
+        overflow: auto;
         display: grid;
         grid-template-columns: 1fr 1.3fr;
         gap: var(--cardgap);
-        align-items: start; /* FIXED: Prevents the left column from stretching to match the right */
+        align-items: stretch;
     }
 
     .areatitle {
@@ -182,22 +211,13 @@
         padding-left: 30px;
     }
 
-    /* FIXED: Set a specific height so the scrollbar activates */
     .infocard.access {
-        display: flex;
-        flex-direction: column;
-        height: 600px; /* Adjust this to match your desired modal height */
-    }
-
-    /* NEW: Matches the scroll behavior from Add_Staff.html */
-    .card-scroll {
-        flex: 1;
-        overflow-y: auto;
-        padding-right: 10px; /* Prevents scrollbar from overlapping text */
+        height: 100%;
     }
 
     .access-list {
         width: 100%;
+        flex: 1;
         display: flex;
         flex-direction: column;
     }

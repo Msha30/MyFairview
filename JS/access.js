@@ -53,8 +53,9 @@ async function loadStaffTable() {
             const mNameInitial = staff.mName ? staff.mName.charAt(0) + '.' : '';
             const fullName = `${staff.lName}, ${staff.fName} ${mNameInitial}`.trim();
             
+            // Added data-id to the tr and an inline pointer cursor for UX
             const row = `
-                <tr class="tableRow">
+                <tr class="tableRow" data-id="${staff.staffID}" style="cursor: pointer;">
                     <td class="user-section">
                         <div class="user-avatar ${staff.role === 'Super Admin' ? 'super' : (staff.role ? 'admin' : 'none')}">
                             ${staff.fName.charAt(0)}${staff.lName.charAt(0)}
@@ -72,12 +73,26 @@ async function loadStaffTable() {
             tbody.insertAdjacentHTML("beforeend", row);
         });
 
+        // ROW CLICK -> Open in View Mode
+        const rows = tbody.querySelectorAll(".tableRow");
+        rows.forEach(row => {
+            row.addEventListener("click", (e) => {
+                // Prevent row click if the user specifically clicked the 'Edit' button
+                if (e.target.classList.contains("edit")) return;
+                
+                const staffID = row.getAttribute("data-id");
+                openStaffModal(staffID, false); // false = View Mode
+            });
+        });
+
+        // EDIT BUTTON CLICK -> Open in Edit Mode
         const editButtons = tbody.querySelectorAll(".btn.edit");
         editButtons.forEach(btn => {
             btn.addEventListener("click", (e) => {
                 e.preventDefault();
+                e.stopPropagation(); // Stops the row click event from firing simultaneously
                 const staffID = e.target.getAttribute("data-id");
-                openEditModal(staffID);
+                openStaffModal(staffID, true); // true = Edit Mode
             });
         });
 
@@ -183,8 +198,8 @@ document.addEventListener("DOMContentLoaded", () => {
     loadStaffTable();
 });
 
-// 8. Open Edit Staff Modal
-async function openEditModal(staffID) {
+// 8. Open Staff Modal (Handles both View and Edit modes)
+async function openStaffModal(staffID, isEditMode = false) {
     try {
         const response = await fetch('../Popups/Info_Staff.html');
         const html = await response.text();
@@ -230,12 +245,30 @@ async function openEditModal(staffID) {
         setEditCheckboxes("evacuation", staff.p_evacPlan);
         setEditCheckboxes("management", staff.p_access);
 
-        // Attach Button Listeners
-        document.querySelector(".button.accept").addEventListener("click", () => saveStaffChanges(staffID));
-        document.querySelector(".button.delete").addEventListener("click", () => removeStaff(staffID));
+        // --- View vs Edit Mode Logic ---
+        if (!isEditMode) {
+            // VIEW MODE: Make text read-only, disable checkboxes, and hide action buttons
+            const allInputs = document.querySelectorAll('#staffModal input');
+            allInputs.forEach(input => {
+                if (input.type === 'checkbox') {
+                    input.disabled = true;
+                } else {
+                    input.readOnly = true; 
+                    input.style.cursor = 'default';
+                }
+            });
+            
+            // Hide "Apply Changes" and "Remove Staff" buttons
+            const actionButtons = document.querySelector('#staffModal .buttons');
+            if (actionButtons) actionButtons.style.display = 'none';
+        } else {
+            // EDIT MODE: Attach Button Listeners
+            document.querySelector(".button.accept").addEventListener("click", () => saveStaffChanges(staffID));
+            document.querySelector(".button.delete").addEventListener("click", () => removeStaff(staffID));
+        }
 
     } catch (err) {
-        console.error("Error opening edit modal:", err);
+        console.error("Error opening modal:", err);
     }
 }
 
