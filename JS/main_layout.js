@@ -62,23 +62,20 @@ if (userSection && userDropdown) {
 // 4. Fetch and inject Dialog_Logout.html on page load
 document.addEventListener("DOMContentLoaded", async () => {
     try {
-        // Adjust path if Dialog_Logout.html is in a subfolder (e.g., "Popups/Dialog_Logout.html")
-        const response = await fetch("Popups/Dialog_Logout.html");
+        const response = await fetch("Popups/Dialog_Logout.html"); // Adjust path if inside a folder like "Popups/Dialog_Logout.html"
         if (response.ok) {
             const html = await response.text();
             const container = document.getElementById("popup-container");
             if (container) {
                 container.innerHTML = html;
             }
-        } else {
-            console.error("Failed to load Dialog_Logout.html");
         }
     } catch (err) {
         console.error("Error loading logout dialog:", err);
     }
 });
 
-// 5. Logout Action - Open Modal instead of logging out directly
+// 5. Logout Action - Open Modal
 if (logoutBtn) {
     logoutBtn.addEventListener("click", (e) => {
         e.preventDefault();
