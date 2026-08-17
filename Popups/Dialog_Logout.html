@@ -1,7 +1,7 @@
-<link rel="stylesheet" href="../CSS/Components.css">
-<link rel="stylesheet" href="../CSS/Popups.css">
 
-<div id="dialogLogout" class="modal-overlay">
+<link rel="stylesheet" href="CSS/Popups.css">
+
+<div id="dialogLogout" class="modal-overlay" style="display: none;">
     <div class="contentadd">
         <div class="diatitle mid">Confirm Logout</div>
         <div class="form-row dia mid">
@@ -9,15 +9,15 @@
         </div>
 
         <div class="buttons">
-            <button class="button delete">Cancel</button>
-            <button class="button red">Logout</button>
+            <button id="cancelLogoutBtn" class="button delete">Cancel</button>
+            <button id="confirmLogoutBtn" class="button red">Logout</button>
         </div>
     </div>
 </div>
 <style>
-    @import url("../Styles/Fonts.css");
-    @import url("../Styles/Variables.css");
-    @import url("../CSS/Popups.css");
+    @import url("Styles/Fonts.css");
+    @import url("Styles/Variables.css");
+    @import url("CSS/Popups.css");
 
     .contentadd {
         width: 300px;

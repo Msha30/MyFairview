@@ -21,8 +21,6 @@ onAuthStateChanged(auth, async (user) => {
 
         if (!querySnapshot.empty) {
             const userData = querySnapshot.docs[0].data();
-            
-            // Targets elements inside userSection
             const userNameEl = document.querySelector(".user-name") || document.getElementById("userName");
             const userRoleEl = document.querySelector(".user-role") || document.getElementById("userRole");
 
@@ -61,28 +59,70 @@ if (userSection && userDropdown) {
     });
 }
 
-// 4. Logout Action
+// 4. Fetch and inject Dialog_Logout.html on page load
+document.addEventListener("DOMContentLoaded", async () => {
+    try {
+        // Adjust path if Dialog_Logout.html is in a subfolder (e.g., "Popups/Dialog_Logout.html")
+        const response = await fetch("Popups/Dialog_Logout.html");
+        if (response.ok) {
+            const html = await response.text();
+            const container = document.getElementById("popup-container");
+            if (container) {
+                container.innerHTML = html;
+            }
+        } else {
+            console.error("Failed to load Dialog_Logout.html");
+        }
+    } catch (err) {
+        console.error("Error loading logout dialog:", err);
+    }
+});
+
+// 5. Logout Action - Open Modal instead of logging out directly
 if (logoutBtn) {
-    logoutBtn.addEventListener("click", async () => {
-        await logout();
+    logoutBtn.addEventListener("click", (e) => {
+        e.preventDefault();
+        if (userDropdown) {
+            userDropdown.classList.add("hidden");
+        }
+
+        const dialogLogout = document.getElementById("dialogLogout");
+        if (dialogLogout) {
+            dialogLogout.style.display = "flex";
+        }
     });
 }
 
-// 5. Live Alert Timestamp
+// 6. Handle Modal Actions (Cancel, Confirm Logout, Outside Click) via Event Delegation
+document.addEventListener("click", async (e) => {
+    const dialogLogout = document.getElementById("dialogLogout");
+    if (!dialogLogout) return;
+
+    // Close modal if clicking "Cancel" or clicking the dark background overlay
+    if (e.target.id === "cancelLogoutBtn" || e.target === dialogLogout) {
+        dialogLogout.style.display = "none";
+    }
+
+    // Execute logout when confirming
+    if (e.target.id === "confirmLogoutBtn") {
+        const confirmBtn = e.target;
+        confirmBtn.textContent = "Logging out...";
+        confirmBtn.disabled = true;
+        await logout();
+    }
+});
+
+// 7. Live Alert Timestamp
 function updateLiveTime() {
     const timeEl = document.getElementById("currentTime");
     if (!timeEl) return;
 
     const now = new Date();
-
-    // Format date: "Jun 8, 2026"
     const dateStr = now.toLocaleDateString("en-US", {
         month: "short",
         day: "numeric",
         year: "numeric"
     });
-
-    // Format time: "10:42 AM"
     const timeStr = now.toLocaleTimeString("en-US", {
         hour: "numeric",
         minute: "2-digit",
@@ -92,7 +132,6 @@ function updateLiveTime() {
     timeEl.textContent = `${dateStr} · ${timeStr}`;
 }
 
-// Run immediately on page load, then refresh every second
 updateLiveTime();
 setInterval(updateLiveTime, 1000);
 
