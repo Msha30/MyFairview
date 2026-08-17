@@ -1,7 +1,7 @@
 <link rel="stylesheet" href="../CSS/Components.css">
 <link rel="stylesheet" href="../CSS/Popups.css">
 
-<div id="addEvacCenter" class="modal-overlay">
+<div id="reportsMapModal" class="modal-overlay" style="display: flex;">
     <div class="contentadd">
         <div class="areaheader">
             <div class="areatitle">Reports Map</div>
@@ -11,11 +11,25 @@
             <span class="badge b2">Public Safety</span>
             <span class="badge b3">Community Report</span>
         </div>
-        <div class="card">
-            *MAP HERE*
-        </div>
+        <div id="reportsMapCard" class="card" style="width: 800px; height: 400px; border-radius: 8px;"></div>
     </div>
 </div>
+
+<script type="module">
+    import { initCardMap } from "../JS/gmapComponent.js";
+
+    document.addEventListener("DOMContentLoaded", () => {
+        const reportsCenter = { lat: 14.6760, lng: 121.0437 }; // Fairview Center
+        const reportMarkers = [
+            { lat: 14.6770, lng: 121.0425, title: "Emergency Report #01", snippet: "Status: Pending Assistance" },
+            { lat: 14.6750, lng: 121.0450, title: "Public Safety Advisory", snippet: "Status: Monitored" },
+            { lat: 14.6735, lng: 121.0415, title: "Community Report", snippet: "Status: Resolved" }
+        ];
+
+        initCardMap("reportsMapCard", reportsCenter, 15, reportMarkers);
+    });
+</script>
+
 <style>
     @import url("../Styles/Fonts.css");
     @import url("../Styles/Variables.css");
@@ -30,6 +44,7 @@
         display: flex;
         flex-direction: row;
         gap: 10px;
+        margin-bottom: 10px;
     }
 
     .badge {

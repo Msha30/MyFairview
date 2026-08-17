@@ -88,9 +88,24 @@
         <!-- ═══════════════════════════════════════════════ -->
         <!-- ═════════════════════ MAP ═════════════════════ -->
         <!-- ═══════════════════════════════════════════════ -->
-        <div class="card">
-            *MAP HERE*
+        <div class="card white">
+            <div class="cardtitle">Fleet Geographic Overview</div>
+            <div id="vehicleMapCard" style="width: 100%; height: 350px; border-radius: 8px; margin-top: 10px;"></div>
         </div>
+
+        <script type="module">
+            import { initCardMap } from "../JS/gmapComponent.js";
+
+            document.addEventListener("DOMContentLoaded", () => {
+                const stationCenter = { lat: 14.6760, lng: 121.0437 }; // Fairview center
+                const vehicleMarkers = [
+                    { lat: 14.6765, lng: 121.0420, title: "PLT 0001 — Ambulance", snippet: "Status: Available" },
+                    { lat: 14.6740, lng: 121.0450, title: "PLT 0002 — Rescue Truck", snippet: "Status: Deployed" }
+                ];
+
+                initCardMap("vehicleMapCard", stationCenter, 14, vehicleMarkers);
+            });
+        </script>
     </div>
 </body>
 
