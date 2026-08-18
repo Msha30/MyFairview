@@ -73,7 +73,7 @@
                     </div>
                     <span class="stat-trend dd">Details ></span>
                 </div>
-                <div class="stat-val">0.00m</div>
+                <div class="stat-val" id="currentWaterLevel">-- m</div>
                 <div class="stat-label">Current Water Level</div>
             </div>
 
@@ -92,25 +92,26 @@
                 </div>
             </div>
             <div class="card-status">
-                <div class="status a">
-                    <span class="level a">Safe</span>
-                    <span class="range">00m - 00m</span>
+                <div class="status safe" data-status="Safe">
+                    <span class="level">Safe</span>
+                    <span class="range" id="range-Safe">00m - 00m</span>
                 </div>
-                <div class="status b active">
-                    <span class="level b">Monitor</span>
-                    <span class="range">00m - 00m</span>
+                <div class="status monitor" data-status="Monitor">
+                    <span class="level">Monitor</span>
+                    <span class="range" id="range-Monitor">00m - 00m</span>
                 </div>
-                <div class="status c">
-                    <span class="level c">Warning</span>
-                    <span class="range">00m - 00m</span>
+                <div class="status warning" data-status="Warning">
+                    <span class="level">Warning</span>
+                    <span class="range" id="range-Warning">00m - 00m</span>
                 </div>
-                <div class="status d">
+                <div class="status d" data-status="Critical">
                     <span class="level d">Critical</span>
-                    <span class="range">00m - 00m</span>
+                    <span class="range" id="range-Critical">00m - 00m</span>
                 </div>
             </div>
         </div>
         <script type="module" src="../JS/WaterChart.js"></script>
+        <script type="module" src="../JS/OverviewWater.js"></script>
 
         <!-- ═══════════════════════════════════════════════ -->
         <!-- ═════════════════ SUBSIVISION ═════════════════ -->
