@@ -1,6 +1,5 @@
-import { auth, firestore, logout } from "./auth.js";
+import { auth, logout, getStaffProfile } from "./auth.js";
 import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.17.0/firebase-auth.js";
-import { collection, query, where, getDocs } from "https://www.gstatic.com/firebasejs/12.17.0/firebase-firestore.js";
 
 const userSection = document.getElementById("userSection");
 const userDropdown = document.getElementById("userDropdown");
@@ -13,25 +12,28 @@ onAuthStateChanged(auth, async (user) => {
         return;
     }
 
-    // Fetch user details from Firestore Info_Staff collection
+    // Only Info_Staff accounts may use this admin console. A signed-in Firebase
+    // Auth user who isn't staff (e.g. loaded MainLayout.html directly with a
+    // resident session) gets signed out and bounced back to the login page.
+    let userData = null;
     try {
-        const staffRef = collection(firestore, "Info_Staff");
-        const q = query(staffRef, where("uid", "==", user.uid));
-        const querySnapshot = await getDocs(q);
-
-        if (!querySnapshot.empty) {
-            const userData = querySnapshot.docs[0].data();
-            const userNameEl = document.querySelector(".user-name") || document.getElementById("userName");
-            const userRoleEl = document.querySelector(".user-role") || document.getElementById("userRole");
-
-            const fullName = `${userData.fName || ""} ${userData.lName || ""}`.trim() || "Administrator";
-
-            if (userNameEl) userNameEl.textContent = fullName;
-            if (userRoleEl) userRoleEl.textContent = userData.role || "Staff";
-        }
+        userData = await getStaffProfile(user.uid);
     } catch (err) {
-        console.error("Error fetching staff profile:", err);
+        console.error("Error verifying staff account:", err);
     }
+
+    if (!userData) {
+        await logout();
+        return;
+    }
+
+    const userNameEl = document.querySelector(".user-name") || document.getElementById("userName");
+    const userRoleEl = document.querySelector(".user-role") || document.getElementById("userRole");
+
+    const fullName = `${userData.fName || ""} ${userData.lName || ""}`.trim() || "Administrator";
+
+    if (userNameEl) userNameEl.textContent = fullName;
+    if (userRoleEl) userRoleEl.textContent = userData.role || "Staff";
 });
 
 // 2. Parse URL parameters for iframe navigation
