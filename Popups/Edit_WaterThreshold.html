@@ -1,7 +1,7 @@
 <link rel="stylesheet" href="../CSS/Components.css">
 <link rel="stylesheet" href="../CSS/Popups.css">
 
-<div id="editWaterThreshold" class="modal-overlay">
+<div id="editWaterThreshold" class="modal-overlay" style="display: none;">
     <div class="contentadd">
         <div class="diatitle">Edit Water Level Threshold</div>
         <div class="grid">
@@ -11,16 +11,14 @@
                     <div>
                         <label class="form-label top">Threshold</label>
                         <div class="thres">
-
                             <div class="thres-item">
                                 <input class="form-input" type="number" value="00">
-                                <label class="ft">ft</label>
+                                <label class="ft">m</label>
                             </div>
-
                             <label class="dash">–</label>
                             <div class="thres-item">
                                 <input class="form-input" type="number" value="00">
-                                <label class="ft">ft</label>
+                                <label class="ft">m</label>
                             </div>
                         </div>
                     </div>
@@ -36,16 +34,14 @@
                     <div>
                         <label class="form-label top">Threshold</label>
                         <div class="thres">
-
                             <div class="thres-item">
                                 <input class="form-input" type="number" value="00">
-                                <label class="ft">ft</label>
+                                <label class="ft">m</label>
                             </div>
-
                             <label class="dash">–</label>
                             <div class="thres-item">
                                 <input class="form-input" type="number" value="00">
-                                <label class="ft">ft</label>
+                                <label class="ft">m</label>
                             </div>
                         </div>
                     </div>
@@ -61,16 +57,14 @@
                     <div>
                         <label class="form-label top">Threshold</label>
                         <div class="thres">
-
                             <div class="thres-item">
                                 <input class="form-input" type="number" value="00">
-                                <label class="ft">ft</label>
+                                <label class="ft">m</label>
                             </div>
-
                             <label class="dash">–</label>
                             <div class="thres-item">
                                 <input class="form-input" type="number" value="00">
-                                <label class="ft">ft</label>
+                                <label class="ft">m</label>
                             </div>
                         </div>
                     </div>
@@ -86,16 +80,14 @@
                     <div>
                         <label class="form-label top">Threshold</label>
                         <div class="thres">
-
                             <div class="thres-item">
                                 <input class="form-input" type="number" value="00">
-                                <label class="ft">ft</label>
+                                <label class="ft">m</label>
                             </div>
-
                             <label class="dash">–</label>
                             <div class="thres-item">
                                 <input class="form-input" type="number" value="00">
-                                <label class="ft">ft</label>
+                                <label class="ft">m</label>
                             </div>
                         </div>
                     </div>
@@ -117,23 +109,23 @@
     @import url("../Styles/Variables.css");
     @import url("../CSS/Popups.css");
 
-    .contentadd {
+    #editWaterThreshold .contentadd {
         width: 700px;
     }
 
-    .grid {
+    #editWaterThreshold .grid {
         display: grid;
         grid-template-rows: 1fr 1fr 1fr 1fr;
         gap: 10px;
     }
 
-    .item {
+    #editWaterThreshold .item {
         padding: 15px;
         border-radius: var(--radsmall);
         border: 1px solid var(--border);
     }
 
-    .dot {
+    #editWaterThreshold .dot {
         display: inline-flex;
         align-items: center;
         font-size: 12px;
@@ -146,69 +138,69 @@
         -webkit-user-drag: none;
     }
 
-    .form-input {
+    #editWaterThreshold .form-input {
         background: white;
     }
 
-    .form-label.top {
+    #editWaterThreshold .form-label.top {
         margin-top: 15px;
     }
 
-    .type {
+    #editWaterThreshold .type {
         font-family: 'InterSemiBold', sans-serif;
         font-size: var(--textbig);
     }
 
-    .item.safe .dot,
-    .item.safe .type {
+    #editWaterThreshold .item.safe .dot,
+    #editWaterThreshold .item.safe .type {
         color: var(--greenlight);
     }
 
-    .item.monitor .dot,
-    .item.monitor .type {
+    #editWaterThreshold .item.monitor .dot,
+    #editWaterThreshold .item.monitor .type {
         color: var(--orange);
     }
 
-    .item.warning .dot,
-    .item.warning .type {
+    #editWaterThreshold .item.warning .dot,
+    #editWaterThreshold .item.warning .type {
         color: var(--red);
     }
 
-    .item.critical .dot,
-    .item.critical .type {
+    #editWaterThreshold .item.critical .dot,
+    #editWaterThreshold .item.critical .type {
         color: var(--bluedark);
     }
 
-    .item.safe {
+    #editWaterThreshold .item.safe {
         background: var(--greenfaded);
     }
 
-    .item.monitor {
+    #editWaterThreshold .item.monitor {
         background: var(--orangefaded);
     }
 
-    .item.warning {
+    #editWaterThreshold .item.warning {
         background: var(--redfaded);
     }
 
-    .item.critical {
+    #editWaterThreshold .item.critical {
         background: var(--bluefaded);
     }
 
-    .form {
+    #editWaterThreshold .form {
         display: grid;
         grid-template-columns: 0.6fr 1fr;
         gap: 20px;
     }
 
-    .thres {
+    #editWaterThreshold .thres {
         display: flex;
         flex-direction: row;
         align-items: center;
         gap: 5px;
     }
 
-    .thres-item {
+    #editWaterThreshold .thres-item {
         display: flex;
         flex-direction: row;
         align-items: center;
@@ -220,26 +212,26 @@
         outline: none;
     }
 
-    .form-input {
+    #editWaterThreshold .form-input {
         border: none;
         text-align: end;
         padding: 10px 5px 10px;
     }
 
-    .message {
+    #editWaterThreshold .message {
         border: 1px solid var(--border);
         padding: 10px;
         text-align: start;
     }
 
-    .ft {
+    #editWaterThreshold .ft {
         font-size: var(--textbig);
         font-family: 'Inter', sans-serif;
         color: var(--grey);
         display: block;
     }
 
-    .dash {
+    #editWaterThreshold .dash {
         font-size: var(--textbig);
         font-family: 'InterSemiBold', sans-serif;
         color: var(--black);
