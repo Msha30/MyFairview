@@ -8,22 +8,28 @@
         </div>
         <div class="form-row add">
             <label class="form-label">Place Name</label>
-            <input class="form-input" type="text" placeholder="Enter Name...">
+            <input id="addEvacName" class="form-input" type="text" placeholder="Enter Name...">
         </div>
         <div class="form-row add">
             <label class="form-label">Full Address</label>
-            <input class="form-input" type="text" placeholder="Enter Address...">
+            <!-- Real coordinates come from the map pin/search select below, not from typing here -->
+            <div id="addEvacAddressContainer"></div>
+            <div id="addEvacSelectedAddress" class="address-readout"></div>
         </div>
         <div class="form-row add">
             <label class="form-label">Capacity</label>
-            <input class="form-input" type="number" placeholder="Enter Capacity...">
+            <input id="addEvacCapacity" class="form-input" type="number" placeholder="Enter Capacity...">
         </div>
-        <div class="card">
-            *MAP HERE*
+        <div class="form-row add">
+            <label class="form-label">Pin Location</label>
+            <div class="card">
+                <div id="addEvacMapCard" style="width: 100%; height: 100%; border-radius: 8px;"></div>
+            </div>
+            <div class="address-hint">Click the map to drop the pin — that's the exact location that gets saved.</div>
         </div>
         <div class="buttons">
-            <button class="button delete">Cancel</button>
-            <button class="button confirm">Add Location</button>
+            <button id="cancelAddEvacBtn" class="button delete">Cancel</button>
+            <button id="confirmAddEvacBtn" class="button confirm">Add Location</button>
         </div>
 
     </div>
@@ -33,8 +39,43 @@
     @import url("../Styles/Variables.css");
     @import url("../CSS/Popups.css");
 
-    .card {
-        width: 400px;
+    #addEvacCenter .contentadd {
+        width: 420px;
+    }
+
+    #addEvacCenter .card {
+        width: 100%;
         height: 220px;
+        padding: 0;
+        overflow: hidden;
+    }
+
+    /* PlaceAutocompleteElement theming.
+       It defaults to "color-scheme: light dark", which lets it render with a
+       dark/black surface depending on the browser/OS theme. Forcing
+       color-scheme + background-color + color keeps it matching the rest
+       of the form regardless of the user's system theme. */
+    #addEvacCenter gmp-place-autocomplete {
+        width: 100%;
+        display: block;
+        color-scheme: light;
+        background-color: #fff;
+        color: #1a1a1a;
+        border: 1px solid var(--border);
+        border-radius: 8px;
+        font-family: inherit;
+        font-size: var(--textreg);
+    }
+    #addEvacCenter .address-readout {
+        margin-top: 6px;
+        font-size: var(--textsmall);
+        color: #333;
+        min-height: 1em;
+        font-weight: 600;
+    }
+    #addEvacCenter .address-hint {
+        margin-top: 6px;
+        font-size: var(--textsmall);
+        color: #999;
     }
 </style>

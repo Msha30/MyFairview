@@ -3,6 +3,8 @@ import { getFirestore, collection, getDocs } from "https://www.gstatic.com/fireb
 import { initCardMap } from "./gmapComponent.js";
 import { loadGoogleMaps } from "./gmaps.js";
 import { database, app } from "./auth.js"; // Ensure app is exported from auth.js to init firestore
+import { isValidLatLng, dropPin, computeAndDrawRoute } from "./map-helper.js";
+import { showToast } from "./toast.js";
 
 const db = database;
 const firestore = getFirestore(app);
@@ -13,46 +15,6 @@ let allVehiclesData = {};
 let verifiedUsers = []; // Cache for Firestore users
 const stationCenter = { lat: 14.6760, lng: 121.0437 };
 const MAP_ID = "MYFAIRVIEW_MAP_ID"; // Required for AdvancedMarkerElement / Route markers
-
-// --- Shared map helpers (used by both the Deploy modal and the Deployed-Info modal) ---
-// The map is the source of truth for "where is this vehicle / where is it headed".
-// Addresses are just human-readable labels — we never treat a typed/saved address
-// string as coordinates. Only real lat/lng data (from a map click, a resolved
-// autocomplete Place, or a contact's saved pinLocation) ever produces a marker or route.
-
-function isValidLatLng(loc) {
-    return !!loc && Number.isFinite(loc.lat) && Number.isFinite(loc.lng);
-}
-
-function dropPin(markerLib, map, location, color = "#EA4335", borderColor = "#B31412") {
-    if (!isValidLatLng(location)) {
-        console.warn("dropPin: ignored invalid location", location);
-        return null;
-    }
-    const pin = new markerLib.PinElement({ background: color, borderColor, glyphColor: "#FFFFFF" });
-    return new markerLib.AdvancedMarkerElement({ position: location, map, content: pin.element });
-}
-
-async function computeAndDrawRoute(routeLib, map, start, end) {
-    if (!isValidLatLng(start) || !isValidLatLng(end)) {
-        console.warn("computeAndDrawRoute: ignored invalid start/end", start, end);
-        return [];
-    }
-    try {
-        const { Route } = routeLib;
-        const { routes } = await Route.computeRoutes({ origin: start, destination: end, travelMode: "DRIVING", fields: ["path"] });
-        if (!routes || !routes.length) {
-            console.warn("No route found between the given points.");
-            return [];
-        }
-        const polylines = routes[0].createPolylines();
-        polylines.forEach(p => p.setMap(map));
-        return polylines;
-    } catch (err) {
-        console.error("Failed to compute route:", err);
-        return [];
-    }
-}
 
 document.addEventListener("DOMContentLoaded", async () => {
     await loadExternalModals();
@@ -168,14 +130,19 @@ function setupAddVehicle() {
 
     document.getElementById("confirmAddVehicleBtn")?.addEventListener("click", async () => {
         const plate = document.getElementById("addPlateNo").value.trim().toUpperCase();
-        if (!plate) return alert("Plate required");
-        await set(ref(db, `vehicles/${plate.replace(/\s+/g, "")}`), {
-            plateNo: plate, vehicleModel: document.getElementById("addModel").value.trim(),
-            vehicleColor: document.getElementById("addColor").value.trim(), capacity: parseInt(document.getElementById("addCapacity").value) || 0,
-            deployed: false, currentLoc: stationCenter, addedBy: "Admin", addedOn: new Date().toISOString(), details: "", contactPerson: "", targetLoc: ""
-        });
-        modal.style.display = "none"; // Closes automatically on success
-        alert("Vehicle Added!");
+        if (!plate) return showToast("Plate number is required.", "error");
+        try {
+            await set(ref(db, `vehicles/${plate.replace(/\s+/g, "")}`), {
+                plateNo: plate, vehicleModel: document.getElementById("addModel").value.trim(),
+                vehicleColor: document.getElementById("addColor").value.trim(), capacity: parseInt(document.getElementById("addCapacity").value) || 0,
+                deployed: false, currentLoc: stationCenter, addedBy: "Admin", addedOn: new Date().toISOString(), details: "", contactPerson: "", targetLoc: ""
+            });
+            modal.style.display = "none"; // Close first so the toast reads as confirmation, not an interruption
+            showToast("Vehicle added.");
+        } catch (err) {
+            console.error("Failed to add vehicle:", err);
+            showToast("Couldn't add vehicle.", "error");
+        }
     });
 }
 
@@ -336,41 +303,56 @@ function setupDeployVehicle() {
     // Deploy logic
     document.getElementById("confirmDeployBtn").onclick = async () => {
         const vId = document.getElementById("deployVehicleSelect").value;
-        if (!vId) return alert("Select a vehicle.");
+        if (!vId) return showToast("Select a vehicle first.", "error");
 
-        await update(ref(db, `vehicles/${vId}`), {
-            deployed: true,
-            contactPerson: document.getElementById("callerInput").value,
-            targetLoc: selectedAddress,
-            targetLocCoords: selectedDestLoc, // real {lat,lng} if we have one, else null
-            details: document.getElementById("deployDetailsInput").value
-        });
-        modal.style.display = "none"; // Closes automatically on success
-        alert("Vehicle Deployed!");
+        try {
+            await update(ref(db, `vehicles/${vId}`), {
+                deployed: true,
+                contactPerson: document.getElementById("callerInput").value,
+                targetLoc: selectedAddress,
+                targetLocCoords: selectedDestLoc, // real {lat,lng} if we have one, else null
+                details: document.getElementById("deployDetailsInput").value
+            });
+            modal.style.display = "none"; // Close first so the toast reads as confirmation, not an interruption
+            showToast("Vehicle deployed.");
+        } catch (err) {
+            console.error("Failed to deploy vehicle:", err);
+            showToast("Couldn't deploy vehicle.", "error");
+        }
     };
 }
 
 // === C. INFO & REMOVE VEHICLE LOGIC ===
 function openAvailableInfo(v, vId) {
     const modal = document.getElementById("infoVehicle");
-    // (Population logic remains the same)
     const inputs = modal.querySelectorAll(".input");
     inputs[0].value = v.plateNo; inputs[1].value = v.vehicleModel;
     inputs[2].value = v.vehicleColor; inputs[3].value = v.capacity;
     modal.style.display = "flex";
 
     modal.querySelector(".button.delete").onclick = async () => {
-        if (confirm(`Remove ${v.plateNo}?`)) {
+        if (!confirm(`Remove ${v.plateNo}?`)) return;
+        try {
             await remove(ref(db, `vehicles/${vId}`));
-            modal.style.display = "none"; // Closes on success
+            modal.style.display = "none"; // Close first so the toast reads as confirmation
+            showToast("Vehicle removed.");
+        } catch (err) {
+            console.error("Failed to remove vehicle:", err);
+            showToast("Couldn't remove vehicle.", "error");
         }
     };
     modal.querySelector(".button.accept").onclick = async () => {
-        await update(ref(db, `vehicles/${vId}`), {
-            plateNo: inputs[0].value, vehicleModel: inputs[1].value,
-            vehicleColor: inputs[2].value, capacity: parseInt(inputs[3].value) || 0
-        });
-        modal.style.display = "none"; // Closes on success
+        try {
+            await update(ref(db, `vehicles/${vId}`), {
+                plateNo: inputs[0].value, vehicleModel: inputs[1].value,
+                vehicleColor: inputs[2].value, capacity: parseInt(inputs[3].value) || 0
+            });
+            modal.style.display = "none";
+            showToast("Changes saved.");
+        } catch (err) {
+            console.error("Failed to update vehicle:", err);
+            showToast("Couldn't save changes.", "error");
+        }
     };
 }
 
@@ -425,9 +407,14 @@ async function openDeployedInfo(v, vId) {
     }
 
     modal.querySelector(".button.accept").onclick = async () => {
-        if (confirm(`Recall ${v.plateNo}?`)) {
+        if (!confirm(`Recall ${v.plateNo}?`)) return;
+        try {
             await update(ref(db, `vehicles/${vId}`), { deployed: false, details: "", targetLoc: "", targetLocCoords: null, contactPerson: "" });
-            modal.style.display = "none"; // Closes on success
+            modal.style.display = "none"; // Close first so the toast reads as confirmation
+            showToast("Vehicle recalled.");
+        } catch (err) {
+            console.error("Failed to recall vehicle:", err);
+            showToast("Couldn't recall vehicle.", "error");
         }
     };
 }

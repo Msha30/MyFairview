@@ -12,15 +12,15 @@
                     <table class="information">
                         <tr class="row">
                             <td>Place Name</td>
-                            <td><input class="input" type="text" value="Lorem Ipsum" disabled></td>
+                            <td><input id="infoEvacName" class="input" type="text" value=""></td>
                         </tr>
                         <tr class="row wrap">
                             <td>Address</td>
-                            <td><input class="input" type="text" value="Lorem Ipsum" disabled></td>
+                            <td><input id="infoEvacAddress" class="input" type="text" value=""></td>
                         </tr>
                         <tr class="row">
                             <td>Capacity</td>
-                            <td><input class="input" type="text" value="Lorem Ipsum" disabled></td>
+                            <td><input id="infoEvacCapacity" class="input" type="text" value=""></td>
                         </tr>
                     </table>
                 </div>
@@ -28,15 +28,15 @@
                     <table class="information">
                         <tr class="row">
                             <td>ID Number</td>
-                            <td>EC-000</td>
+                            <td id="infoEvacIDNum">EC-000</td>
                         </tr>
                         <tr class="row">
                             <td>Added on</td>
-                            <td>Month 00, 0000</td>
+                            <td id="infoEvacAddedOn">Month 00, 0000</td>
                         </tr>
                         <tr class="row">
                             <td>Added by</td>
-                            <td>Lorem Ipsum</td>
+                            <td id="infoEvacAddedBy">—</td>
                         </tr>
                     </table>
                     <button class="button delete">Remove Evacuation Center</button>
@@ -48,8 +48,9 @@
                     <div class="areatitle">Pin Location</div>
                 </div>
                 <div class="card">
-                    *MAP HERE*
+                    <div id="infoEvacMapCard" style="width: 100%; height: 100%; border-radius: 8px;"></div>
                 </div>
+                <div class="address-hint">Click the map to move the pin — saved when you press Apply Changes.</div>
             </div>
 
         </div>
@@ -60,7 +61,7 @@
     @import url("../Styles/Variables.css");
     @import url("../CSS/Popups.css");
 
-    .grid-2 {
+    #infoEvacCenter .grid-2 {
         overflow: auto;
         display: grid;
         grid-template-columns: 1fr 1fr;
@@ -68,17 +69,30 @@
         align-items: start;
     }
 
-    .infocard.loc {
+    #infoEvacCenter .infocard.loc {
         height: 100%;
     }
 
-    .row td:first-child {
+    #infoEvacCenter .card {
+        width: 100%;
+        height: 260px;
+        padding: 0;
+        overflow: hidden;
+    }
+
+    #infoEvacCenter .row td:first-child {
         width: 40%;
         text-align: left;
     }
 
-    .row td:last-child {
+    #infoEvacCenter .row td:last-child {
         text-align: left;
         padding-left: 30px;
+    }
+
+    #infoEvacCenter .address-hint {
+        margin-top: 6px;
+        font-size: var(--textsmall);
+        color: #999;
     }
 </style>
