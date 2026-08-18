@@ -1,4 +1,3 @@
-<link rel="stylesheet" href="../CSS/Components.css">
 <link rel="stylesheet" href="../CSS/Popups.css">
 
 <div id="deployVehicle" class="modal-overlay">
@@ -11,61 +10,41 @@
                 <div class="form-row add">
                     <label class="form-label">Vehicle</label>
                     <div class="form-selectbg">
-                        <select class="form-select">
-                            <option>PLT 0000 | Vehicle 1</option>
-                            <option>PLT 0000 | Vehicle 2</option>
-                        </select>
-                    </div>
-                </div>
-                <div class="form-row add">
-                    <label class="form-label">Type</label>
-                    <div class="form-selectbg">
-                        <select class="form-select">
-                            <option>Barangay Use</option>
-                            <option>Request</option>
-                            <option>Emergency</option>
+                        <select class="form-select" id="deployVehicleSelect">
+                            <option value="">Select a vehicle...</option>
                         </select>
                     </div>
                 </div>
                 <div class="form-row add">
                     <label class="form-label">Contact Person</label>
-
-                    <div class="search-box" id="callerSearchBox">
-                        <input type="text" class="form-input search-input" placeholder="Search name..."
-                            id="callerInput">
-                        <div class="dropdown" id="callerDropdown"></div>
+                    <div class="search-box" id="callerSearchBox" style="position: relative;">
+                        <input type="text" class="form-input search-input" placeholder="Search verified user..." id="callerInput" autocomplete="off">
+                        <div class="dropdown" id="callerDropdown" style="width: 100%;"></div>
                     </div>
                 </div>
                 <div class="form-row add">
-                    <label class="form-label">Location</label>
-                    <div class="form-selectbg">
-                        <select class="form-select">
-                            <option>Custom</option>
-                            <option>Contact Person Location</option>
-                            <option>Contact Person Address</option>
-                        </select>
-                    </div>
-                </div>
-                <div class="form-row add">
-                    <label class="form-label">Address</label>
-                    <textarea class="form-input big" placeholder="Enter Address..."></textarea>
+                    <label class="form-label">Address / Destination</label>
+                    <!-- PlaceAutocompleteElement gets mounted into this container by vehicle-manager.js.
+                         It replaces the old <input id="deployAddressInput"> since the new widget is a
+                         custom element (<gmp-place-autocomplete>), not something you attach to a plain input. -->
+                    <div id="deployAddressContainer"></div>
+                    <div id="deploySelectedAddress" class="address-readout"></div>
+                    <div class="address-hint">Tip: drop a pin on the map for the most accurate destination — searched addresses are approximate.</div>
                 </div>
                 <div class="form-row add">
                     <label class="form-label">Details</label>
-                    <textarea class="form-input big" placeholder="Enter Details..."></textarea>
+                    <textarea id="deployDetailsInput" class="form-input big" placeholder="Enter Details..."></textarea>
                 </div>
                 <div class="buttons">
-                    <button class="button delete">Cancel</button>
-                    <button class="button confirm">Deploy</button>
+                    <button class="button delete" id="cancelDeployBtn">Cancel</button>
+                    <button class="button confirm" id="confirmDeployBtn">Deploy</button>
                 </div>
             </div>
-            <script src="../JS/Search-Dropdown.js"></script>
             <div class="infocard loc">
-                <div class="card">
-                    *MAP HERE*
+                <div class="card" style="padding: 0; overflow: hidden; width: 100%; height: 100%;">
+                    <div id="deployMapCard" style="width: 100%; height: 100%; border-radius: 8px;"></div>
                 </div>
             </div>
-
         </div>
     </div>
 </div>
@@ -74,62 +53,41 @@
     @import url("../Styles/Variables.css");
     @import url("../CSS/Popups.css");
 
-    .grid-2 {
-        overflow: auto;
-        display: grid;
-        grid-template-columns: 1fr 1.5fr;
-        gap: var(--cardgap);
-        align-items: start;
-    }
+    #deployVehicle .grid-2 { overflow: auto; display: grid; grid-template-columns: 1fr 1.5fr; gap: var(--cardgap); align-items: start; }
+    #deployVehicle .infocard.loc { height: 100%; }
+    #deployVehicle .card { width: 400px; }
+    #deployVehicle .dropdown { position: absolute; width: 100%; background: white; border: 1px solid var(--border); border-top: none; max-height: 180px; overflow-y: auto; display: none; z-index: 10; font-size: var(--textreg); }
+    #deployVehicle .dropdown div { padding: 10px; border-bottom: 1px solid var(--border); cursor: pointer; }
+    #deployVehicle .dropdown div:hover { background: var(--orangefaded); }
+    #deployVehicle .item .title { display: block; font-weight: 600; }
+    #deployVehicle .item .sub { margin-top: 5px; font-size: var(--textsmall); color: #777; }
 
-    .infocard.loc {
-        height: 100%;
-    }
-
-    .row td:first-child {
-        width: 40%;
-        text-align: left;
-    }
-
-    .row td:last-child {
-        text-align: left;
-        padding-left: 30px;
-    }
-
-    .card {
-        width: 400px;
-    }
-
-    .dropdown {
-        position: absolute;
-        width: 253px;
-        background: white;
+    /* PlaceAutocompleteElement theming.
+       It defaults to "color-scheme: light dark", which lets it render with a
+       dark/black surface depending on the browser/OS theme. Forcing
+       color-scheme + background-color + color keeps it matching the rest
+       of the form regardless of the user's system theme. */
+    #deployVehicle gmp-place-autocomplete {
+        width: 100%;
+        display: block;
+        color-scheme: light;
+        background-color: #fff;
+        color: #1a1a1a;
         border: 1px solid var(--border);
-        border-top: none;
-        max-height: 180px;
-        overflow-y: auto;
-        display: none;
-        z-index: 10;
+        border-radius: 8px;
+        font-family: inherit;
         font-size: var(--textreg);
     }
-
-    .dropdown div {
-        padding: 10px;
-        border-bottom: 1px solid var(--border);
-        cursor: pointer;
-    }
-
-    .dropdown div:hover {
-        background: var(--orangefaded);
-    }
-
-    .item .title {
-        display: block;
-    }
-
-    .item .sub {
-        margin-top: 5px;
+    #deployVehicle .address-readout {
+        margin-top: 6px;
         font-size: var(--textsmall);
-        color: #777;
+        color: #333;
+        min-height: 1em;
+        font-weight: 600;
+    }
+    #deployVehicle .address-hint {
+        margin-top: 2px;
+        font-size: var(--textsmall);
+        color: #999;
     }
 </style>

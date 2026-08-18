@@ -1,13 +1,14 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-statale=1.0">
-    <title>MyFairview</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MyFairview Vehicles</title>
     <link rel="stylesheet" href="../CSS/Components.css">
     <link rel="stylesheet" href="../CSS/Vehicles.css">
     <script type="module" src="../JS/subpage_guard.js"></script>
+    
+    <script type="module" src="../JS/vehicle-manager.js"></script>
 </head>
 
 <body>
@@ -23,65 +24,13 @@
                     <div class="cardtitle">Barangay Vehicles</div>
                     <div class="cardsubtitle">Vehicles Available for the Community</div>
                 </div>
-                <a class="btn add" href="#">Add Vehicle</a>
+                <a class="btn add" id="openAddVehicleBtn" href="#">Add Vehicle</a>
             </div>
             <div class="card-scroll">
-                <div class="vehicle-list">
-                    <div class="vehicle available">
-                        <div class="line"></div>
-                        <div class="content">
-                            <div class="title">PLT 0000 — Ambulance</div>
-                            <div class="meta">
-                                <span class="badge">● Available</span>
-                                <span>White</span>
-                                <span>Capacity : 000</span>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="vehicle available">
-                        <div class="line"></div>
-                        <div class="content">
-                            <div class="title">PLT 0000 — Fire Truck</div>
-                            <div class="meta">
-                                <span class="badge">● Available</span>
-                                <span>Red</span>
-                                <span>Capacity : 000</span>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="vehicle deployed">
-                        <div class="line"></div>
-                        <div class="content">
-                            <div class="title">PLT 0000 — Toyota Hiace</div>
-                            <div class="desc">
-                                Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor
-                                incididunt ut labore, Quezon City.
-                            </div>
-                            <div class="meta">
-                                <span class="badge">◉ Deployed</span>
-                                <span>White</span>
-                                <span>Capacity : 000</span>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="vehicle deployed">
-                        <div class="line"></div>
-                        <div class="content">
-                            <div class="title">PLT 0000 — Toyota Hiace</div>
-                            <div class="desc">
-                                Community Use
-                            </div>
-                            <div class="meta">
-                                <span class="badge">◉ Deployed</span>
-                                <span>White</span>
-                                <span>Capacity : 000</span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+                <div class="vehicle-list"></div>
             </div>
             <div class="buttons">
-                <button class="button deploy">Deploy Vehicle</button>
+                <button class="button deploy" id="openDeployVehicleBtn">Deploy Vehicle</button>
             </div>
         </div>
 
@@ -92,21 +41,6 @@
             <div class="cardtitle">Fleet Geographic Overview</div>
             <div id="vehicleMapCard" style="width: 100%; height: 350px; border-radius: 8px; margin-top: 10px;"></div>
         </div>
-
-        <script type="module">
-            import { initCardMap } from "../JS/gmapComponent.js";
-
-            document.addEventListener("DOMContentLoaded", () => {
-                const stationCenter = { lat: 14.6760, lng: 121.0437 }; // Fairview center
-                const vehicleMarkers = [
-                    { lat: 14.6765, lng: 121.0420, title: "PLT 0001 — Ambulance", snippet: "Status: Available" },
-                    { lat: 14.6740, lng: 121.0450, title: "PLT 0002 — Rescue Truck", snippet: "Status: Deployed" }
-                ];
-
-                initCardMap("vehicleMapCard", stationCenter, 14, vehicleMarkers);
-            });
-        </script>
     </div>
 </body>
-
 </html>

@@ -1,32 +1,31 @@
-<link rel="stylesheet" href="../CSS/Components.css">
+
 <link rel="stylesheet" href="../CSS/Popups.css">
 
-<div id="addVehicle" class="modal-overlay">
+<div id="addVehicleModal" class="modal-overlay" style="display: none;">
     <div class="contentadd">
         <div class="areaheader">
             <div class="areatitle">New Barangay Vehicle</div>
         </div>
         <div class="form-row add">
             <label class="form-label">Plate Number</label>
-            <input class="form-input" type="text" placeholder="Enter Name...">
+            <input id="addPlateNo" class="form-input" type="text" placeholder="e.g. PLT0000">
         </div>
         <div class="form-row add">
             <label class="form-label">Vehicle Model</label>
-            <input class="form-input" type="text" placeholder="Enter Address...">
+            <input id="addModel" class="form-input" type="text" placeholder="e.g. Ambulance">
         </div>
         <div class="form-row add">
             <label class="form-label">Color</label>
-            <input class="form-input" type="text" placeholder="Enter Address...">
+            <input id="addColor" class="form-input" type="text" placeholder="e.g. White">
         </div>
         <div class="form-row add">
             <label class="form-label">Capacity</label>
-            <input class="form-input" type="number" placeholder="Enter Capacity...">
+            <input id="addCapacity" class="form-input" type="number" placeholder="Enter Capacity...">
         </div>
         <div class="buttons">
-            <button class="button delete">Cancel</button>
-            <button class="button confirm">Add Vehicle</button>
+            <button id="cancelAddVehicleBtn" class="button delete">Cancel</button>
+            <button id="confirmAddVehicleBtn" class="button confirm">Add Vehicle</button>
         </div>
-
     </div>
 </div>
 <style>
@@ -34,7 +33,7 @@
     @import url("../Styles/Variables.css");
     @import url("../CSS/Popups.css");
 
-    .contentadd {
+    #addVehicleModal .contentadd {
         width: 400px;
     }
 </style>

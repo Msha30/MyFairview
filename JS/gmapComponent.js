@@ -51,7 +51,8 @@ export async function initCardMap(containerId, center, zoom = 15, markers = []) 
                     });
                 });
             }
-        });
+        })
+        return map;
     } catch (err) {
         console.error("Failed to load Google Maps:", err);
         container.innerHTML = `<div style="padding: 20px; text-align: center; color: var(--grey);">Map failed to load.</div>`;
