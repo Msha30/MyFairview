@@ -55,6 +55,7 @@ async function fetchVerifiedUsers() {
         verifiedUsers = [];
         querySnapshot.forEach((doc) => {
             const data = doc.data();
+            data.docId = doc.id; // Capture document ID for the BFV ID
             if (data.status === "Verified") verifiedUsers.push(data);
         });
     } catch (e) { console.error("Error fetching users: ", e); }
@@ -163,7 +164,13 @@ function setupDeployVehicle() {
             if (!allVehiclesData[id].deployed) select.innerHTML += `<option value="${id}">${allVehiclesData[id].plateNo}</option>`;
         });
 
-        // Reset destination state each time the modal opens
+        // Reset inputs and destination state each time the modal opens
+        const callerInput = document.getElementById("callerInput");
+        if(callerInput) {
+            callerInput.value = "";
+            delete callerInput.dataset.userid;
+        }
+
         setSelectedAddress("");
         selectedDestLoc = null;
         clearRoute();
@@ -255,6 +262,9 @@ function setupDeployVehicle() {
     const callerDropdown = document.getElementById("callerDropdown");
 
     callerInput?.addEventListener("input", (e) => {
+        // Clear saved user ID dataset if the user modifies the input manually
+        delete e.target.dataset.userid; 
+
         const val = e.target.value.toLowerCase();
         callerDropdown.innerHTML = "";
         if (!val) { callerDropdown.style.display = "none"; return; }
@@ -267,6 +277,9 @@ function setupDeployVehicle() {
                 div.innerHTML = `<span class="title">${m.fName} ${m.lName}</span><span class="sub">${m.contactMain}</span>`;
                 div.onclick = async () => {
                     callerInput.value = `${m.fName} ${m.lName}`;
+                    
+                    // Bind the BFV-26-**** userID to the dataset for database extraction
+                    callerInput.dataset.userid = m.userID || m.docId || ""; 
                     callerDropdown.style.display = "none";
 
                     // Firestore GeoPoint exposes .latitude / .longitude, but never trust
@@ -305,10 +318,14 @@ function setupDeployVehicle() {
         const vId = document.getElementById("deployVehicleSelect").value;
         if (!vId) return showToast("Select a vehicle first.", "error");
 
+        // Attempt to extract the BFV ID from the dataset, fallback to value if they typed manually
+        const callerInputElem = document.getElementById("callerInput");
+        const contactToSave = callerInputElem.dataset.userid || callerInputElem.value;
+
         try {
             await update(ref(db, `vehicles/${vId}`), {
                 deployed: true,
-                contactPerson: document.getElementById("callerInput").value,
+                contactPerson: contactToSave,
                 targetLoc: selectedAddress,
                 targetLocCoords: selectedDestLoc, // real {lat,lng} if we have one, else null
                 details: document.getElementById("deployDetailsInput").value

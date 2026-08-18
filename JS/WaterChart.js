@@ -8,835 +8,248 @@ import {
     database
 } from "./auth.js";
 
-
 // ============================================================
 // CONFIGURATION
 // ============================================================
 
-const HISTORY_PATH =
-    "history/UL800";
-
-const CURRENT_PATH =
-    "sensors/UL800";
-
-const MAX_POINTS =
-    12;
-
+const HISTORY_PATH = "history/UL800";
+const CURRENT_PATH = "sensors/UL800";
+const MAX_POINTS = 12;
 
 // ============================================================
-// SAMPLE DATA (placeholder for past days)
+// SAMPLE DATA (Converted from feet to meters)
 // ============================================================
 
-const SAMPLE_VALUES =
-    [
-        3.2,
-        3.0,
-        2.5,
-        2.1,
-        2.3,
-        2.8,
-        3.5,
-        2.9,
-        2.6,
-        2.4,
-        2.7
-    ];
-
+const SAMPLE_VALUES = [
+    0.98, 0.91, 0.76, 0.64, 0.70, 0.85, 1.07, 0.88, 0.79, 0.73, 0.82
+];
 
 // ============================================================
 // SVG SETUP
 // ============================================================
 
-const svg =
-    document.getElementById(
-        "waterchart"
-    );
+const svg = document.getElementById("waterchart");
+svg.setAttribute("viewBox", "0 0 735 120");
+svg.setAttribute("preserveAspectRatio", "xMidYMid meet");
 
-svg.setAttribute(
-    "viewBox",
-    "0 0 735 120"
-);
-
-svg.setAttribute(
-    "preserveAspectRatio",
-    "xMidYMid meet"
-);
-
-const NS =
-    "http://www.w3.org/2000/svg";
-
-const leftMargin =
-    20;
-
-const chartLeft =
-    34 + leftMargin;
-
-const chartRight =
-    694 + leftMargin;
-
-const chartWidth =
-    chartRight -
-    chartLeft;
-
-const topY =
-    10;
-
-const bottomY =
-    106;
-
-const chartHeight =
-    bottomY -
-    topY;
-
-
-// ============================================================
-// METERS → FEET
-// ============================================================
-
-function metersToFeet(
-    meters
-)
-{
-    return (
-        Number(meters) *
-        3.28084
-    );
-}
-
+const NS = "http://www.w3.org/2000/svg";
+const leftMargin = 20;
+const chartLeft = 34 + leftMargin;
+const chartRight = 694 + leftMargin;
+const chartWidth = chartRight - chartLeft;
+const topY = 10;
+const bottomY = 106;
+const chartHeight = bottomY - topY;
 
 // ============================================================
 // CURRENT READING (from real-time sensor)
 // ============================================================
 
-let currentReading =
-    null;
-
+let currentReading = null;
 
 // ============================================================
 // GET TODAY DATE
 // ============================================================
 
-function getCurrentDate()
-{
-    const now =
-        new Date();
-
-    const year =
-        now.getFullYear();
-
-    const month =
-        String(
-            now.getMonth() +
-            1
-        ).padStart(
-            2,
-            "0"
-        );
-
-    const day =
-        String(
-            now.getDate()
-        ).padStart(
-            2,
-            "0"
-        );
-
-    return (
-        `${year}-${month}-${day}`
-    );
+function getCurrentDate() {
+    const now = new Date();
+    const year = now.getFullYear();
+    const month = String(now.getMonth() + 1).padStart(2, "0");
+    const day = String(now.getDate()).padStart(2, "0");
+    return `${year}-${month}-${day}`;
 }
-
 
 // ============================================================
 // GET LAST N DATES
 // ============================================================
 
-function getLastNDates(
-    n
-)
-{
-    const dates =
-        [];
-
-    const now =
-        new Date();
-
-    for (
-        let i =
-            n;
-        i >= 1;
-        i--
-    )
-    {
-        const d =
-            new Date(
-                now
-            );
-
-        d.setDate(
-            d.getDate() -
-            i
-        );
-
-        const year =
-            d.getFullYear();
-
-        const month =
-            String(
-                d.getMonth() +
-                1
-            ).padStart(
-                2,
-                "0"
-            );
-
-        const day =
-            String(
-                d.getDate()
-            ).padStart(
-                2,
-                "0"
-            );
-
-        dates.push(
-            `${year}-${month}-${day}`
-        );
+function getLastNDates(n) {
+    const dates = [];
+    const now = new Date();
+    for (let i = n; i >= 1; i--) {
+        const d = new Date(now);
+        d.setDate(d.getDate() - i);
+        const year = d.getFullYear();
+        const month = String(d.getMonth() + 1).padStart(2, "0");
+        const day = String(d.getDate()).padStart(2, "0");
+        dates.push(`${year}-${month}-${day}`);
     }
-
     return dates;
 }
-
 
 // ============================================================
 // PROCESS HISTORY
 // ============================================================
 
-function processHistory(
-    data
-)
-{
-    const dailyData =
-        {};
+function processHistory(data) {
+    const dailyData = {};
 
-    Object.entries(
-        data
-    ).forEach(
-        (
-            [
-                date,
-                readings
-            ]
-        ) =>
-        {
-            if (!readings)
-            {
-                return;
+    Object.entries(data).forEach(([date, readings]) => {
+        if (!readings) return;
+
+        const values = [];
+        Object.values(readings).forEach(reading => {
+            if (!reading || reading.level === undefined) return;
+            
+            const meters = Number(reading.level);
+            if (meters > 0) {
+                values.push(meters);
             }
+        });
 
-            const values =
-                [];
+        if (values.length === 0) return;
 
-            Object.values(
-                readings
-            ).forEach(
-                reading =>
-                {
-                    if (
-                        !reading ||
-                        reading.level ===
-                        undefined
-                    )
-                    {
-                        return;
-                    }
-
-                    const feet =
-                        metersToFeet(
-                            reading.level
-                        );
-
-                    if (
-                        feet > 0
-                    )
-                    {
-                        values.push(
-                            feet
-                        );
-                    }
-                }
-            );
-
-            if (
-                values.length === 0
-            )
-            {
-                return;
-            }
-
-            const average =
-                values.reduce(
-                    (
-                        sum,
-                        v
-                    ) =>
-                        sum + v,
-                    0
-                )
-                /
-                values.length;
-
-            dailyData[
-                date
-            ] =
-            {
-                average:
-                    average
-            };
-        }
-    );
+        const average = values.reduce((sum, v) => sum + v, 0) / values.length;
+        dailyData[date] = { average: average };
+    });
 
     return dailyData;
 }
-
 
 // ============================================================
 // FORMAT DATE
 // ============================================================
 
-function formatDate(
-    dateString
-)
-{
-    const date =
-        new Date(
-            dateString +
-            "T00:00:00"
-        );
-
-    return date.toLocaleDateString(
-        "en-US",
-        {
-            month:
-                "short",
-
-            day:
-                "numeric"
-        }
-    );
+function formatDate(dateString) {
+    const date = new Date(dateString + "T00:00:00");
+    return date.toLocaleDateString("en-US", { month: "short", day: "numeric" });
 }
-
 
 // ============================================================
 // CLEAR SVG
 // ============================================================
 
-function clearChart()
-{
-    while (
-        svg.firstChild
-    )
-    {
-        svg.removeChild(
-            svg.firstChild
-        );
+function clearChart() {
+    while (svg.firstChild) {
+        svg.removeChild(svg.firstChild);
     }
 }
-
 
 // ============================================================
 // Y-AXIS STEP
 // ============================================================
 
-function getYStep(
-    yMax
-)
-{
-    if (
-        yMax <= 40
-    )
-    {
-        return 10;
-    }
-
-    if (
-        yMax <= 80
-    )
-    {
-        return 20;
-    }
-
-    return 50;
+function getYStep(yMax) {
+    if (yMax <= 10) return 2;
+    if (yMax <= 20) return 5;
+    return 10;
 }
-
 
 // ============================================================
 // RENDER Y-AXIS
 // ============================================================
 
-function renderYAxis(
-    yMax
-)
-{
-    const step =
-        getYStep(
-            yMax
-        );
+function renderYAxis(yMax) {
+    const step = getYStep(yMax);
+    for (let val = 0; val <= yMax; val += step) {
+        const ratio = val / yMax;
+        const y = bottomY - (chartHeight * ratio);
 
-    for (
-        let val = 0;
-        val <= yMax;
-        val += step
-    )
-    {
-        const ratio =
-            val / yMax;
+        const t = document.createElementNS(NS, "text");
+        t.setAttribute("x", 30);
+        t.setAttribute("y", y + 4);
+        t.setAttribute("fill", "var(--blue)");
+        t.setAttribute("font-size", "9px");
+        t.setAttribute("text-anchor", "end");
+        t.textContent = val + " m";
 
-        const y =
-            bottomY -
-            (
-                chartHeight *
-                ratio
-            );
-
-        const t =
-            document.createElementNS(
-                NS,
-                "text"
-            );
-
-        t.setAttribute(
-            "x",
-            30
-        );
-
-        t.setAttribute(
-            "y",
-            y + 4
-        );
-
-        t.setAttribute(
-            "fill",
-            "var(--blue)"
-        );
-
-        t.setAttribute(
-            "font-size",
-            "9px"
-        );
-
-        t.setAttribute(
-            "text-anchor",
-            "end"
-        );
-
-        t.textContent =
-            val +
-            " ft";
-
-        svg.appendChild(
-            t
-        );
+        svg.appendChild(t);
     }
 }
-
 
 // ============================================================
 // RENDER CHART
 // ============================================================
 
-function renderChart(
-    dailyData,
-    isSample
-)
-{
+function renderChart(dailyData, isSample) {
     clearChart();
+    const dates = Object.keys(dailyData).sort().slice(-MAX_POINTS);
 
-    const dates =
-        Object.keys(
-            dailyData
-        )
-        .sort()
-        .slice(
-            -MAX_POINTS
-        );
-
-
-    // ========================================================
     // INSUFFICIENT DATA — SHOW SAMPLE + CURRENT READING
-    // ========================================================
+    if (dates.length < MAX_POINTS && !isSample) {
+        const pastDates = getLastNDates(MAX_POINTS - 1);
+        const todayDate = getCurrentDate();
+        const sampleData = {};
 
-    if (
-        dates.length <
-        MAX_POINTS &&
-        !isSample
-    )
-    {
-        const pastDates =
-            getLastNDates(
-                MAX_POINTS -
-                1
-            );
+        pastDates.forEach((date, i) => {
+            sampleData[date] = { average: SAMPLE_VALUES[i] };
+        });
 
-        const todayDate =
-            getCurrentDate();
-
-        const sampleData =
-            {};
-
-        pastDates.forEach(
-            (
-                date,
-                i
-            ) =>
-            {
-                sampleData[
-                    date
-                ] =
-                {
-                    average:
-                        SAMPLE_VALUES[
-                            i
-                        ]
-                };
-            }
-        );
-
-        if (
-            currentReading !==
-            null
-        )
-        {
-            sampleData[
-                todayDate
-            ] =
-            {
-                average:
-                    currentReading
-            };
+        if (currentReading !== null) {
+            sampleData[todayDate] = { average: currentReading };
         }
 
-        renderChart(
-            sampleData,
-            true
-        );
-
+        renderChart(sampleData, true);
         return;
     }
 
+    const averages = dates.map(d => dailyData[d].average);
+    const maxVal = Math.max(...averages);
 
-    // ========================================================
-    // COMPUTE AVERAGES
-    // ========================================================
+    // DYNAMIC Y-AXIS MAX FOR METERS
+    const yMax = Math.max(10, Math.ceil(maxVal / 2) * 2);
 
-    const averages =
-        dates.map(
-            d =>
-                dailyData[
-                    d
-                ].average
-        );
+    renderYAxis(yMax);
 
-    const maxVal =
-        Math.max(
-            ...averages
-        );
+    const points = averages.map((val, i) => {
+        const x = dates.length === 1 ? 367 : chartLeft + (chartWidth * i) / (dates.length - 1);
+        const y = topY + chartHeight * (1 - val / yMax);
+        return [x, y];
+    });
 
+    const polyline = document.createElementNS(NS, "polyline");
+    polyline.setAttribute("points", points.map(p => p.join(",")).join(" "));
+    polyline.setAttribute("fill", "none");
+    polyline.setAttribute("stroke", "var(--blue)");
+    polyline.setAttribute("stroke-width", "3");
+    polyline.setAttribute("stroke-linejoin", "round");
+    svg.appendChild(polyline);
 
-    // ========================================================
-    // DYNAMIC Y-AXIS MAX
-    // ========================================================
+    points.forEach(p => {
+        const circle = document.createElementNS(NS, "circle");
+        circle.setAttribute("cx", p[0]);
+        circle.setAttribute("cy", p[1]);
+        circle.setAttribute("r", "4");
+        circle.setAttribute("fill", "var(--blue)");
+        svg.appendChild(circle);
+    });
 
-    const yMax =
-        Math.max(
-            30,
-            Math.ceil(
-                maxVal /
-                10
-            ) *
-            10
-        );
-
-
-    // ========================================================
-    // Y-AXIS LABELS
-    // ========================================================
-
-    renderYAxis(
-        yMax
-    );
-
-
-    // ========================================================
-    // COMPUTE POINTS
-    // ========================================================
-
-    const points =
-        averages.map(
-            (
-                val,
-                i
-            ) =>
-            {
-                const x =
-                    dates.length ===
-                    1
-                        ?
-                        367
-                        :
-                        chartLeft +
-                        (
-                            chartWidth *
-                            i
-                        ) /
-                        (
-                            dates.length -
-                            1
-                        );
-
-                const y =
-                    topY +
-                    chartHeight *
-                    (
-                        1 -
-                        val /
-                        yMax
-                    );
-
-                return [
-                    x,
-                    y
-                ];
-            }
-        );
-
-
-    // ========================================================
-    // POLYLINE
-    // ========================================================
-
-    const polyline =
-        document.createElementNS(
-            NS,
-            "polyline"
-        );
-
-    polyline.setAttribute(
-        "points",
-        points
-            .map(
-                p =>
-                    p.join(
-                        ","
-                    )
-            )
-            .join(
-                " "
-            )
-    );
-
-    polyline.setAttribute(
-        "fill",
-        "none"
-    );
-
-    polyline.setAttribute(
-        "stroke",
-        "var(--blue)"
-    );
-
-    polyline.setAttribute(
-        "stroke-width",
-        "3"
-    );
-
-    polyline.setAttribute(
-        "stroke-linejoin",
-        "round"
-    );
-
-    svg.appendChild(
-        polyline
-    );
-
-
-    // ========================================================
-    // DOTS
-    // ========================================================
-
-    points.forEach(
-        p =>
-        {
-            const circle =
-                document.createElementNS(
-                    NS,
-                    "circle"
-                );
-
-            circle.setAttribute(
-                "cx",
-                p[
-                    0
-                ]
-            );
-
-            circle.setAttribute(
-                "cy",
-                p[
-                    1
-                ]
-            );
-
-            circle.setAttribute(
-                "r",
-                "4"
-            );
-
-            circle.setAttribute(
-                "fill",
-                "var(--blue)"
-            );
-
-            svg.appendChild(
-                circle
-            );
-        }
-    );
-
-
-    // ========================================================
-    // X-AXIS LABELS
-    // ========================================================
-
-    dates.forEach(
-        (
-            date,
-            i
-        ) =>
-        {
-            const t =
-                document.createElementNS(
-                    NS,
-                    "text"
-                );
-
-            t.setAttribute(
-                "x",
-                points[
-                    i
-                ][
-                    0
-                ]
-            );
-
-            t.setAttribute(
-                "y",
-                115
-            );
-
-            t.setAttribute(
-                "text-anchor",
-                "middle"
-            );
-
-            t.setAttribute(
-                "fill",
-                "var(--blue)"
-            );
-
-            t.setAttribute(
-                "font-size",
-                "9px"
-            );
-
-            t.textContent =
-                formatDate(
-                    date
-                );
-
-            svg.appendChild(
-                t
-            );
-        }
-    );
+    dates.forEach((date, i) => {
+        const t = document.createElementNS(NS, "text");
+        t.setAttribute("x", points[i][0]);
+        t.setAttribute("y", 115);
+        t.setAttribute("text-anchor", "middle");
+        t.setAttribute("fill", "var(--blue)");
+        t.setAttribute("font-size", "9px");
+        t.textContent = formatDate(date);
+        svg.appendChild(t);
+    });
 }
-
 
 // ============================================================
 // FIREBASE LISTENER — HISTORY
 // ============================================================
 
-const historyRef =
-    ref(
-        database,
-        HISTORY_PATH
-    );
-
-onValue(
-    historyRef,
-    snapshot =>
-    {
-        const data =
-            snapshot.val();
-
-        if (!data)
-        {
-            renderChart(
-                {}
-            );
-
-            return;
-        }
-
-        const dailyData =
-            processHistory(
-                data
-            );
-
-        renderChart(
-            dailyData
-        );
+const historyRef = ref(database, HISTORY_PATH);
+onValue(historyRef, snapshot => {
+    const data = snapshot.val();
+    if (!data) {
+        renderChart({});
+        return;
     }
-);
-
+    const dailyData = processHistory(data);
+    renderChart(dailyData);
+});
 
 // ============================================================
 // FIREBASE LISTENER — CURRENT SENSOR
 // ============================================================
 
-const currentRef =
-    ref(
-        database,
-        CURRENT_PATH
-    );
-
-onValue(
-    currentRef,
-    snapshot =>
-    {
-        const data =
-            snapshot.val();
-
-        if (
-            !data ||
-            data.level ===
-            undefined
-        )
-        {
-            return;
-        }
-
-        const levelMeters =
-            Number(
-                data.level
-            );
-
-        currentReading =
-            metersToFeet(
-                levelMeters
-            );
-
-        renderChart(
-            {}
-        );
-    }
-);
+const currentRef = ref(database, CURRENT_PATH);
+onValue(currentRef, snapshot => {
+    const data = snapshot.val();
+    if (!data || data.level === undefined) return;
+    
+    currentReading = Number(data.level);
+    renderChart({});
+});
