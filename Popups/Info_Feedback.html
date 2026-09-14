@@ -41,6 +41,7 @@
                     </table>
                 </div>
             </div>
+            <!--
             <div class="infocard loc">
                 <div class="areaheader small">
                     <div class="areatitle">History</div>
@@ -91,6 +92,7 @@
                     </div>
                 </div>
             </div>
+            -->
         </div>
     </div>
 </div>
@@ -100,7 +102,8 @@
     @import url("../Styles/Variables.css");
     @import url("../CSS/Popups.css");
 
-    .grid-2 {
+    /* Scoped strictly to #infoFeedback to prevent background leaking */
+    #infoFeedback .grid-2 {
         height: 350px;
         display: grid;
         grid-template-columns: 1.3fr 1fr;
@@ -108,43 +111,43 @@
         align-items: stretch;
     }
 
-    .wide {
+    #infoFeedback .wide {
         flex: 1;
     }
 
-    .infocard.loc {
+    #infoFeedback .infocard.loc {
         height: 100%;
     }
 
-    .row td:first-child {
+    #infoFeedback .row td:first-child {
         width: 40%;
         text-align: left;
     }
 
-    .row td:last-child {
+    #infoFeedback .row td:last-child {
         width: 70%;
         text-align: left;
         padding-left: 30px;
     }
 
-    .areaheader.small {
+    #infoFeedback .areaheader.small {
         height: 10px;
         margin-top: 13px;
     }
 
-    .card-scroll {
+    #infoFeedback .card-scroll {
         height: 100%;
         flex: 1;
         overflow-y: auto;
     }
 
-    .history-list {
+    #infoFeedback .history-list {
         display: flex;
         flex-direction: column;
         gap: 10px;
     }
 
-    .history-item {
+    #infoFeedback .history-item {
         width: 250px;
         border: 1px solid var(--border);
         border-radius: var(--radsmall);
@@ -156,26 +159,25 @@
         gap: 5px;
     }
 
-    .history-item:hover {
+    #infoFeedback .history-item:hover {
         cursor: pointer;
         background: var(--bg);
     }
 
-
-    .title {
+    #infoFeedback .title {
         font-family: 'InterBold', sans-serif;
         color: var(--grey);
         font-size: var(--textreg);
         margin-bottom: 5px;
     }
 
-    .desc {
+    #infoFeedback .desc {
         font-size: var(--textreg);
         color: var(--grey);
         margin-bottom: 5px;
     }
 
-    .meta {
+    #infoFeedback .meta {
         font-size: var(--textsmall);
         color: var(--greylight);
         display: flex;

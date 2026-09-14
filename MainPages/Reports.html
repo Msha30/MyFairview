@@ -8,6 +8,7 @@
     <link rel="stylesheet" href="../CSS/Components.css">
     <link rel="stylesheet" href="../CSS/Reports.css">
     <script type="module" src="../JS/subpage_guard.js"></script>
+    <script type="module" src="../JS/Reports.js"></script>
 </head>
 
 <body>
@@ -32,7 +33,7 @@
                     <img src="../Icons/ic_search.svg">
                     <input id="search" type="text" placeholder="Search...">
                 </div>
-                <div class="form-selectbg">
+                <div id="report_sort" class="form-selectbg">
                     <select class="form-select" style="width:150px;">
                         <option>All Reports</option>
                         <option>Emergency</option>
@@ -41,8 +42,9 @@
                         <option>Feedback</option>
                     </select>
                 </div>
-                <div class="form-selectbg">
+                <div id="status_sort" class="form-selectbg">
                     <select class="form-select" style="width:100px;">
+                        <option>All</option>
                         <option>Unresolved</option>
                         <option>Resolved</option>
                         <option>Feedback</option>
@@ -65,111 +67,7 @@
                         </tr>
                     </thead>
                     <tbody>
-                        <tr class="tableRow emergency">
-                            <td class="user-section">
-                                <div class="dot">●</div>
-                                <div class="user-info">
-                                    <strong>R26-0000 | Flood</strong><br>
-                                    <span>Jun 7, 2026 · 11:45 PM</span>
-                                </div>
-                            </td>
-                            <td class="location">Sa Lorem Ipsum sa Lorem Ipsum katabi ng Lorem Ipsum naka Lorem Ipsum
-                            </td>
-                            <td>Lorem Ipsum</td>
-                            <td>0994 123 4567</td>
-                        </tr>
-                        <tr class="tableRow emergency">
-                            <td class="user-section">
-                                <div class="dot">●</div>
-                                <div class="user-info">
-                                    <strong>R26-0000 | Fire</strong><br>
-                                    <span>Jun 7, 2026 · 11:45 PM</span>
-                                </div>
-                            </td>
-                            <td class="location">Sa Lorem Ipsum sa Lorem Ipsum katabi ng Lorem Ipsum naka Lorem Ipsum
-                            </td>
-                            <td>Lorem Ipsum</td>
-                            <td>0994 123 4567</td>
-                        </tr>
-                        <tr class="tableRow safety">
-                            <td class="user-section">
-                                <div class="dot">●</div>
-                                <div class="user-info">
-                                    <strong>R26-0000 | Suspicious Activity</strong><br>
-                                    <span>Jun 7, 2026 · 11:45 PM</span>
-                                </div>
-                            </td>
-                            <td class="location">Sa Lorem Ipsum sa Lorem Ipsum katabi ng Lorem Ipsum naka Lorem Ipsum
-                            </td>
-                            <td>Lorem Ipsum</td>
-                            <td>0994 123 4567</td>
-                        </tr>
-                        <tr class="tableRow community">
-                            <td class="user-section">
-                                <div class="dot">●</div>
-                                <div class="user-info">
-                                    <strong>R26-0000 | Road</strong><br>
-                                    <span>Jun 7, 2026 · 11:45 PM</span>
-                                </div>
-                            </td>
-                            <td class="location">Sa Lorem Ipsum sa Lorem Ipsum katabi ng Lorem Ipsum naka Lorem Ipsum
-                            </td>
-                            <td>Lorem Ipsum</td>
-                            <td>0994 123 4567</td>
-                        </tr>
-
-                        <tr class="tableRow community">
-                            <td class="user-section">
-                                <div class="dot">●</div>
-                                <div class="user-info">
-                                    <strong>R26-0000 | Loud Music</strong><br>
-                                    <span>Jun 7, 2026 · 11:45 PM</span>
-                                </div>
-                            </td>
-                            <td class="location">Sa Lorem Ipsum sa Lorem Ipsum katabi ng Lorem Ipsum naka Lorem Ipsum
-                            </td>
-                            <td>Lorem Ipsum</td>
-                            <td>0994 123 4567</td>
-                        </tr>
-                        <tr class="tableRow feedback">
-                            <td class="user-section">
-                                <div class="dot">●</div>
-                                <div class="user-info">
-                                    <strong>F26-0000 | Feedback</strong><br>
-                                    <span>Jun 7, 2026 · 11:45 PM</span>
-                                </div>
-                            </td>
-                            <td class="location">Sa Lorem Ipsum sa Lorem Ipsum katabi ng Lorem Ipsum naka Lorem Ipsum
-                            </td>
-                            <td>Lorem Ipsum</td>
-                            <td>0994 123 4567</td>
-                        </tr>
-                        <tr class="tableRow invalid">
-                            <td class="user-section">
-                                <div class="dot">●</div>
-                                <div class="user-info">
-                                    <strong>R26-0000 | Spam</strong><br>
-                                    <span>Jun 7, 2026 · 11:45 PM</span>
-                                </div>
-                            </td>
-                            <td class="location">Sa Lorem Ipsum sa Lorem Ipsum katabi ng Lorem Ipsum naka Lorem Ipsum
-                            </td>
-                            <td>Lorem Ipsum</td>
-                            <td>0994 123 4567</td>
-                        </tr>
-                        <tr class="tableRow resolved">
-                            <td class="user-section">
-                                <div class="dot">●</div>
-                                <div class="user-info">
-                                    <strong>R26-0000 | Loud Music</strong><br>
-                                    <span>Jun 7, 2026 · 11:45 PM</span>
-                                </div>
-                            </td>
-                            <td class="location">Sa Lorem Ipsum sa Lorem Ipsum katabi ng Lorem Ipsum naka Lorem Ipsum
-                            </td>
-                            <td>Lorem Ipsum</td>
-                            <td>0994 123 4567</td>
-                        </tr>
+                        
                     </tbody>
                 </table>
             </div>
@@ -180,10 +78,11 @@
                 <!-- ════════════════════════════════════════════════ -->
                 <!-- ════════════════════ STATS ═════════════════════ -->
                 <!-- ════════════════════════════════════════════════ -->
-                <button class="btn active" type="button">Unresolved</button>
-                <button class="btn inactive" type="button">Resolved</button>
+                <button id="unresolved_btn" class="btn active" type="button">Unresolved</button>
+                <button id="resolved_btn" class="btn inactive" type="button">Resolved</button>
+                <!-- Change resolution summary based on selected button -->
             </div>
-            <div class="grid-summary">
+            <div id="resolution_summary" class="grid-summary">
                 <div class="info">
                     <div class="stat-top">
                         <div class="stat-icon a">
@@ -227,6 +126,7 @@
             </div>
         </div>
     </div>
+    <div id="modal-container"></div>
 
 </body>
 

@@ -15,39 +15,25 @@
     </div>
 </div>
 
-<script type="module">
-    import { initCardMap } from "../JS/gmapComponent.js";
-
-    document.addEventListener("DOMContentLoaded", () => {
-        const reportsCenter = { lat: 14.6760, lng: 121.0437 }; // Fairview Center
-        const reportMarkers = [
-            { lat: 14.6770, lng: 121.0425, title: "Emergency Report #01", snippet: "Status: Pending Assistance" },
-            { lat: 14.6750, lng: 121.0450, title: "Public Safety Advisory", snippet: "Status: Monitored" },
-            { lat: 14.6735, lng: 121.0415, title: "Community Report", snippet: "Status: Resolved" }
-        ];
-
-        initCardMap("reportsMapCard", reportsCenter, 15, reportMarkers);
-    });
-</script>
-
 <style>
     @import url("../Styles/Fonts.css");
     @import url("../Styles/Variables.css");
     @import url("../CSS/Popups.css");
 
-    .card {
+    /* Scoped strictly to #reportsMapModal */
+    #reportsMapModal .card {
         width: 800px;
         height: 400px;
     }
 
-    .row {
+    #reportsMapModal .row {
         display: flex;
         flex-direction: row;
         gap: 10px;
         margin-bottom: 10px;
     }
 
-    .badge {
+    #reportsMapModal .badge {
         display: inline-block;
         padding: 5px 15px;
         border-radius: 20px;
@@ -55,17 +41,17 @@
         font-family: 'InterSemiBold', sans-serif;
     }
 
-    .badge.b1 {
+    #reportsMapModal .badge.b1 {
         background: var(--redfaded);
         color: var(--red);
     }
 
-    .badge.b2 {
+    #reportsMapModal .badge.b2 {
         background: var(--orangefaded);
         color: var(--orange);
     }
 
-    .badge.b3 {
+    #reportsMapModal .badge.b3 {
         background: var(--bluefaded);
         color: var(--blue);
     }

@@ -1,7 +1,15 @@
 import { firestore } from "./auth.js";
-import { doc, getDoc, updateDoc } from "https://www.gstatic.com/firebasejs/12.17.0/firebase-firestore.js";
+import { 
+    doc, 
+    getDoc, 
+    updateDoc, 
+    collection, 
+    query, 
+    where, 
+    getDocs 
+} from "https://www.gstatic.com/firebasejs/12.17.0/firebase-firestore.js";
 
-let currentOpenedUid = null; // Track the currently viewed user
+let currentOpenedDocId = null; // Store the exact Firestore Document ID for updates
 
 // Helper for formatting Firestore Timestamps
 function formatTimestamp(ts) {
@@ -14,14 +22,13 @@ function formatTimestamp(ts) {
 }
 
 // Global function to open the modal & fetch data
-window.openInfoCitizens = async function(uid) {
+window.openInfoCitizens = async function(identifier) {
     const modal = document.getElementById("infoCitizens");
     if (modal) modal.style.display = "flex";
 
-    if (!uid) return;
-    currentOpenedUid = uid; // Store the UID so the save function knows who to update
+    if (!identifier) return;
 
-    // Reset Apply button state just in case
+    // Reset Apply button state
     const applyBtn = document.getElementById("btn-apply-changes");
     if (applyBtn) {
         applyBtn.textContent = "Apply Changes";
@@ -29,10 +36,35 @@ window.openInfoCitizens = async function(uid) {
     }
 
     try {
-        const userRef = doc(firestore, "Info_User", uid);
-        const userSnap = await getDoc(userRef);
+        let userSnap = null;
+        let docId = null;
 
-        if (userSnap.exists()) {
+        // 1. Try fetching directly assuming identifier is Document ID (e.g., BFV-26-#####)
+        const directDocRef = doc(firestore, "Info_User", identifier);
+        const directSnap = await getDoc(directDocRef);
+
+        if (directSnap.exists()) {
+            userSnap = directSnap;
+            docId = directSnap.id;
+        } else {
+            // 2. Fallback: Query where internal field "uid" matches identifier
+            const qUid = query(collection(firestore, "Info_User"), where("uid", "==", identifier));
+            let querySnap = await getDocs(qUid);
+
+            // 3. Fallback: Query where internal field "userID" matches identifier
+            if (querySnap.empty) {
+                const qUserID = query(collection(firestore, "Info_User"), where("userID", "==", identifier));
+                querySnap = await getDocs(qUserID);
+            }
+
+            if (!querySnap.empty) {
+                userSnap = querySnap.docs[0];
+                docId = userSnap.id;
+            }
+        }
+
+        if (userSnap && userSnap.exists()) {
+            currentOpenedDocId = docId; // Save the exact document ID for updating later
             const user = userSnap.data();
 
             // 1. Text Inputs (Left Column)
@@ -79,7 +111,6 @@ window.openInfoCitizens = async function(uid) {
             statusSpan.textContent = user.status || "Unverified";
             statusSpan.className = "status"; // Clear existing color classes
             
-            // Logic for hiding/showing Accept/Reject buttons based on status
             if (statusStr === "verified") {
                 statusSpan.classList.add("verified");
                 if (verificationBtns) verificationBtns.style.display = "none";
@@ -90,6 +121,8 @@ window.openInfoCitizens = async function(uid) {
                 statusSpan.classList.add("unverified");
                 if (verificationBtns) verificationBtns.style.display = "flex";
             }
+        } else {
+            console.warn("No user found with document ID or UID:", identifier);
         }
     } catch (error) {
         console.error("Error fetching citizen info:", error);
@@ -98,14 +131,17 @@ window.openInfoCitizens = async function(uid) {
 
 // Global function to apply and save changes to Firestore
 window.applyCitizenChanges = async function() {
-    if (!currentOpenedUid) return;
+    if (!currentOpenedDocId) {
+        console.error("No valid document ID loaded to update.");
+        return;
+    }
 
     const btn = document.getElementById("btn-apply-changes");
     btn.textContent = "Saving...";
     btn.disabled = true;
 
     try {
-        const userRef = doc(firestore, "Info_User", currentOpenedUid);
+        const userRef = doc(firestore, "Info_User", currentOpenedDocId);
         
         // Grab values from the editable fields
         const updatedData = {
@@ -115,8 +151,7 @@ window.applyCitizenChanges = async function() {
             address: document.getElementById("pop-address").value,
         };
 
-        // Handle Date of Birth parsing 
-        // Turns "March 30, 2005" back into a Date object so Firestore accepts it
+        // Handle Date of Birth parsing
         const dobInput = document.getElementById("pop-birthdate").value;
         const parsedDob = new Date(dobInput);
         if (!isNaN(parsedDob.getTime())) {

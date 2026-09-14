@@ -47,90 +47,53 @@
                             <td>Lorem Ipsum</td>
                         </tr>
                     </table>
-                    <div class="buttons col">
-                        <button class="button reject">Close as Invalid</button>
-                        <button class="button accept">Resolve</button>
+                    <div class="buttons col" id="actionButtons">
+                        <button class="button reject" id="btnInvalid">Close as Invalid</button>
+                        <button class="button accept" id="btnResolve">Resolve</button>
                     </div>
                 </div>
-                <div class="infocard">
+                
+                <div class="infocard" id="resolvedCard" style="display: none;">
                     <table class="information">
                         <tr class="row">
                             <td>Resolved On</td>
-                            <td>Lorem Ipsum</td>
+                            <td id="resOn">Lorem Ipsum</td>
                         </tr>
                         <tr class="row">
                             <td>Resolved By</td>
-                            <td>Lorem Ipsum</td>
+                            <td id="resBy">Lorem Ipsum</td>
                         </tr>
                         <tr class="row wrap">
                             <td>Action</td>
-                            <td>Lorem Ipsum</td>
+                            <td id="resAction">Lorem Ipsum</td>
                         </tr>
                     </table>
                 </div>
-                <div class="infocard">
+                
+                <div class="infocard" id="invalidCard" style="display: none;">
                     <table class="information">
                         <tr class="row">
                             <td>Closed On</td>
-                            <td>Lorem Ipsum</td>
+                            <td id="invOn">Lorem Ipsum</td>
                         </tr>
                         <tr class="row">
                             <td>Closed By</td>
-                            <td>Lorem Ipsum</td>
+                            <td id="invBy">Lorem Ipsum</td>
                         </tr>
                         <tr class="row wrap">
                             <td>Reason</td>
-                            <td>Lorem Ipsum</td>
+                            <td id="invReason">Lorem Ipsum</td>
                         </tr>
                     </table>
                 </div>
             </div>
+            
             <div class="infocard loc">
                 <div class="areaheader small">
                     <div class="areatitle">History</div>
                 </div>
                 <div class="card-scroll">
                     <div class="history-list">
-                        <div class="history-item">
-                            <div class="title">R26-0000 | Lorem Ipsum</div>
-                            <div class="desc">
-                                Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-                            </div>
-                            <div class="meta">
-                                <span>Jun 7, 2026 · 11:45 PM</span>
-                                <span>Unresolved</span>
-                            </div>
-                        </div>
-                        <div class="history-item">
-                            <div class="title">R26-0000 | Lorem Ipsum</div>
-                            <div class="desc">
-                                Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-                            </div>
-                            <div class="meta">
-                                <span>Jun 7, 2026 · 11:45 PM</span>
-                                <span>Unresolved</span>
-                            </div>
-                        </div>
-                        <div class="history-item">
-                            <div class="title">R26-0000 | Lorem Ipsum</div>
-                            <div class="desc">
-                                Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-                            </div>
-                            <div class="meta">
-                                <span>Jun 7, 2026 · 11:45 PM</span>
-                                <span>Unresolved</span>
-                            </div>
-                        </div>
-                        <div class="history-item">
-                            <div class="title">R26-0000 | Lorem Ipsum</div>
-                            <div class="desc">
-                                Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-                            </div>
-                            <div class="meta">
-                                <span>Jun 7, 2026 · 11:45 PM</span>
-                                <span>Unresolved</span>
-                            </div>
-                        </div>
                         
                     </div>
                 </div>
@@ -138,13 +101,14 @@
         </div>
     </div>
 </div>
-</div>
+
 <style>
     @import url("../Styles/Fonts.css");
     @import url("../Styles/Variables.css");
     @import url("../CSS/Popups.css");
 
-    .grid-2 {
+    /* Scoped strictly to #infoReport to prevent background leaking */
+    #infoReport .grid-2 {
         height: 525px;
         display: grid;
         grid-template-columns: 1.3fr 1fr;
@@ -152,43 +116,43 @@
         align-items: stretch;
     }
 
-    .wide {
+    #infoReport .wide {
         flex: 1;
     }
 
-    .infocard.loc {
+    #infoReport .infocard.loc {
         height: 100%;
     }
 
-    .row td:first-child {
+    #infoReport .row td:first-child {
         width: 40%;
         text-align: left;
     }
 
-    .row td:last-child {
+    #infoReport .row td:last-child {
         width: 70%;
         text-align: left;
         padding-left: 30px;
     }
 
-    .areaheader.small {
+    #infoReport .areaheader.small {
         height: 10px;
         margin-top: 13px;
     }
 
-    .card-scroll {
+    #infoReport .card-scroll {
         height: 100%;
         flex: 1;
         overflow-y: auto;
     }
 
-    .history-list {
+    #infoReport .history-list {
         display: flex;
         flex-direction: column;
         gap: 10px;
     }
 
-    .history-item {
+    #infoReport .history-item {
         width: 250px;
         border: 1px solid var(--border);
         border-radius: var(--radsmall);
@@ -200,26 +164,25 @@
         gap: 5px;
     }
 
-    .history-item:hover {
+    #infoReport .history-item:hover {
         cursor: pointer;
         background: var(--bg);
     }
 
-
-    .title {
+    #infoReport .title {
         font-family: 'InterBold', sans-serif;
         color: var(--grey);
         font-size: var(--textreg);
         margin-bottom: 5px;
     }
 
-    .desc {
+    #infoReport .desc {
         font-size: var(--textreg);
         color: var(--grey);
         margin-bottom: 5px;
     }
 
-    .meta {
+    #infoReport .meta {
         font-size: var(--textsmall);
         color: var(--greylight);
         display: flex;
