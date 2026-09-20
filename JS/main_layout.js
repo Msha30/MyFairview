@@ -1,5 +1,7 @@
-import { auth, logout, getStaffProfile } from "./auth.js";
+import { auth, logout, getStaffProfile, database, app } from "./auth.js";
 import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.17.0/firebase-auth.js";
+import { ref, onValue } from "https://www.gstatic.com/firebasejs/12.17.0/firebase-database.js";
+import { getFirestore, doc, onSnapshot } from "https://www.gstatic.com/firebasejs/12.17.0/firebase-firestore.js";
 
 const userSection = document.getElementById("userSection");
 const userDropdown = document.getElementById("userDropdown");
@@ -133,7 +135,85 @@ function updateLiveTime() {
 
 updateLiveTime();
 setInterval(updateLiveTime, 1000);
+// 8. Dynamic Water Level Alert
+const firestore = getFirestore(app);
+let currentWaterLevel = 0;
 
+let dynamicThresholds = {
+    Safe: { min: 0, max: 0, msg: "", status: "Safe" },
+    Monitor: { min: 0, max: 0, msg: "", status: "Monitor" },
+    Warning: { min: 0, max: 0, msg: "", status: "Warning" },
+    Critical: { min: 0, max: 0, msg: "", status: "Critical" }
+};
+
+// Fetch Thresholds from Firestore
+function loadThresholds() {
+    const statuses = ["Safe", "Monitor", "Warning", "Critical"];
+    statuses.forEach(status => {
+        const docRef = doc(firestore, "WaterLevel_Threshold", status);
+        onSnapshot(docRef, (docSnap) => {
+            if (docSnap.exists()) {
+                const data = docSnap.data();
+                dynamicThresholds[status] = {
+                    min: data.thresholdMin || 0,
+                    max: data.thresholdMax || 0,
+                    msg: data.message || "",
+                    status: data.status || status
+                };
+                updateAlertUI(); // Refresh UI if thresholds change
+            }
+        });
+    });
+}
+
+function getStatus(level) {
+    if (level >= dynamicThresholds.Critical.min) return "Critical";
+    if (level >= dynamicThresholds.Warning.min) return "Warning";
+    if (level >= dynamicThresholds.Monitor.min) return "Monitor";
+    return "Safe";
+}
+
+// Update the Top Bar Alert UI
+function updateAlertUI() {
+    const alertEl = document.querySelector(".alert");
+    if (!alertEl) return;
+
+    const status = getStatus(currentWaterLevel);
+    const thresholdData = dynamicThresholds[status];
+
+    if (status === "Safe") {
+        alertEl.style.display = "none";
+    } else {
+        alertEl.style.display = "flex";
+
+        // Apply Color Based on Status
+        if (status === "Monitor") alertEl.style.background = "var(--orange)";
+        else if (status === "Warning") alertEl.style.background = "var(--red)";
+        else if (status === "Critical") alertEl.style.background = "var(--bluedark)";
+
+        // Construct HTML dynamically (using Meters and Firebase Message)
+        alertEl.innerHTML = `
+            <span class="alert-pill">⚠ ALERT</span>
+            <strong>Water Level Advisory:</strong>
+            Paltok Creek is at ${currentWaterLevel.toFixed(2)}m — ${thresholdData.msg || 'Monitor closely.'}
+            <span id="currentTime" style="margin-left:auto;font-size:12px;opacity:0.8"></span>
+        `;
+        
+        // Immediately repopulate the time since we overwrote the span
+        updateLiveTime();
+    }
+}
+
+// Initialize Realtime Sensor Fetching
+loadThresholds();
+const currentRef = ref(database, "sensors/UL800");
+onValue(currentRef, snapshot => {
+    const data = snapshot.val();
+    if (data && data.level !== undefined) {
+        currentWaterLevel = Number(data.level);
+        updateAlertUI();
+    }
+});
 /*
 export async function registerUser(fullname, email, password) {
     try {

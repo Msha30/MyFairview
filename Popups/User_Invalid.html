@@ -5,12 +5,12 @@
     <div class="contentadd">
         <div class="diatitle mid">Confirm Rejection</div>
         <div class="form-row dia mid">
-            <label class="form-label dia1">By confirming, the account will be marked as Invalid and the verification request will be rejected.</label>
+            <label class="form-label dia1">Rejecting <strong id="reject-user-name">this user</strong> will mark the account as Invalid and the verification request will be rejected.</label>
             <label class="form-label dia2">Please select the reason for rejection before continuing.</label>
         </div>
         <div class="form-row add">
             <div class="form-selectbg">
-                <select class="form-select">
+                <select id="invalid-reason-select" class="form-select">
                     <option>Spam</option>
                     <option>False Information</option>
                     <option>Duplicate Account</option>
@@ -20,8 +20,8 @@
             </div>
         </div>
         <div class="buttons">
-            <button class="button delete">Cancel</button>
-            <button class="button red">Confirm</button>
+            <button id="btn-invalid-cancel" class="button delete">Cancel</button>
+            <button id="btn-invalid-confirm" class="button red">Confirm</button>
         </div>
     </div>
 </div>

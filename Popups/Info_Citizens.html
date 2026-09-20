@@ -7,7 +7,7 @@
             <div class="infocard">
                 <div class="areaheader">
                     <div class="areatitle">Personal Information</div>
-                    <a class="btn editinfo" href="#">Edit</a>
+                    <a id="btn-edit-info" class="btn editinfo" href="#" onclick="toggleEditMode(event)" style="display: none;">Edit</a>
                 </div>
                 <!-- Left Column: Personal Information -->
                 <table class="information">
@@ -54,7 +54,7 @@
                 <!-- Right Column: Verification Information -->
                 <div class="infocard">
                     <table class="information">
-                        <tr class="row">
+                        <tr class="row" id="row-userID">
                             <td>ID Number</td>
                             <td id="pop-userID">Loading...</td>
                         </tr>
@@ -62,13 +62,13 @@
                             <td>Registered on</td>
                             <td id="pop-regDate">Loading...</td>
                         </tr>
-                        <tr class="row">
+                        <tr class="row" id="row-verifiedOn">
                             <td>Verified on</td>
-                            <td id="pop-verifiedOn">N/A</td> <!-- pendins -->
+                            <td id="pop-verifiedOn">N/A</td> 
                         </tr>
-                        <tr class="row">
+                        <tr class="row" id="row-verifiedBy">
                             <td>Verified by</td>
-                            <td id="pop-verifiedBy">N/A</td> <!-- pendins -->
+                            <td id="pop-verifiedBy">N/A</td> 
                         </tr>
                     </table>
                 </div>
@@ -86,28 +86,28 @@
                             <td>Proof of Residiency</td>
                             <td><a id="pop-residency" class="btn attachment" href="#" target="_blank">View File</a></td>
                         </tr>
-                        <tr class="row">
+                        <tr class="row" id="row-rejectedOn">
                             <td>Rejected on</td>
-                            <td id="pop-rejectedOn">N/A</td> <!-- pendins -->
+                            <td id="pop-rejectedOn">N/A</td> 
                         </tr>
-                        <tr class="row">
+                        <tr class="row" id="row-rejectedBy">
                             <td>Rejected by</td>
-                            <td id="pop-rejectedBy">N/A</td> <!-- pendins -->
+                            <td id="pop-rejectedBy">N/A</td> 
                         </tr>
-                        <tr class="row wrap">
+                        <tr class="row wrap" id="row-reason">
                             <td>Reason</td>
-                            <td id="pop-reason">N/A</td> <!-- pendins -->
+                            <td id="pop-reason">N/A</td> 
                         </tr>
                     </table>
                     <div id="pop-verification-btns" class="buttons">
-                        <button class="button reject">Reject</button>
-                        <button class="button accept">Accept</button>
+                        <button id="btn-verify-reject" class="button reject">Reject</button>
+                        <button id="btn-verify-accept" class="button accept">Accept</button>
                     </div>
                     <div class="buttons col">
                         <button class="button delete">Remove User</button>
                     </div>
                 </div>
-                <button id="btn-apply-changes" class="button accept" onclick="applyCitizenChanges()">Apply Changes</button>
+                <button id="btn-apply-changes" class="button accept" onclick="applyCitizenChanges()" style="display: none;">Apply Changes</button>
             </div>
         </div>
     </div>

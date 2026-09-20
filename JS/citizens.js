@@ -4,8 +4,8 @@ import { collection, getDocs } from "https://www.gstatic.com/firebasejs/12.17.0/
 // 1. Global Array to store users so we don't query Firestore on every keystroke
 let allCitizens = [];
 
-// 2. Fetch Citizens Once
-async function fetchCitizens() {
+// 2. Fetch Citizens (Globally Accessible)
+window.refreshCitizensTable = async function() {
     try {
         const querySnapshot = await getDocs(collection(firestore, "Info_User"));
         allCitizens = []; // Reset array
@@ -14,11 +14,16 @@ async function fetchCitizens() {
             allCitizens.push(docSnap.data());
         });
 
-        renderTable(allCitizens); // Draw table with all data initially
+        // Re-apply any active search/dropdown filters to the fresh data
+        if (typeof filterTable === "function") {
+            filterTable(); 
+        } else {
+            renderTable(allCitizens); 
+        }
     } catch (error) {
         console.error("Error loading citizens table:", error);
     }
-}
+};
 
 // 3. Draw the Table
 function renderTable(usersData) {
@@ -163,4 +168,4 @@ if (areaEl) areaEl.addEventListener("change", filterTable);    // Triggers on dr
 if (statusEl) statusEl.addEventListener("change", filterTable); // Triggers on dropdown select
 
 // 6. Start Initial Fetch
-fetchCitizens();
+window.refreshCitizensTable();
