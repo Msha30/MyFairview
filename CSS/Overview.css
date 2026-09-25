@@ -281,22 +281,6 @@ body {
     color: white;
 }
 
-.level.a {
-    color: var(--green);
-}
-
-.level.b {
-    color: var(--orange);
-}
-
-.level.c {
-    color: var(--red);
-}
-
-.level.d {
-    color: var(--bluedark);
-}
-
 .status.active .level {
     color: white;
 }
@@ -306,19 +290,19 @@ body {
 }
 
 
-.status.a.active {
+.status.safe.active {
     background: var(--green);
 }
 
-.status.b.active {
+.status.monitor.active {
     background: var(--orange);
 }
 
-.status.c.active {
+.status.warning.active {
     background: var(--red);
 }
 
-.status.d.active {
+.status.critical.active {
     background: var(--bluedark);
 }
 
