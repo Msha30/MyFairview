@@ -3,6 +3,7 @@ import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, si
 import { getFirestore, collection, query, where, getDocs } from "https://www.gstatic.com/firebasejs/12.17.0/firebase-firestore.js";
 import { getDatabase } from "https://www.gstatic.com/firebasejs/12.17.0/firebase-database.js";
 import { getAnalytics } from "https://www.gstatic.com/firebasejs/12.17.0/firebase-analytics.js";
+import { getStorage } from "https://www.gstatic.com/firebasejs/12.17.0/firebase-storage.js";
 
 export const firebaseConfig = {
     apiKey: "AIzaSyADZ7D4nZfcHsWo1MDXgyjBU15xmuKMnIQ",
@@ -21,11 +22,9 @@ export const auth = getAuth(app);
 export const firestore = getFirestore(app);
 export const database = getDatabase(app);
 export const analytics = getAnalytics(app);
+export const storage = getStorage(app);
 
-// Looks up a Firebase Auth uid in Info_Staff. Returns the staff doc's data
-// (with its Firestore doc id attached) if found, or null if this uid is not
-// a registered staff account — e.g. a resident/Info_User account, or an
-// orphaned Auth user with no staff record at all.
+// Looks up a Firebase Auth uid in Info_Staff.
 export async function getStaffProfile(uid) {
     const staffQuery = query(collection(firestore, "Info_Staff"), where("uid", "==", uid));
     const snap = await getDocs(staffQuery);

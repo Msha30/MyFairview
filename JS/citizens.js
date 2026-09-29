@@ -11,10 +11,10 @@ window.refreshCitizensTable = async function() {
         allCitizens = []; // Reset array
         
         querySnapshot.forEach((docSnap) => {
-            allCitizens.push(docSnap.data());
+            // Save docId along with doc data
+            allCitizens.push({ docId: docSnap.id, ...docSnap.data() });
         });
 
-        // Re-apply any active search/dropdown filters to the fresh data
         if (typeof filterTable === "function") {
             filterTable(); 
         } else {
@@ -83,7 +83,7 @@ function renderTable(usersData) {
         const sex = user.sex || "N/A"; 
 
         const row = `
-            <tr class="tableRow" data-uid="${user.uid}">
+            <tr class="tableRow" data-uid="${user.docId || user.uid}">
                 <td class="user-section">
                     <div class="user-avatar ${statusClass}">${initials}</div>
                     <div class="user-info">

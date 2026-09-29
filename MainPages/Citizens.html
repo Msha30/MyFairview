@@ -76,15 +76,14 @@
             </table>
         </div>
     </div>
-    <div id="popup-container" class="hidden"></div>
+    <div id="popup-container"></div>
     <script>
         fetch('../Popups/Info_Citizens.html')
             .then(response => response.text())
             .then(data => {
                 document.getElementById('popup-container').innerHTML = data;
-                document.getElementById('popup-container').classList.remove("hidden")
-
-            });
+            })
+            .catch(err => console.error("Error loading Info_Citizens popup:", err));
     </script>
 </body>
 

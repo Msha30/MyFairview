@@ -68,7 +68,7 @@
                             <td>ID Number</td>
                             <td id="pop-userID">Loading...</td>
                         </tr>
-                        <tr class="row">
+                        <tr class="row" id="row-regDate" style="display: flex;">
                             <td>Registered on</td>
                             <td id="pop-regDate">Loading...</td>
                         </tr>
@@ -127,14 +127,18 @@
     @import url("../Styles/Variables.css");
     @import url("../CSS/Popups.css");
 
-    .content {
-        max-width: 70%;
+    /* Ensure modal content takes proper width and does not shrink to 0 */
+    .modal-overlay .content {
+        width: 800px;
+        max-width: 90vw;
+        box-sizing: border-box;
     }
 
     .grid-2 {
+        width: 100%;
         overflow: auto;
         display: grid;
-        grid-template-columns: 1.5fr 1fr;
+        grid-template-columns: 1.4fr 1fr;
         gap: var(--cardgap);
         align-items: start;
     }
@@ -146,7 +150,7 @@
 
     .row td:last-child {
         text-align: left;
-        padding-left: 30px;
+        padding-left: 20px;
     }
 
     .status {
