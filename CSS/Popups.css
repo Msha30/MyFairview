@@ -223,7 +223,7 @@
     background: none;
 }
 
-.modal-overlay .input.edit {
+.modal-overlay .input.edit:not(:disabled) {
     color: var(--black);
     background: var(--bg);
     border: 1px solid var(--grey);

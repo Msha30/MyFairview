@@ -1,6 +1,7 @@
 import { auth, firestore } from "./auth.js";
 import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.17.0/firebase-auth.js";
 import { collection, getDocs, setDoc, doc, deleteDoc, updateDoc, query, where, limit } from "https://www.gstatic.com/firebasejs/12.17.0/firebase-firestore.js";
+import { writeLog } from "./logging.js";
 
 let currentStaffId = "BFVS-26-00000"; // Default fallback staff ID
 let uploadedFiles = [];
@@ -164,6 +165,7 @@ async function loadAnnouncements() {
                 const docId = e.currentTarget.getAttribute("data-id");
                 if (confirm("Are you sure you want to delete this announcement?")) {
                     await deleteDoc(doc(firestore, "Announcement", docId));
+                    writeLog("Delete", "Removed Announcement", docId, `Deleted announcement ${docId}`);
                     await loadAnnouncements();
                 }
             });
@@ -232,6 +234,7 @@ async function handlePublishAnnouncement() {
         renderMediaList();
 
         alert(`Announcement published successfully under ID: ${annID}`);
+        writeLog("Add", "New Announcement", annID, `Published "${title}"`);
         await loadAnnouncements();
     } catch (err) {
         console.error("Error publishing announcement:", err);
@@ -279,6 +282,7 @@ function initEditModalLogic() {
                 title: newTitle,
                 message: newMessage
             });
+            writeLog("Edit", "Edited Announcement", activeEditId, `Updated "${newTitle}"`);
 
             modal.style.display = "none";
             activeEditId = null;

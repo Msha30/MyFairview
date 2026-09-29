@@ -4,6 +4,7 @@ import { loadGoogleMaps } from "./gmaps.js";
 import { app } from "./auth.js";
 import { isValidLatLng, dropPin, geopointToLatLng } from "./map-helper.js";
 import { showToast } from "./toast.js";
+import { writeLog } from "./logging.js";
 
 const firestore = getFirestore(app);
 const evacCollection = collection(firestore, "EvacuationCenter");
@@ -203,6 +204,7 @@ function setupAddEvacCenter() {
             });
             modal.style.display = "none"; // Close first so the toast reads as confirmation, not an interruption
             showToast("Evacuation center added.");
+            writeLog("Add", "New Evacuation Center", newId, `Added ${name}`);
         } catch (err) {
             console.error("Failed to add evacuation center:", err);
             showToast("Couldn't add evacuation center.", "error");
@@ -225,19 +227,44 @@ async function nextEvacId() {
 let infoMap = null;
 let infoMarker = null;
 let infoMarkerLib = null;
+let isEvacEditing = false;
+let evacEditedLoc = null; // Only updates if the user clicks the map while editing
 
 async function openEvacInfo(v, id) {
     const modal = document.getElementById("infoEvacCenter");
 
-    document.getElementById("infoEvacName").value = v.placeName || "";
-    document.getElementById("infoEvacAddress").value = v.address || "";
-    document.getElementById("infoEvacCapacity").value = v.capacity || "";
+    const nameInput = document.getElementById("infoEvacName");
+    const addressInput = document.getElementById("infoEvacAddress");
+    const capacityInput = document.getElementById("infoEvacCapacity");
+    const editBtn = document.getElementById("btn-edit-evac");
+    const deleteBtn = modal.querySelector(".button.delete");
+    const applyBtn = modal.querySelector(".button.accept");
+
+    nameInput.value = v.placeName || "";
+    addressInput.value = v.address || "";
+    capacityInput.value = v.capacity || "";
     setText("infoEvacIDNum", v.evacID || id);
     setText("infoEvacAddedOn", formatTimestamp(v.createdOn));
     setText("infoEvacAddedBy", v.createdBy);
 
     const currentLoc = geopointToLatLng(v.pinLocation);
-    let editedLoc = currentLoc; // Only updates if the user clicks the map — address text never touches this
+    evacEditedLoc = currentLoc; // address text never touches this — only the pin
+
+    // Always open in read-only view mode; Edit unlocks everything below.
+    isEvacEditing = false;
+    [nameInput, addressInput, capacityInput].forEach(el => el.disabled = true);
+    if (deleteBtn) deleteBtn.style.display = "none";
+    if (applyBtn) applyBtn.style.display = "none";
+
+    if (editBtn) {
+        editBtn.onclick = (e) => {
+            e.preventDefault();
+            isEvacEditing = true;
+            [nameInput, addressInput, capacityInput].forEach(el => el.disabled = false);
+            if (deleteBtn) deleteBtn.style.display = "block";
+            if (applyBtn) applyBtn.style.display = "block";
+        };
+    }
 
     modal.style.display = "flex";
 
@@ -250,8 +277,9 @@ async function openEvacInfo(v, id) {
             center, zoom: 15, disableDefaultUI: true, mapId: MAP_ID
         });
         infoMap.addListener("click", (e) => {
-            editedLoc = { lat: e.latLng.lat(), lng: e.latLng.lng() };
-            placeInfoPin(editedLoc);
+            if (!isEvacEditing) return; // Pin isn't moveable until Edit is clicked
+            evacEditedLoc = { lat: e.latLng.lat(), lng: e.latLng.lng() };
+            placeInfoPin(evacEditedLoc);
         });
     } else {
         infoMap.setCenter(center);
@@ -265,37 +293,43 @@ async function openEvacInfo(v, id) {
         infoMarker = dropPin(infoMarkerLib, infoMap, loc, "#1E8E3E", "#0F5C22");
     }
 
-    modal.querySelector(".button.delete").onclick = async () => {
-        if (!confirm(`Remove ${v.placeName}?`)) return;
-        try {
-            await deleteDoc(doc(firestore, "EvacuationCenter", id));
-            modal.style.display = "none"; // Close first so the toast reads as confirmation
-            showToast("Evacuation center removed.");
-        } catch (err) {
-            console.error("Failed to remove evacuation center:", err);
-            showToast("Couldn't remove evacuation center.", "error");
-        }
-    };
-
-    modal.querySelector(".button.accept").onclick = async () => {
-        const updates = {
-            placeName: document.getElementById("infoEvacName").value.trim(),
-            address: document.getElementById("infoEvacAddress").value.trim(),
-            capacity: document.getElementById("infoEvacCapacity").value.trim()
+    if (deleteBtn) {
+        deleteBtn.onclick = async () => {
+            if (!confirm(`Remove ${v.placeName}?`)) return;
+            try {
+                await deleteDoc(doc(firestore, "EvacuationCenter", id));
+                modal.style.display = "none"; // Close first so the toast reads as confirmation
+                showToast("Evacuation center removed.");
+                writeLog("Delete", "Removed Evacuation Center", v.evacID || id, `Removed ${v.placeName}`);
+            } catch (err) {
+                console.error("Failed to remove evacuation center:", err);
+                showToast("Couldn't remove evacuation center.", "error");
+            }
         };
-        // Only overwrite the saved pin if the user actually clicked a new, valid spot
-        if (isValidLatLng(editedLoc)) {
-            updates.pinLocation = new GeoPoint(editedLoc.lat, editedLoc.lng);
-        }
-        try {
-            await updateDoc(doc(firestore, "EvacuationCenter", id), updates);
-            modal.style.display = "none";
-            showToast("Changes saved.");
-        } catch (err) {
-            console.error("Failed to update evacuation center:", err);
-            showToast("Couldn't save changes.", "error");
-        }
-    };
+    }
+
+    if (applyBtn) {
+        applyBtn.onclick = async () => {
+            const updates = {
+                placeName: nameInput.value.trim(),
+                address: addressInput.value.trim(),
+                capacity: capacityInput.value.trim()
+            };
+            // Only overwrite the saved pin if the user actually clicked a new, valid spot
+            if (isValidLatLng(evacEditedLoc)) {
+                updates.pinLocation = new GeoPoint(evacEditedLoc.lat, evacEditedLoc.lng);
+            }
+            try {
+                await updateDoc(doc(firestore, "EvacuationCenter", id), updates);
+                modal.style.display = "none";
+                showToast("Changes saved.");
+                writeLog("Edit", "Edited Evacuation Center", v.evacID || id, `Updated info for ${updates.placeName}`);
+            } catch (err) {
+                console.error("Failed to update evacuation center:", err);
+                showToast("Couldn't save changes.", "error");
+            }
+        };
+    }
 }
 
 function formatTimestamp(ts) {

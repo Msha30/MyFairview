@@ -43,7 +43,7 @@
                     </div>
                     <span class="stat-trend aa">Details ></span>
                 </div>
-                <div class="stat-val">00</div>
+                <div class="stat-val" id="statUnresolvedReports">00</div>
                 <div class="stat-label">Total Unresolved Reports</div>
             </div>
             <div class="card white">
@@ -53,7 +53,7 @@
                     </div>
                     <span class="stat-trend bb">Details ></span>
                 </div>
-                <div class="stat-val">0 / 0</div>
+                <div class="stat-val" id="statAvailableVehicles">0 / 0</div>
                 <div class="stat-label">Available Barangay Vehicles</div>
             </div>
             <div class="card white">
@@ -63,7 +63,7 @@
                     </div>
                     <span class="stat-trend cc">Details ></span>
                 </div>
-                <div class="stat-val">0,000</div>
+                <div class="stat-val" id="statRegisteredCitizens">0,000</div>
                 <div class="stat-label">Total Registered Citizens</div>
             </div>
             <div class="card white">
@@ -128,62 +128,62 @@
                     <th>Resolved Reports</th>
                 </tr>
             </thead>
-            <tbody>
-                <tr>
-                    <td>Subdivision 1</td>
-                    <td>00,000</td>
-                    <td>00,000</td>
-                    <td>00,000</td>
-                    <td>000</td>
-                    <td>000</td>
-                </tr>
-                <tr>
-                    <td>Subdivision 2</td>
-                    <td>00,000</td>
-                    <td>00,000</td>
-                    <td>00,000</td>
-                    <td>000</td>
-                    <td>000</td>
-                </tr>
-                <tr>
-                    <td>Subdivision 3</td>
-                    <td>00,000</td>
-                    <td>00,000</td>
-                    <td>00,000</td>
-                    <td>000</td>
-                    <td>000</td>
-                </tr>
-                <tr>
-                    <td>Subdivision 4</td>
-                    <td>00,000</td>
-                    <td>00,000</td>
-                    <td>00,000</td>
-                    <td>000</td>
-                    <td>000</td>
-                </tr>
-                <tr>
-                    <td>Subdivision 5</td>
-                    <td>00,000</td>
-                    <td>00,000</td>
-                    <td>00,000</td>
-                    <td>000</td>
-                    <td>000</td>
-                </tr>
-                <tr>
+            <tbody id="subdivisionTableBody">
+                <tr data-sub="No Subdivision">
                     <td>No Subdivision</td>
-                    <td>00,000</td>
-                    <td>00,000</td>
-                    <td>00,000</td>
-                    <td>000</td>
-                    <td>000</td>
+                    <td data-field="registered">00,000</td>
+                    <td data-field="unverified">00,000</td>
+                    <td data-field="invalid">00,000</td>
+                    <td data-field="unresolved">000</td>
+                    <td data-field="resolved">000</td>
                 </tr>
-                <tr>
-                    <td>Condominium</td>
-                    <td>00,000</td>
-                    <td>00,000</td>
-                    <td>00,000</td>
-                    <td>000</td>
-                    <td>000</td>
+                <tr data-sub="Ciudad Verde">
+                    <td>Ciudad Verde</td>
+                    <td data-field="registered">00,000</td>
+                    <td data-field="unverified">00,000</td>
+                    <td data-field="invalid">00,000</td>
+                    <td data-field="unresolved">000</td>
+                    <td data-field="resolved">000</td>
+                </tr>
+                <tr data-sub="West Fairview Subdivision">
+                    <td>West Fairview Subdivision</td>
+                    <td data-field="registered">00,000</td>
+                    <td data-field="unverified">00,000</td>
+                    <td data-field="invalid">00,000</td>
+                    <td data-field="unresolved">000</td>
+                    <td data-field="resolved">000</td>
+                </tr>
+                <tr data-sub="East Fairview Park Subdivision">
+                    <td>East Fairview Park Subdivision</td>
+                    <td data-field="registered">00,000</td>
+                    <td data-field="unverified">00,000</td>
+                    <td data-field="invalid">00,000</td>
+                    <td data-field="unresolved">000</td>
+                    <td data-field="resolved">000</td>
+                </tr>
+                <tr data-sub="Sunny Villas Condominium">
+                    <td>Sunny Villas Condominium</td>
+                    <td data-field="registered">00,000</td>
+                    <td data-field="unverified">00,000</td>
+                    <td data-field="invalid">00,000</td>
+                    <td data-field="unresolved">000</td>
+                    <td data-field="resolved">000</td>
+                </tr>
+                <tr data-sub="Grand Mesa Residences">
+                    <td>Grand Mesa Residences</td>
+                    <td data-field="registered">00,000</td>
+                    <td data-field="unverified">00,000</td>
+                    <td data-field="invalid">00,000</td>
+                    <td data-field="unresolved">000</td>
+                    <td data-field="resolved">000</td>
+                </tr>
+                <tr data-sub="Other">
+                    <td>Other</td>
+                    <td data-field="registered">00,000</td>
+                    <td data-field="unverified">00,000</td>
+                    <td data-field="invalid">00,000</td>
+                    <td data-field="unresolved">000</td>
+                    <td data-field="resolved">000</td>
                 </tr>
             </tbody>
         </table>
@@ -192,6 +192,8 @@
 
 </body>
 <!-- SKELETON LOADER -->
+
+<script type="module" src="../JS/Overview.js"></script>
 
 <script>
     document.addEventListener("DOMContentLoaded", () => {

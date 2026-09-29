@@ -1,7 +1,8 @@
 import { auth, firestore, firebaseConfig } from "./auth.js"; // Ensure firebaseConfig is exported from auth.js
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.17.0/firebase-app.js";
 import { getAuth, createUserWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/12.17.0/firebase-auth.js";
-import { collection, doc, setDoc, getDocs, getDoc, updateDoc, deleteDoc } from "https://www.gstatic.com/firebasejs/12.17.0/firebase-firestore.js";
+import { collection, doc, setDoc, getDocs, getDoc, updateDoc, deleteDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/12.17.0/firebase-firestore.js";
+import { writeLog } from "./logging.js";
 
 // 1. Initialize a Secondary App for Secure Account Creation
 // Prevents the Super Admin from being logged out when creating a new staff member.
@@ -160,6 +161,7 @@ async function submitNewStaff() {
         await secondaryAuth.signOut();
 
         alert("Staff member successfully added!");
+        writeLog("Add", "New Staff Member", newStaffID, `Added ${staffData.fName} ${staffData.lName} (${staffData.role})`);
         closeModal();
         loadStaffTable(); // Refresh the table automatically
     } catch (error) {
@@ -195,6 +197,78 @@ function closeModal() {
     popupContainer.innerHTML = "";
 }
 
+// 11. System Logs — live from the Logs collection
+const ACTION_BG = {
+    add: "post", edit: "edit", change: "edit", update: "edit",
+    delete: "remove", remove: "remove"
+};
+
+function logRowClass(action) {
+    const key = (action || "").toLowerCase();
+    for (const [needle, cls] of Object.entries(ACTION_BG)) {
+        if (key.includes(needle)) return cls;
+    }
+    return ""; // Verify/Reject/anything else: plain white row
+}
+
+async function loadStaffNameLookup() {
+    const lookup = {};
+    try {
+        const snap = await getDocs(collection(firestore, "Info_Staff"));
+        snap.forEach(d => {
+            const s = d.data();
+            const name = [s.fName, s.lName].filter(Boolean).join(" ").trim();
+            lookup[d.id] = name || d.id;
+        });
+    } catch (err) {
+        console.error("Error loading staff names for logs:", err);
+    }
+    return lookup;
+}
+
+function formatLogTimestamp(ts) {
+    if (!ts || !ts.toDate) return { date: "—", time: "—" };
+    const d = ts.toDate();
+    return {
+        date: d.toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" }),
+        time: d.toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit" })
+    };
+}
+
+async function initSystemLogs() {
+    const listEl = document.getElementById("systemLogsList");
+    if (!listEl) return;
+
+    const staffNames = await loadStaffNameLookup();
+
+    onSnapshot(collection(firestore, "Logs"), (snapshot) => {
+        const logs = snapshot.docs
+            .map(d => d.data())
+            .sort((a, b) => (b.madeOn?.toMillis?.() || 0) - (a.madeOn?.toMillis?.() || 0));
+
+        listEl.innerHTML = "";
+
+        logs.forEach(log => {
+            const { date, time } = formatLogTimestamp(log.madeOn);
+            const rowClass = logRowClass(log.action);
+            const madeByName = staffNames[log.madeBy] || log.madeBy || "—";
+
+            const row = document.createElement("div");
+            row.className = rowClass ? `row ${rowClass}` : "row";
+            row.innerHTML = `
+                <div class="logtitle">${log.actionDesc || log.action || "Log"} — ${log.affectedID || ""}</div>
+                <div class="logdesc">${log.details || ""}</div>
+                <div class="logmeta">
+                    <span>${date}</span>
+                    <span>${time}</span>
+                    <span>By: ${madeByName}</span>
+                </div>
+            `;
+            listEl.appendChild(row);
+        });
+    });
+}
+
 // 7. Initialization
 document.addEventListener("DOMContentLoaded", () => {
     // Attach event to the "Add Member" button in Access.html
@@ -208,6 +282,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // Load initial table data
     loadStaffTable();
+    initSystemLogs();
 });
 
 // 8. Open Staff Modal (Handles both View and Edit modes)
@@ -308,6 +383,7 @@ async function saveStaffChanges(staffID) {
 
         await updateDoc(doc(firestore, "Info_Staff", staffID), updatedData);
         alert("Changes applied successfully!");
+        writeLog("Edit", "Edited Staff Info", staffID, `Updated info for ${updatedData.fName} ${updatedData.lName}`);
         closeModal();
         loadStaffTable(); // Refresh table automatically
     } catch (error) {
@@ -322,6 +398,7 @@ async function removeStaff(staffID) {
     try {
         await deleteDoc(doc(firestore, "Info_Staff", staffID));
         alert("Staff member removed successfully.");
+        writeLog("Delete", "Removed Staff Member", staffID, `Removed staff ${staffID}`);
         closeModal();
         loadStaffTable();
     } catch (error) {

@@ -1,6 +1,7 @@
 import { firestore } from './auth.js'; 
 import { collection, getDocs, doc, getDoc, updateDoc, Timestamp } from "https://www.gstatic.com/firebasejs/12.17.0/firebase-firestore.js"; 
 import { initCardMap } from "./gmapComponent.js"; 
+import { writeLog } from "./logging.js";
 
 let reportsData = [];
 const tableBody = document.querySelector('.tableDiv.reports tbody');
@@ -121,14 +122,19 @@ function renderTable(data) {
         const timeString = dateObj.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' });
 
         const tr = document.createElement('tr');
-        const rowClass = report.category ? report.category.toLowerCase().replace(' ', '') : 'community';
-        tr.className = `tableRow ${rowClass}`;
-        
+        const categoryClass = report.category ? report.category.toLowerCase().replace(' ', '') : 'community';
+        const statusClass = report.status === 'Resolved' ? 'resolved' : (report.status === 'Invalid' ? 'invalid' : '');
+        tr.className = `tableRow ${categoryClass} ${statusClass}`.trim();
+
+        const titleLine = report.status === 'Invalid'
+            ? `${report.reportID || 'N/A'} | ${report.History?.reason || 'N/A'}`
+            : `${report.reportID || 'N/A'} | ${report.type || 'N/A'}`;
+
         tr.innerHTML = `
             <td class="user-section">
                 <div class="dot">●</div>
                 <div class="user-info">
-                    <strong>${report.reportID || 'N/A'} | ${report.type || 'N/A'}</strong><br>
+                    <strong>${titleLine}</strong><br>
                     <span>${dateString} · ${timeString}</span>
                 </div>
             </td>
@@ -433,6 +439,8 @@ async function openInvalidPopup(report) {
                 }
             });
             
+            writeLog("Edit", "Marked Report Invalid", report.reportID, `${report.reportID} marked invalid — Reason: ${reason}`);
+
             // Cleanup and reload data view
             document.body.removeChild(popupContainer);
             modalContainer.innerHTML = '';
@@ -489,6 +497,8 @@ async function openResolvePopup(report) {
                 }
             });
             
+            writeLog("Edit", "Resolved Report", report.reportID, `${report.reportID} resolved — ${actionText}`);
+
             document.body.removeChild(popupContainer);
             modalContainer.innerHTML = '';
             await fetchReports();

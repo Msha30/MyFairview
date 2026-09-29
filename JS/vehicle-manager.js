@@ -5,6 +5,7 @@ import { loadGoogleMaps } from "./gmaps.js";
 import { database, app } from "./auth.js"; // Ensure app is exported from auth.js to init firestore
 import { isValidLatLng, dropPin, computeAndDrawRoute } from "./map-helper.js";
 import { showToast } from "./toast.js";
+import { writeLog } from "./logging.js";
 
 const db = database;
 const firestore = getFirestore(app);
@@ -76,8 +77,17 @@ function listenToVehicles() {
         allVehiclesData = snapshot.val();
         const maps = await loadGoogleMaps();
 
-        Object.keys(allVehiclesData).forEach((vKey) => {
-            const v = allVehiclesData[vKey];
+        // Available vehicles first (alphabetical), then deployed (alphabetical)
+        const sortedEntries = Object.entries(allVehiclesData).sort(([keyA, a], [keyB, b]) => {
+            const depA = a.deployed ? 1 : 0;
+            const depB = b.deployed ? 1 : 0;
+            if (depA !== depB) return depA - depB;
+            const plateA = (a.plateNo || keyA).toString();
+            const plateB = (b.plateNo || keyB).toString();
+            return plateA.localeCompare(plateB);
+        });
+
+        sortedEntries.forEach(([vKey, v]) => {
             const isDep = v.deployed;
 
             const item = document.createElement("div");
@@ -140,6 +150,7 @@ function setupAddVehicle() {
             });
             modal.style.display = "none"; // Close first so the toast reads as confirmation, not an interruption
             showToast("Vehicle added.");
+            writeLog("Add", "New Vehicle", plate, `Added vehicle ${plate}`);
         } catch (err) {
             console.error("Failed to add vehicle:", err);
             showToast("Couldn't add vehicle.", "error");
@@ -332,6 +343,7 @@ function setupDeployVehicle() {
             });
             modal.style.display = "none"; // Close first so the toast reads as confirmation, not an interruption
             showToast("Vehicle deployed.");
+            writeLog("Edit", "Deployed Vehicle", vId, `Deployed ${vId} to ${contactToSave}`);
         } catch (err) {
             console.error("Failed to deploy vehicle:", err);
             showToast("Couldn't deploy vehicle.", "error");
@@ -353,6 +365,7 @@ function openAvailableInfo(v, vId) {
             await remove(ref(db, `vehicles/${vId}`));
             modal.style.display = "none"; // Close first so the toast reads as confirmation
             showToast("Vehicle removed.");
+            writeLog("Delete", "Removed Vehicle", vId, `Removed vehicle ${vId}`);
         } catch (err) {
             console.error("Failed to remove vehicle:", err);
             showToast("Couldn't remove vehicle.", "error");
@@ -366,6 +379,7 @@ function openAvailableInfo(v, vId) {
             });
             modal.style.display = "none";
             showToast("Changes saved.");
+            writeLog("Edit", "Edited Vehicle Info", vId, `Updated info for ${vId}`);
         } catch (err) {
             console.error("Failed to update vehicle:", err);
             showToast("Couldn't save changes.", "error");
@@ -429,6 +443,7 @@ async function openDeployedInfo(v, vId) {
             await update(ref(db, `vehicles/${vId}`), { deployed: false, details: "", targetLoc: "", targetLocCoords: null, contactPerson: "" });
             modal.style.display = "none"; // Close first so the toast reads as confirmation
             showToast("Vehicle recalled.");
+            writeLog("Edit", "Recalled Vehicle", vId, `Recalled vehicle ${vId}`);
         } catch (err) {
             console.error("Failed to recall vehicle:", err);
             showToast("Couldn't recall vehicle.", "error");

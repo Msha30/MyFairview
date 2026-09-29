@@ -8,19 +8,20 @@
                 <div class="infocard">
                     <div class="areaheader">
                         <div class="areatitle">Evacuation Center Information</div>
+                        <a id="btn-edit-evac" class="btn editinfo" href="#">Edit</a>
                     </div>
                     <table class="information">
                         <tr class="row">
                             <td>Place Name</td>
-                            <td><input id="infoEvacName" class="input" type="text" value=""></td>
+                            <td><input id="infoEvacName" class="input edit" type="text" value="" disabled></td>
                         </tr>
                         <tr class="row wrap">
                             <td>Address</td>
-                            <td><input id="infoEvacAddress" class="input" type="text" value=""></td>
+                            <td><input id="infoEvacAddress" class="input edit" type="text" value="" disabled></td>
                         </tr>
                         <tr class="row">
                             <td>Capacity</td>
-                            <td><input id="infoEvacCapacity" class="input" type="text" value=""></td>
+                            <td><input id="infoEvacCapacity" class="input edit" type="text" value="" disabled></td>
                         </tr>
                     </table>
                 </div>
@@ -39,9 +40,9 @@
                             <td id="infoEvacAddedBy">—</td>
                         </tr>
                     </table>
-                    <button class="button delete">Remove Evacuation Center</button>
+                    <button class="button delete" style="display: none;">Remove Evacuation Center</button>
                 </div>
-                <button class="button accept">Apply Changes</button>
+                <button class="button accept" style="display: none;">Apply Changes</button>
             </div>
             <div class="infocard loc">
                 <div class="areaheader">

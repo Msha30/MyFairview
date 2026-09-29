@@ -30,6 +30,11 @@ function renderTable(usersData) {
     const tbody = document.querySelector(".tableDiv.citizens tbody");
     if (!tbody) return;
 
+    // Sort alphabetically by surname (instead of by ID number)
+    usersData = [...usersData].sort((a, b) =>
+        (a.lName || "").localeCompare(b.lName || "")
+    );
+
     tbody.innerHTML = ""; // Clear existing rows
 
     // Show a message if no results match the filter

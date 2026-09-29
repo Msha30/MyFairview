@@ -1,4 +1,5 @@
 import { firestore } from "./auth.js";
+import { writeLog } from "./logging.js";
 import { 
     doc, 
     getDoc, 
@@ -154,6 +155,10 @@ window.applyCitizenChanges = async function() {
         
         // Grab values from the editable fields
         const updatedData = {
+            lName: document.getElementById("pop-lName").value,
+            fName: document.getElementById("pop-fName").value,
+            mName: document.getElementById("pop-mName").value,
+            suffix: document.getElementById("pop-suffix").value,
             contactMain: document.getElementById("pop-contactMain").value,
             contact2: document.getElementById("pop-contact2").value,
             area: document.getElementById("pop-area").value,
@@ -170,6 +175,9 @@ window.applyCitizenChanges = async function() {
         // Push updates to Firestore
         await updateDoc(userRef, updatedData);
         if (window.refreshCitizensTable) window.refreshCitizensTable();
+
+        const fullName = `${updatedData.fName} ${updatedData.lName}`.trim();
+        writeLog("Edit", "Edited Citizen Info", currentOpenedDocId, `Updated info for ${fullName}`);
 
         // Visual feedback
         btn.textContent = "Saved!";
@@ -361,7 +369,11 @@ document.addEventListener("click", async function (e) {
                 verifiedBy: "Administrator", // Can be dynamically swapped for active admin session later
                 userID: newUserID
             });
-            
+
+            const vFName = document.getElementById("pop-fName").value;
+            const vLName = document.getElementById("pop-lName").value;
+            writeLog("Verify", "Verified Citizen", newUserID, `Verified ${vFName} ${vLName}`.trim());
+
             document.getElementById("userAccept").style.display = "none";
             window.openInfoCitizens(currentOpenedDocId); // Refresh main popup UI
             if (window.refreshCitizensTable) window.refreshCitizensTable();
@@ -390,7 +402,11 @@ document.addEventListener("click", async function (e) {
                 rejectedBy: "Administrator",
                 reason: reason
             });
-            
+
+            const rFName = document.getElementById("pop-fName").value;
+            const rLName = document.getElementById("pop-lName").value;
+            writeLog("Reject", "Rejected Citizen", currentOpenedDocId, `Rejected ${rFName} ${rLName} — Reason: ${reason}`.trim());
+
             document.getElementById("userInvalid").style.display = "none";
             window.openInfoCitizens(currentOpenedDocId); // Refresh main popup UI
             if (window.refreshCitizensTable) window.refreshCitizensTable();
