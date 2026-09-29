@@ -59,7 +59,7 @@ onSnapshot(collection(firestore, "Reports"), (snapshot) => {
     const unresolvedEl = document.getElementById("statUnresolvedReports");
     if (unresolvedEl) {
         const unresolvedCount = reportsData.filter(r => r.status === "Unresolved" && r.category !== "Feedback").length;
-        unresolvedEl.textContent = String(unresolvedCount).padStart(2, "0");
+        unresolvedEl.textContent = String(unresolvedCount);
     }
 
     renderSubdivisionTable();

@@ -91,6 +91,50 @@ async function ensureModalLoaded() {
 // MODAL: EDIT THRESHOLDS
 // ============================================================
 const THRESHOLD_TYPES = ['safe', 'monitor', 'warning', 'critical'];
+const MAX_LEVEL_LIMIT = 10; // Highest allowed value for Critical's max threshold
+
+// Swaps a number <input> for a <select> (once), keeping the same classes so styling is unchanged
+function toSelect(el) {
+    if (el.tagName === "SELECT") return el;
+    const sel = document.createElement("select");
+    sel.className = el.className;
+    el.replaceWith(sel);
+    return sel;
+}
+
+// Fills a dropdown with 1..maxVal. A stored value outside that range is still listed so it
+// stays visible (and will be rejected on Save).
+function fillSelect(sel, maxVal, current) {
+    const cur = parseFloat(current);
+    const opts = [];
+    for (let i = 1; i <= maxVal; i++) opts.push(i);
+    if (!isNaN(cur) && cur !== 0 && !opts.includes(cur)) opts.push(cur);
+    opts.sort((a, b) => a - b);
+    sel.innerHTML = opts.map(n => `<option value="${n}">${n}</option>`).join("");
+    sel.value = String(!isNaN(cur) && opts.includes(cur) ? cur : opts[0]);
+}
+
+// (Re)builds every threshold dropdown based on Critical's max
+function setupThresholdDropdowns(modal, values) {
+    const get = (type, idx) => toSelect(modal.querySelectorAll(`.item.${type} .thres-item .form-input`)[idx]);
+    const critMax = get("critical", 1);
+    const others = [get("safe", 1), get("monitor", 0), get("monitor", 1), get("warning", 0), get("warning", 1), get("critical", 0)];
+
+    // Safe minimum is always 0 and not editable
+    const safeMin = get("safe", 0);
+    safeMin.innerHTML = `<option value="0">0</option>`;
+    safeMin.value = "0";
+    safeMin.disabled = true;
+
+    if (values) fillSelect(critMax, MAX_LEVEL_LIMIT, values.criticalMax);
+    const rebuildOthers = (vals) => {
+        const max = parseFloat(critMax.value) || MAX_LEVEL_LIMIT;
+        others.forEach((sel, i) => fillSelect(sel, max, vals ? vals[i] : sel.value));
+    };
+    if (values) rebuildOthers([values.safeMax, values.monitorMin, values.monitorMax, values.warningMin, values.warningMax, values.criticalMin]);
+
+    critMax.onchange = () => { rebuildOthers(null); refreshThresholdSaveState(); };
+}
 let thresholdOriginal = {};
 
 // Reads the popup's current values and the human labels for each field
@@ -101,7 +145,7 @@ function readThresholdModal(modal) {
         const cap = type.charAt(0).toUpperCase() + type.slice(1);
         const item = modal.querySelector(`.item.${type}`);
         if (!item) return;
-        const inputs = item.querySelectorAll("input[type='number']");
+        const inputs = item.querySelectorAll(".thres-item .form-input");
         const msgInput = item.querySelector(".message");
         if (inputs.length >= 2) {
             values[`${type}Min`] = String(parseFloat(inputs[0].value) || 0);
@@ -144,14 +188,16 @@ document.addEventListener("DOMContentLoaded", () => {
                 const t = dynamicThresholds[capitalized];
                 const item = modal.querySelector(`.item.${type}`);
                 if (item) {
-                    const inputs = item.querySelectorAll("input[type='number']");
+                    const inputs = item.querySelectorAll(".thres-item .form-input");
                     const msgInput = item.querySelector(".message");
-                    if (inputs.length >= 2) {
-                        inputs[0].value = t.min;
-                        inputs[1].value = t.max;
-                    }
                     if (msgInput) msgInput.value = t.msg;
                 }
+            });
+            setupThresholdDropdowns(modal, {
+                safeMax: dynamicThresholds.Safe.max,
+                monitorMin: dynamicThresholds.Monitor.min, monitorMax: dynamicThresholds.Monitor.max,
+                warningMin: dynamicThresholds.Warning.min, warningMax: dynamicThresholds.Warning.max,
+                criticalMin: dynamicThresholds.Critical.min, criticalMax: dynamicThresholds.Critical.max
             });
             thresholdOriginal = readThresholdModal(modal).values;
             refreshThresholdSaveState();
@@ -171,6 +217,14 @@ document.addEventListener("DOMContentLoaded", () => {
             const { values: currentValues, labels: thresholdLabels } = readThresholdModal(modal);
             const thresholdChanges = getChanges(thresholdOriginal, currentValues, thresholdLabels);
             if (thresholdChanges.length === 0) return; // Nothing changed: nothing to save or log
+
+            // Every threshold must be within the highest (Critical max) level
+            const highest = parseFloat(currentValues.criticalMax);
+            const tooHigh = Object.keys(currentValues).filter(k => /(Min|Max)$/.test(k) && parseFloat(currentValues[k]) > highest);
+            if (tooHigh.length > 0) {
+                alert(`Thresholds can't be higher than the highest level (${highest}). Please fix the dropdowns that exceed it.`);
+                return;
+            }
             saveBtn.textContent = "Saving...";
             saveBtn.disabled = true;
             
@@ -180,7 +234,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 const capitalized = type.charAt(0).toUpperCase() + type.slice(1);
                 const item = modal.querySelector(`.item.${type}`);
                 if (item) {
-                    const inputs = item.querySelectorAll("input[type='number']");
+                    const inputs = item.querySelectorAll(".thres-item .form-input");
                     const msgInput = item.querySelector(".message");
                     
                     if (inputs.length >= 2 && msgInput) {

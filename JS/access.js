@@ -350,7 +350,12 @@ async function openStaffModal(staffID, isEditMode = false) {
             const actionButtons = document.querySelector('#staffModal .buttons');
             if (actionButtons) actionButtons.style.display = 'none';
         } else {
-            // EDIT MODE: Attach Button Listeners
+            // EDIT MODE: mark editable text fields so it's clear they can be changed
+            document.querySelectorAll('#staffModal input.input').forEach(input => {
+                if (!input.disabled) input.classList.add('edit');
+            });
+
+            // Attach Button Listeners
             const applyBtn = document.querySelector("#staffModal .button.accept");
             const originalValues = collectStaffValues();
             const staffChanges = () => getChanges(originalValues, collectStaffValues(), STAFF_LABELS);

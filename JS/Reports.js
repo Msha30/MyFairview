@@ -178,6 +178,20 @@ function updateStats(statusFilter) {
         if (counts[r.category] !== undefined) counts[r.category]++;
     });
 
+    // "This Month" = Unresolved + Resolved reports created in the current month, per category
+    const now = new Date();
+    const monthCounts = { 'Emergency': 0, 'Public Safety': 0, 'Community': 0, 'Feedback': 0 };
+    reportsData.forEach(r => {
+        if (r.status !== 'Unresolved' && r.status !== 'Resolved') return;
+        if (monthCounts[r.category] === undefined) return;
+        const d = r.createdOn && typeof r.createdOn.toDate === 'function' ? r.createdOn.toDate() : null;
+        if (d && d.getMonth() === now.getMonth() && d.getFullYear() === now.getFullYear()) monthCounts[r.category]++;
+    });
+    const trendEls = ['aa', 'bb', 'cc', 'dd'].map(k => document.querySelector(`.stat-trend.${k}`));
+    ['Emergency', 'Public Safety', 'Community', 'Feedback'].forEach((cat, i) => {
+        if (trendEls[i]) trendEls[i].textContent = `${monthCounts[cat]} This Month`;
+    });
+
     const statVals = document.querySelectorAll('.stat-val');
     if(statVals.length >= 4) {
         statVals[0].textContent = counts['Emergency'];
