@@ -497,7 +497,7 @@ async function openResolvePopup(report) {
                 }
             });
             
-            writeLog("Edit", "Resolved Report", report.reportID, `${report.reportID} resolved — ${actionText}`);
+            writeLog("Verify", "Resolved Report", report.reportID, `${report.reportID} resolved — ${actionText}`);
 
             document.body.removeChild(popupContainer);
             modalContainer.innerHTML = '';

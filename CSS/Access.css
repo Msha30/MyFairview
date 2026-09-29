@@ -211,7 +211,7 @@ body {
 }
 
 .row.edit {
-    background: var(--redfaded);
+    background: var(--border);
 }
 
 .row.post {
@@ -219,7 +219,7 @@ body {
 }
 
 .row.remove {
-    background: var(--border);
+    background: var(--redfaded);
 }
 
 .row:first-child { padding-top: 10px;}
