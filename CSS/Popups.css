@@ -171,62 +171,70 @@
 
 .modal-overlay .information {
     width: 100%;
-    overflow-x: auto;
-}
-
-.modal-overlay .row {
-    display: flex;
-    align-items: stretch;
+    border-collapse: collapse;
+    table-layout: fixed;
 }
 
 .modal-overlay .row td {
     white-space: nowrap;
-    padding: 10px 0px;
+    padding: 10px 0;
     font-size: var(--textreg);
     color: var(--grey);
-    text-align: center;
+    text-align: left;
     border-bottom: 1px solid var(--border);
-    display: flex;
-    align-items: center;
+    vertical-align: middle;
 }
 
+/* Keep the first column at a consistent width */
+.modal-overlay .row td:first-child {
+    width: 40%;
+    text-align: left;
+    font-family: 'InterBold', sans-serif;
+}
+
+/* Second column fills the remaining space */
+.modal-overlay .row td:last-child {
+    width: 60%;
+    text-align: left;
+    padding-left: 30px;
+}
+
+/* Allow long text such as addresses/reasons to wrap */
 .modal-overlay .row.wrap td {
-    white-space: pre-wrap;
+    white-space: normal;
+    overflow-wrap: break-word;
 }
 
+/* First and last row spacing */
 .modal-overlay .row:first-child td {
-    padding-top: 0px;
+    padding-top: 0;
 }
 
 .modal-overlay .row:last-child td {
     border-bottom: none;
-    padding-bottom: 0px;
+    padding-bottom: 0;
 }
 
-.modal-overlay .row td:first-child {
-    font-family: 'InterBold', sans-serif;
-}
-
-.modal-overlay .row td:last-child {
-    flex: 1;
-}
-
+/* Inputs stay aligned with the second column */
 .modal-overlay .input {
     width: 100%;
     box-sizing: border-box;
-    padding: 5px;
+    padding: 5px 0;
     color: var(--grey);
     font-family: inherit;
     font-size: inherit;
     outline: none;
     border: none;
     background: none;
+    text-align: left;
 }
 
+/* Edit mode */
 .modal-overlay .input.edit:not(:disabled) {
     color: var(--black);
     background: var(--bg);
     border: 1px solid var(--grey);
+    padding: 5px;
 }
 
 .modal-overlay .form-row.add {

@@ -90,7 +90,7 @@
             
             <div class="infocard loc">
                 <div class="areaheader small">
-                    <div class="areatitle">History</div>
+                    <div class="areatitle">User History</div>
                 </div>
                 <div class="card-scroll">
                     <div class="history-list">
@@ -107,11 +107,15 @@
     @import url("../Styles/Variables.css");
     @import url("../CSS/Popups.css");
 
+    .content {
+        max-width: 70%;
+    }
+
     /* Scoped strictly to #infoReport to prevent background leaking */
     #infoReport .grid-2 {
         height: 525px;
         display: grid;
-        grid-template-columns: 1.3fr 1fr;
+        grid-template-columns: 1.7fr 1fr;
         gap: var(--cardgap);
         align-items: stretch;
     }
@@ -162,11 +166,6 @@
         overflow: hidden;
         background: white;
         gap: 5px;
-    }
-
-    #infoReport .history-item:hover {
-        cursor: pointer;
-        background: var(--bg);
     }
 
     #infoReport .title {

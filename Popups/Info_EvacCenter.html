@@ -17,7 +17,14 @@
                         </tr>
                         <tr class="row wrap">
                             <td>Address</td>
-                            <td><input id="infoEvacAddress" class="input edit" type="text" value="" disabled></td>
+                            <td>
+                                <textarea
+                                    id="infoEvacAddress"
+                                    class="input edit"
+                                    disabled
+                                    rows="3"
+                                ></textarea>
+                            </td>
                         </tr>
                         <tr class="row">
                             <td>Capacity</td>
@@ -62,6 +69,10 @@
     @import url("../Styles/Variables.css");
     @import url("../CSS/Popups.css");
 
+    .content {
+        max-width: 70%;
+    }
+
     #infoEvacCenter .grid-2 {
         overflow: auto;
         display: grid;
@@ -95,5 +106,13 @@
         margin-top: 6px;
         font-size: var(--textsmall);
         color: #999;
+    }
+
+    #infoEvacCenter #infoEvacAddress {
+        width: 100%;
+        min-height: 70px;
+        resize: none;
+        box-sizing: border-box;
+        font-family: inherit;
     }
 </style>

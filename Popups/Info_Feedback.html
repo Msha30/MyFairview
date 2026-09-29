@@ -3,120 +3,66 @@
 
 <div id="infoFeedback" class="modal-overlay">
     <div class="content">
-        <div class="grid-2">
-            <div style="display: flex; flex-direction: column; gap: 15px;">
-                <div class="infocard wide">
-                    <div class="areaheader">
-                        <div class="areatitle">Feedback Details</div>
-                    </div>
-                    <table class="information wide">
-                        <tr class="row">
-                            <td>Feedback No.</td>
-                            <td>F26-0000</td>
-                        </tr>
-                        <tr class="row">
-                            <td>Type</td>
-                            <td>Flood</td>
-                        </tr>
-                        <tr class="row wrap">
-                            <td>Details</td>
-                            <td>Lorem Ipsum</td>
-                        </tr>
-                        <tr class="row">
-                            <td>Submitted On</td>
-                            <td>Lorem Ipsum</td>
-                        </tr>
-                        <tr class="row">
-                            <td>Submitted By</td>
-                            <td>Lorem Ipsum</td>
-                        </tr>
-                        <tr class="row">
-                            <td>ID Number</td>
-                            <td>Lorem Ipsum</td>
-                        </tr>
-                        <tr class="row">
-                            <td>Contact Number</td>
-                            <td>Lorem Ipsum</td>
-                        </tr>
-                    </table>
-                </div>
+        <div class="infocard wide">
+            <div class="areaheader">
+                <div class="areatitle">Feedback Details</div>
             </div>
-            <!--
-            <div class="infocard loc">
-                <div class="areaheader small">
-                    <div class="areatitle">History</div>
-                </div>
-                <div class="card-scroll">
-                    <div class="history-list">
-                        <div class="history-item">
-                            <div class="title">R26-0000 | Lorem Ipsum</div>
-                            <div class="desc">
-                                Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-                            </div>
-                            <div class="meta">
-                                <span>Jun 7, 2026 · 11:45 PM</span>
-                                <span>Unresolved</span>
-                            </div>
+
+            <table class="information wide">
+                <tr class="row">
+                    <td>Feedback No.</td>
+                    <td>F26-0000</td>
+                </tr>
+
+                <tr class="row">
+                    <td>Type</td>
+                    <td>Flood</td>
+                </tr>
+
+                <tr class="row">
+                    <td>Details</td>
+                    <td>
+                        <div class="areatext">
+                            Loading...
                         </div>
-                        <div class="history-item">
-                            <div class="title">R26-0000 | Lorem Ipsum</div>
-                            <div class="desc">
-                                Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-                            </div>
-                            <div class="meta">
-                                <span>Jun 7, 2026 · 11:45 PM</span>
-                                <span>Unresolved</span>
-                            </div>
-                        </div>
-                        <div class="history-item">
-                            <div class="title">R26-0000 | Lorem Ipsum</div>
-                            <div class="desc">
-                                Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-                            </div>
-                            <div class="meta">
-                                <span>Jun 7, 2026 · 11:45 PM</span>
-                                <span>Unresolved</span>
-                            </div>
-                        </div>
-                        <div class="history-item">
-                            <div class="title">R26-0000 | Lorem Ipsum</div>
-                            <div class="desc">
-                                Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-                            </div>
-                            <div class="meta">
-                                <span>Jun 7, 2026 · 11:45 PM</span>
-                                <span>Unresolved</span>
-                            </div>
-                        </div>
-                        
-                    </div>
-                </div>
-            </div>
-            -->
+                    </td>
+                </tr>
+
+                <tr class="row">
+                    <td>Submitted On</td>
+                    <td>Loading...</td>
+                </tr>
+
+                <tr class="row">
+                    <td>Submitted By</td>
+                    <td>Loading...</td>
+                </tr>
+
+                <tr class="row">
+                    <td>ID Number</td>
+                    <td>Loading...</td>
+                </tr>
+
+                <tr class="row">
+                    <td>Contact Number</td>
+                    <td>Loading...</td>
+                </tr>
+            </table>
         </div>
     </div>
 </div>
-</div>
+
 <style>
     @import url("../Styles/Fonts.css");
     @import url("../Styles/Variables.css");
     @import url("../CSS/Popups.css");
 
-    /* Scoped strictly to #infoFeedback to prevent background leaking */
-    #infoFeedback .grid-2 {
-        height: 350px;
-        display: grid;
-        grid-template-columns: 1.3fr 1fr;
-        gap: var(--cardgap);
-        align-items: stretch;
+    #infoFeedback .content {
+        max-width: 50%;
     }
 
     #infoFeedback .wide {
         flex: 1;
-    }
-
-    #infoFeedback .infocard.loc {
-        height: 100%;
     }
 
     #infoFeedback .row td:first-child {
@@ -128,59 +74,5 @@
         width: 70%;
         text-align: left;
         padding-left: 30px;
-    }
-
-    #infoFeedback .areaheader.small {
-        height: 10px;
-        margin-top: 13px;
-    }
-
-    #infoFeedback .card-scroll {
-        height: 100%;
-        flex: 1;
-        overflow-y: auto;
-    }
-
-    #infoFeedback .history-list {
-        display: flex;
-        flex-direction: column;
-        gap: 10px;
-    }
-
-    #infoFeedback .history-item {
-        width: 250px;
-        border: 1px solid var(--border);
-        border-radius: var(--radsmall);
-        padding: var(--cardpadding);
-        display: flex;
-        flex-direction: column;
-        overflow: hidden;
-        background: white;
-        gap: 5px;
-    }
-
-    #infoFeedback .history-item:hover {
-        cursor: pointer;
-        background: var(--bg);
-    }
-
-    #infoFeedback .title {
-        font-family: 'InterBold', sans-serif;
-        color: var(--grey);
-        font-size: var(--textreg);
-        margin-bottom: 5px;
-    }
-
-    #infoFeedback .desc {
-        font-size: var(--textreg);
-        color: var(--grey);
-        margin-bottom: 5px;
-    }
-
-    #infoFeedback .meta {
-        font-size: var(--textsmall);
-        color: var(--greylight);
-        display: flex;
-        gap: 15px;
     }
 </style>

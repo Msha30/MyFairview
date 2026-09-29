@@ -96,8 +96,14 @@ const MAX_LEVEL_LIMIT = 10; // Highest allowed value for Critical's max threshol
 // Swaps a number <input> for a <select> (once), keeping the same classes so styling is unchanged
 function toSelect(el) {
     if (el.tagName === "SELECT") return el;
+
     const sel = document.createElement("select");
     sel.className = el.className;
+
+    sel.style.appearance = "none";
+    sel.style.webkitAppearance = "none";
+    sel.style.mozAppearance = "none";
+
     el.replaceWith(sel);
     return sel;
 }

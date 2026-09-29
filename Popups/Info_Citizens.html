@@ -55,7 +55,7 @@
                     </tr>
                     <tr class="row wrap">
                         <td>Address</td>
-                        <td><input id="pop-address" class="input edit" type="text" value="" disabled></td>
+                        <td><textarea id="pop-address" class="input edit address" disabled></textarea></td>
                     </tr>
                 </table>
 
@@ -164,5 +164,13 @@
 
     .status.invalid {
         color: var(--red);
+    }
+
+    .modal-overlay .input.address {
+        min-height: 60px;
+        resize: none;
+        white-space: pre-wrap;
+        overflow-wrap: break-word;
+        line-height: 1.4;
     }
 </style>

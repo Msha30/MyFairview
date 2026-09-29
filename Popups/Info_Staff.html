@@ -153,41 +153,17 @@
     @import url("../Styles/Variables.css");
     @import url("../CSS/Popups.css");
 
-    /* Scoped strictly to #staffModal to avoid breaking global/background elements */
-    #staffModal .information {
+    /* =========================
+       STAFF MODAL
+    ========================= */
+
+    #staffModal .content {
         width: 100%;
-        border-collapse: collapse;
+        max-width: 70%;
+        box-sizing: border-box;
     }
 
-    #staffModal .row {
-        display: table-row; 
-    }
-
-    #staffModal .row td {
-        display: table-cell; 
-        vertical-align: middle;
-        padding: 6px 0;
-        border-bottom: 1px solid var(--border);
-    }
-
-    #staffModal .row td:first-child {
-        width: 35%;
-        font-family: 'InterBold', sans-serif;
-        text-align: left;
-    }
-
-    #staffModal .row td:last-child {
-        width: 65%;
-        text-align: left;
-        padding-left: 15px;
-    }
-
-
-    .content {
-        max-width: 100%;
-    }
-
-    .grid-2 {
+    #staffModal .grid-2 {
         overflow: auto;
         display: grid;
         grid-template-columns: 1fr 1.3fr;
@@ -195,66 +171,99 @@
         align-items: stretch;
     }
 
-    .areatitle {
-        margin-right: 100px;
+    /* =========================
+       INFORMATION TABLE
+    ========================= */
+
+    #staffModal .information {
+        width: 100%;
+        border-collapse: collapse;
     }
 
-    .row td:first-child {
+    #staffModal .row {
+        display: table-row;
+    }
+
+    #staffModal .row td {
+        display: table-cell;
+        vertical-align: middle;
+        padding: 6px 0;
+        border-bottom: 1px solid var(--border);
+    }
+
+    #staffModal .row td:first-child {
         width: 40%;
+        font-family: 'InterBold', sans-serif;
         text-align: left;
     }
 
-    .row td:last-child {
+    #staffModal .row td:last-child {
+        width: 60%;
         text-align: left;
         padding-left: 30px;
     }
 
-    .infocard.access {
+    #staffModal .row.smol td {
+        padding: 6px 0;
+    }
+
+    #staffModal .row.smol td:last-child {
+        padding-left: 30px;
+    }
+
+    /* =========================
+       AREA HEADER
+    ========================= */
+
+    #staffModal .areatitle {
+        margin-right: 100px;
+    }
+
+    /* =========================
+       ACCESS SECTION
+    ========================= */
+
+    #staffModal .infocard.access {
         height: 100%;
     }
 
-    .access-list {
+    #staffModal .access-list {
         width: 100%;
         flex: 1;
         display: flex;
         flex-direction: column;
     }
 
-    .access-row {
+    #staffModal .access-row {
         flex: 1;
-        padding: 10px 0px;
+        padding: 10px 0;
         display: grid;
         grid-template-columns: 1fr 1fr;
         align-items: center;
         border-bottom: 1px solid #ddd;
     }
 
-    .access-row:first-child {
-        padding: 0px 0px 10px;
+    #staffModal .access-row:first-child {
+        padding: 0 0 10px;
     }
 
-    .access-row:last-child {
+    #staffModal .access-row:last-child {
         border-bottom: none;
     }
 
-    .access-name {
+    #staffModal .access-name {
         font-family: 'InterSemiBold', sans-serif;
         font-size: var(--textreg);
         color: var(--grey);
     }
 
-    .access-permissions {
+    #staffModal .access-permissions {
         display: flex;
         flex-direction: column;
         gap: 4px;
     }
 
-    input[type="checkbox"] {
-        accent-color: var(--green);
-        transform: scale(1.2);
-    }
-
-    .access-permissions label {
+    #staffModal .access-permissions label {
         display: flex;
         align-items: center;
         font-family: 'Inter', sans-serif;
@@ -263,8 +272,12 @@
         cursor: pointer;
     }
 
-    .row.smol td {
-        padding: 6px 0px;
-    }
+    /* =========================
+       CHECKBOXES
+    ========================= */
 
+    #staffModal input[type="checkbox"] {
+        accent-color: var(--green);
+        transform: scale(1.2);
+    }
 </style>

@@ -270,7 +270,7 @@ body {
 
 .date {
     font-family: 'InterSemiBold', sans-serif;
-    font-size: var(--textreg);
+    font-size: 12px;
     color: var(--black);
 }
 
@@ -281,7 +281,7 @@ body {
 }
 
 .ave strong {
-    font-size: var(--textgiant);
+    font-size: 21px;
 }
 
 .ave span {
@@ -295,7 +295,7 @@ body {
 }
 
 .desc {
-    font-size: 13px;
+    font-size: 11px;
     color: var(--grey);
 }
 
