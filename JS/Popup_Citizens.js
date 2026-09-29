@@ -1,5 +1,6 @@
 import { firestore } from "./auth.js";
 import { writeLog } from "./logging.js";
+import { getChanges, describeChanges, setApplyState } from "./edit-tracker.js";
 import { 
     doc, 
     getDoc, 
@@ -11,6 +12,71 @@ import {
 } from "https://www.gstatic.com/firebasejs/12.17.0/firebase-firestore.js";
 
 let currentOpenedDocId = null; // Store the exact Firestore Document ID for updates
+let citizenEditSnapshot = null; // Field values captured when Edit is clicked (null = not editing)
+
+const CITIZEN_FIELDS = {
+    lName: { id: "pop-lName", label: "last name" },
+    fName: { id: "pop-fName", label: "first name" },
+    mName: { id: "pop-mName", label: "middle name" },
+    suffix: { id: "pop-suffix", label: "suffix" },
+    contactMain: { id: "pop-contactMain", label: "contact number" },
+    contact2: { id: "pop-contact2", label: "secondary contact number" },
+    area: { id: "pop-area", label: "area" },
+    address: { id: "pop-address", label: "address" },
+    birthdate: { id: "pop-birthdate", label: "birthdate" }
+};
+const CITIZEN_LABELS = Object.fromEntries(Object.entries(CITIZEN_FIELDS).map(([k, v]) => [k, v.label]));
+
+function readCitizenFields() {
+    const out = {};
+    Object.entries(CITIZEN_FIELDS).forEach(([key, f]) => {
+        const el = document.getElementById(f.id);
+        out[key] = el ? el.value : "";
+    });
+    return out;
+}
+
+function writeCitizenFields(values) {
+    Object.entries(CITIZEN_FIELDS).forEach(([key, f]) => {
+        const el = document.getElementById(f.id);
+        if (el) el.value = values[key] ?? "";
+    });
+}
+
+function citizenChanges() {
+    if (!citizenEditSnapshot) return [];
+    return getChanges(citizenEditSnapshot, readCitizenFields(), CITIZEN_LABELS);
+}
+
+function refreshCitizenApplyButton() {
+    if (!citizenEditSnapshot) return;
+    setApplyState(document.getElementById("btn-apply-changes"), citizenChanges().length > 0);
+}
+
+// Live-update the Apply/Cancel button as fields are edited
+["input", "change"].forEach(evt => {
+    document.addEventListener(evt, (e) => {
+        if (citizenEditSnapshot && e.target.closest && e.target.closest("#infoCitizens")) {
+            refreshCitizenApplyButton();
+        }
+    });
+});
+
+// Discards edits and returns to the normal (view) state
+function cancelCitizenEdit() {
+    if (citizenEditSnapshot) writeCitizenFields(citizenEditSnapshot);
+    citizenEditSnapshot = null;
+    const btn = document.getElementById("btn-apply-changes");
+    if (btn) {
+        btn.textContent = "Apply Changes";
+        btn.style.background = "";
+        btn.style.color = "";
+        btn.style.borderColor = "";
+        btn.disabled = false;
+    }
+    const statusStr = (document.getElementById("pop-status").textContent || "Unverified").toLowerCase();
+    applyStatusUI(statusStr, false);
+}
 
 // Updated Helper for formatting Firestore Timestamps or JS Dates
 function formatTimestamp(ts) {
@@ -35,9 +101,13 @@ window.openInfoCitizens = async function(identifier) {
     if (!identifier) return;
 
     // Reset Apply button state
+    citizenEditSnapshot = null;
     const applyBtn = document.getElementById("btn-apply-changes");
     if (applyBtn) {
         applyBtn.textContent = "Apply Changes";
+        applyBtn.style.background = "";
+        applyBtn.style.color = "";
+        applyBtn.style.borderColor = "";
         applyBtn.disabled = false;
     }
 
@@ -146,6 +216,14 @@ window.applyCitizenChanges = async function() {
         return;
     }
 
+    // Nothing changed: the button is acting as "Cancel" — just leave edit mode
+    const changes = citizenChanges();
+    if (changes.length === 0) {
+        cancelCitizenEdit();
+        return;
+    }
+    const originalName = `${citizenEditSnapshot.fName} ${citizenEditSnapshot.lName}`.trim() || currentOpenedDocId;
+
     const btn = document.getElementById("btn-apply-changes");
     btn.textContent = "Saving...";
     btn.disabled = true;
@@ -176,8 +254,8 @@ window.applyCitizenChanges = async function() {
         await updateDoc(userRef, updatedData);
         if (window.refreshCitizensTable) window.refreshCitizensTable();
 
-        const fullName = `${updatedData.fName} ${updatedData.lName}`.trim();
-        writeLog("Edit", "Edited Citizen Info", currentOpenedDocId, `Updated info for ${fullName}`);
+        writeLog("Edit", "Edited Citizen Info", currentOpenedDocId, describeChanges(originalName, changes));
+        citizenEditSnapshot = null;
 
         // Visual feedback
         btn.textContent = "Saved!";
@@ -267,7 +345,9 @@ window.toggleEditMode = function(event) {
     const statusStr = (statusSpan.textContent || "Unverified").toLowerCase();
     
     // Switch to editing mode
+    citizenEditSnapshot = readCitizenFields();
     applyStatusUI(statusStr, true);
+    refreshCitizenApplyButton();
 };
 
 // Global function to close modal

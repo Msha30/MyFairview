@@ -1,6 +1,8 @@
 import { ref, onValue } from "https://www.gstatic.com/firebasejs/12.17.0/firebase-database.js";
 import { getFirestore, doc, onSnapshot, writeBatch } from "https://www.gstatic.com/firebasejs/12.17.0/firebase-firestore.js";
 import { database, app } from "./auth.js";
+import { writeLog } from "./logging.js";
+import { getChanges, describeChanges, setSaveEnabled } from "./edit-tracker.js";
 
 // ============================================================
 // CONFIGURATION & SETUP
@@ -88,7 +90,46 @@ async function ensureModalLoaded() {
 // ============================================================
 // MODAL: EDIT THRESHOLDS
 // ============================================================
+const THRESHOLD_TYPES = ['safe', 'monitor', 'warning', 'critical'];
+let thresholdOriginal = {};
+
+// Reads the popup's current values and the human labels for each field
+function readThresholdModal(modal) {
+    const values = {};
+    const labels = {};
+    THRESHOLD_TYPES.forEach(type => {
+        const cap = type.charAt(0).toUpperCase() + type.slice(1);
+        const item = modal.querySelector(`.item.${type}`);
+        if (!item) return;
+        const inputs = item.querySelectorAll("input[type='number']");
+        const msgInput = item.querySelector(".message");
+        if (inputs.length >= 2) {
+            values[`${type}Min`] = String(parseFloat(inputs[0].value) || 0);
+            values[`${type}Max`] = String(parseFloat(inputs[1].value) || 0);
+            labels[`${type}Min`] = `${cap} minimum threshold`;
+            labels[`${type}Max`] = `${cap} maximum threshold`;
+        }
+        if (msgInput) {
+            values[`${type}Msg`] = msgInput.value;
+            labels[`${type}Msg`] = `${cap} bridge message`;
+        }
+    });
+    return { values, labels };
+}
+
+function refreshThresholdSaveState() {
+    const modal = document.getElementById("editWaterThreshold");
+    if (!modal) return;
+    const { values, labels } = readThresholdModal(modal);
+    setSaveEnabled(modal.querySelector(".button.confirm"), getChanges(thresholdOriginal, values, labels).length > 0);
+}
+
 document.addEventListener("DOMContentLoaded", () => {
+    // Save stays grey/inactive until a threshold or message actually changes
+    document.addEventListener("input", (e) => {
+        if (e.target.closest && e.target.closest("#editWaterThreshold")) refreshThresholdSaveState();
+    });
+
     document.addEventListener("click", async (e) => {
         
         // 1. OPEN MODAL
@@ -112,6 +153,8 @@ document.addEventListener("DOMContentLoaded", () => {
                     if (msgInput) msgInput.value = t.msg;
                 }
             });
+            thresholdOriginal = readThresholdModal(modal).values;
+            refreshThresholdSaveState();
             modal.style.display = "flex";
         }
 
@@ -125,6 +168,9 @@ document.addEventListener("DOMContentLoaded", () => {
         if (e.target.closest(".button.confirm") && e.target.closest("#editWaterThreshold")) {
             const saveBtn = e.target.closest(".button.confirm");
             const modal = document.getElementById("editWaterThreshold");
+            const { values: currentValues, labels: thresholdLabels } = readThresholdModal(modal);
+            const thresholdChanges = getChanges(thresholdOriginal, currentValues, thresholdLabels);
+            if (thresholdChanges.length === 0) return; // Nothing changed: nothing to save or log
             saveBtn.textContent = "Saving...";
             saveBtn.disabled = true;
             
@@ -150,6 +196,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
             try {
                 await batch.commit();
+                writeLog("Edit", "Edited Water Level Threshold", "WaterLevel_Threshold", describeChanges("water level", thresholdChanges));
                 modal.style.display = "none";
             } catch (err) {
                 console.error("Error updating thresholds:", err);

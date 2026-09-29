@@ -1,4 +1,4 @@
-import { firestore } from "./auth.js";
+import { firestore, auth, getStaffProfile } from "./auth.js";
 import { collection, doc, setDoc, getDocs, serverTimestamp } from "https://www.gstatic.com/firebasejs/12.17.0/firebase-firestore.js";
 
 const logsCollection = collection(firestore, "Logs");
@@ -20,13 +20,29 @@ async function nextLogId() {
     return `${prefix}${String(max + 1).padStart(5, "0")}`;
 }
 
-function currentStaffID() {
+function staffFullName(s) {
+    const name = [s.fName, s.lName].filter(Boolean).join(" ").trim();
+    return name || s.email || s.staffID || s.id || "Unknown";
+}
+
+// Resolves who is making the change: the signed-in staff member (id + name).
+async function currentStaff() {
     try {
-        const userData = JSON.parse(sessionStorage.getItem("userData") || "{}");
-        return userData.staffID || userData.id || "system";
-    } catch {
-        return "system";
-    }
+        const u = JSON.parse(sessionStorage.getItem("userData") || "{}");
+        if (u && (u.staffID || u.id)) {
+            return { id: u.staffID || u.id, name: staffFullName(u) };
+        }
+    } catch { /* fall through to auth lookup */ }
+
+    try {
+        await auth.authStateReady();
+        if (auth.currentUser) {
+            const p = await getStaffProfile(auth.currentUser.uid);
+            if (p) return { id: p.staffID || p.id, name: staffFullName(p) };
+        }
+    } catch { /* fall through */ }
+
+    return { id: "", name: "Unknown" };
 }
 
 /**
@@ -46,13 +62,15 @@ function currentStaffID() {
 export async function writeLog(action, actionDesc, affectedID, details = "") {
     try {
         const logID = await nextLogId();
+        const staff = await currentStaff();
         await setDoc(doc(firestore, "Logs", logID), {
             logID,
             action,
             actionDesc,
             affectedID: affectedID || "",
             details,
-            madeBy: currentStaffID(),
+            madeBy: staff.id,
+            madeByName: staff.name,
             madeOn: serverTimestamp()
         });
     } catch (err) {

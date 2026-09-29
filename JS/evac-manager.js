@@ -5,6 +5,7 @@ import { app } from "./auth.js";
 import { isValidLatLng, dropPin, geopointToLatLng } from "./map-helper.js";
 import { showToast } from "./toast.js";
 import { writeLog } from "./logging.js";
+import { getChanges, describeChanges, setApplyState } from "./edit-tracker.js";
 
 const firestore = getFirestore(app);
 const evacCollection = collection(firestore, "EvacuationCenter");
@@ -229,6 +230,7 @@ let infoMarker = null;
 let infoMarkerLib = null;
 let isEvacEditing = false;
 let evacEditedLoc = null; // Only updates if the user clicks the map while editing
+let evacRefreshApply = null; // Re-checks Apply/Cancel state (set per opened popup)
 
 async function openEvacInfo(v, id) {
     const modal = document.getElementById("infoEvacCenter");
@@ -256,6 +258,34 @@ async function openEvacInfo(v, id) {
     if (deleteBtn) deleteBtn.style.display = "none";
     if (applyBtn) applyBtn.style.display = "none";
 
+    // Track real changes so an untouched edit shows a grey "Cancel" and logs nothing
+    const EVAC_LABELS = { placeName: "name", address: "address", capacity: "capacity" };
+    const originalEvac = { placeName: nameInput.value, address: addressInput.value, capacity: capacityInput.value };
+    const readEvac = () => ({ placeName: nameInput.value, address: addressInput.value, capacity: capacityInput.value });
+    const fmtLoc = (l) => isValidLatLng(l) ? `${Number(l.lat).toFixed(6)}, ${Number(l.lng).toFixed(6)}` : "";
+    const collectEvacChanges = () => {
+        const list = getChanges(originalEvac, readEvac(), EVAC_LABELS);
+        if (isValidLatLng(evacEditedLoc) && fmtLoc(evacEditedLoc) !== fmtLoc(currentLoc)) {
+            list.push({ key: "pinLocation", label: "pin location", from: fmtLoc(currentLoc), to: fmtLoc(evacEditedLoc) });
+        }
+        return list;
+    };
+    evacRefreshApply = () => { if (isEvacEditing) setApplyState(applyBtn, collectEvacChanges().length > 0); };
+    [nameInput, addressInput, capacityInput].forEach(el => { el.oninput = evacRefreshApply; });
+
+    const exitEvacEdit = () => {
+        // Discard edits and go back to the normal viewing state
+        nameInput.value = originalEvac.placeName;
+        addressInput.value = originalEvac.address;
+        capacityInput.value = originalEvac.capacity;
+        evacEditedLoc = currentLoc;
+        if (isValidLatLng(currentLoc)) placeInfoPin(currentLoc);
+        isEvacEditing = false;
+        [nameInput, addressInput, capacityInput].forEach(el => el.disabled = true);
+        if (deleteBtn) deleteBtn.style.display = "none";
+        if (applyBtn) applyBtn.style.display = "none";
+    };
+
     if (editBtn) {
         editBtn.onclick = (e) => {
             e.preventDefault();
@@ -263,6 +293,7 @@ async function openEvacInfo(v, id) {
             [nameInput, addressInput, capacityInput].forEach(el => el.disabled = false);
             if (deleteBtn) deleteBtn.style.display = "block";
             if (applyBtn) applyBtn.style.display = "block";
+            evacRefreshApply();
         };
     }
 
@@ -280,6 +311,7 @@ async function openEvacInfo(v, id) {
             if (!isEvacEditing) return; // Pin isn't moveable until Edit is clicked
             evacEditedLoc = { lat: e.latLng.lat(), lng: e.latLng.lng() };
             placeInfoPin(evacEditedLoc);
+            if (evacRefreshApply) evacRefreshApply();
         });
     } else {
         infoMap.setCenter(center);
@@ -310,6 +342,8 @@ async function openEvacInfo(v, id) {
 
     if (applyBtn) {
         applyBtn.onclick = async () => {
+            const changes = collectEvacChanges();
+            if (changes.length === 0) { exitEvacEdit(); return; } // Cancel
             const updates = {
                 placeName: nameInput.value.trim(),
                 address: addressInput.value.trim(),
@@ -323,7 +357,7 @@ async function openEvacInfo(v, id) {
                 await updateDoc(doc(firestore, "EvacuationCenter", id), updates);
                 modal.style.display = "none";
                 showToast("Changes saved.");
-                writeLog("Edit", "Edited Evacuation Center", v.evacID || id, `Updated info for ${updates.placeName}`);
+                writeLog("Edit", "Edited Evacuation Center", v.evacID || id, describeChanges(originalEvac.placeName || id, changes));
             } catch (err) {
                 console.error("Failed to update evacuation center:", err);
                 showToast("Couldn't save changes.", "error");

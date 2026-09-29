@@ -6,6 +6,7 @@ import { database, app } from "./auth.js"; // Ensure app is exported from auth.j
 import { isValidLatLng, dropPin, computeAndDrawRoute } from "./map-helper.js";
 import { showToast } from "./toast.js";
 import { writeLog } from "./logging.js";
+import { getChanges, describeChanges, setApplyState } from "./edit-tracker.js";
 
 const db = database;
 const firestore = getFirestore(app);
@@ -359,6 +360,15 @@ function openAvailableInfo(v, vId) {
     inputs[2].value = v.vehicleColor; inputs[3].value = v.capacity;
     modal.style.display = "flex";
 
+    // Only log/save when something actually changed; otherwise the button is a grey "Cancel"
+    const VEHICLE_LABELS = { plateNo: "plate number", vehicleModel: "model", vehicleColor: "color", capacity: "capacity" };
+    const readVehicle = () => ({ plateNo: inputs[0].value, vehicleModel: inputs[1].value, vehicleColor: inputs[2].value, capacity: inputs[3].value });
+    const originalVehicle = readVehicle();
+    const applyBtn = modal.querySelector(".button.accept");
+    const refreshApply = () => setApplyState(applyBtn, getChanges(originalVehicle, readVehicle(), VEHICLE_LABELS).length > 0);
+    inputs.forEach(i => { i.oninput = refreshApply; });
+    refreshApply();
+
     modal.querySelector(".button.delete").onclick = async () => {
         if (!confirm(`Remove ${v.plateNo}?`)) return;
         try {
@@ -371,7 +381,9 @@ function openAvailableInfo(v, vId) {
             showToast("Couldn't remove vehicle.", "error");
         }
     };
-    modal.querySelector(".button.accept").onclick = async () => {
+    applyBtn.onclick = async () => {
+        const changes = getChanges(originalVehicle, readVehicle(), VEHICLE_LABELS);
+        if (changes.length === 0) { modal.style.display = "none"; return; } // Cancel
         try {
             await update(ref(db, `vehicles/${vId}`), {
                 plateNo: inputs[0].value, vehicleModel: inputs[1].value,
@@ -379,7 +391,7 @@ function openAvailableInfo(v, vId) {
             });
             modal.style.display = "none";
             showToast("Changes saved.");
-            writeLog("Edit", "Edited Vehicle Info", vId, `Updated info for ${vId}`);
+            writeLog("Edit", "Edited Vehicle Info", vId, describeChanges(originalVehicle.plateNo || vId, changes));
         } catch (err) {
             console.error("Failed to update vehicle:", err);
             showToast("Couldn't save changes.", "error");

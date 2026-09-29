@@ -52,12 +52,13 @@ onSnapshot(collection(firestore, "Info_User"), (snapshot) => {
 onSnapshot(collection(firestore, "Reports"), (snapshot) => {
     reportsData = snapshot.docs.map(d => ({
         status: d.data().status || "",
+        category: d.data().category || "",
         createdBy: d.data().createdBy || ""
     }));
 
     const unresolvedEl = document.getElementById("statUnresolvedReports");
     if (unresolvedEl) {
-        const unresolvedCount = reportsData.filter(r => r.status === "Unresolved").length;
+        const unresolvedCount = reportsData.filter(r => r.status === "Unresolved" && r.category !== "Feedback").length;
         unresolvedEl.textContent = String(unresolvedCount).padStart(2, "0");
     }
 

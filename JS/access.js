@@ -3,6 +3,7 @@ import { initializeApp } from "https://www.gstatic.com/firebasejs/12.17.0/fireba
 import { getAuth, createUserWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/12.17.0/firebase-auth.js";
 import { collection, doc, setDoc, getDocs, getDoc, updateDoc, deleteDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/12.17.0/firebase-firestore.js";
 import { writeLog } from "./logging.js";
+import { getChanges, describeChanges, setApplyState } from "./edit-tracker.js";
 
 // 1. Initialize a Secondary App for Secure Account Creation
 // Prevents the Super Admin from being logged out when creating a new staff member.
@@ -251,7 +252,7 @@ async function initSystemLogs() {
         logs.forEach(log => {
             const { date, time } = formatLogTimestamp(log.madeOn);
             const rowClass = logRowClass(log.action);
-            const madeByName = staffNames[log.madeBy] || log.madeBy || "—";
+            const madeByName = staffNames[log.madeBy] || log.madeByName || (log.madeBy && log.madeBy !== "system" ? log.madeBy : "—");
 
             const row = document.createElement("div");
             row.className = rowClass ? `row ${rowClass}` : "row";
@@ -350,8 +351,28 @@ async function openStaffModal(staffID, isEditMode = false) {
             if (actionButtons) actionButtons.style.display = 'none';
         } else {
             // EDIT MODE: Attach Button Listeners
-            document.querySelector(".button.accept").addEventListener("click", () => saveStaffChanges(staffID));
-            document.querySelector(".button.delete").addEventListener("click", () => removeStaff(staffID));
+            const applyBtn = document.querySelector("#staffModal .button.accept");
+            const originalValues = collectStaffValues();
+            const staffChanges = () => getChanges(originalValues, collectStaffValues(), STAFF_LABELS);
+            const refreshApplyBtn = () => setApplyState(applyBtn, staffChanges().length > 0);
+
+            // Unchanged => button reads "Cancel" (grey); any edit turns it back into "Apply Changes"
+            refreshApplyBtn();
+            document.querySelectorAll("#staffModal input").forEach(input => {
+                input.addEventListener("input", refreshApplyBtn);
+                input.addEventListener("change", refreshApplyBtn);
+            });
+
+            applyBtn.addEventListener("click", () => {
+                const changes = staffChanges();
+                if (changes.length === 0) {
+                    // Cancel: back to the normal viewing mode
+                    openStaffModal(staffID, false);
+                    return;
+                }
+                saveStaffChanges(staffID, originalValues, changes);
+            });
+            document.querySelector("#staffModal .button.delete").addEventListener("click", () => removeStaff(staffID));
         }
 
     } catch (err) {
@@ -360,30 +381,53 @@ async function openStaffModal(staffID, isEditMode = false) {
 }
 
 // 9. Save Staff Changes
-async function saveStaffChanges(staffID) {
+const STAFF_LABELS = {
+    role: "position",
+    lName: "surname",
+    fName: "first name",
+    mName: "middle name",
+    suffix: "suffix",
+    contact: "contact number",
+    birthDate: "date of birth",
+    address: "address",
+    p_announcement: "Announcement access",
+    p_citizens: "Citizens access",
+    p_vehicles: "Vehicles access",
+    p_reports: "Reports access",
+    p_waterLevel: "Water Level access",
+    p_evacPlan: "Evacuation Plan access",
+    p_access: "Access Management access"
+};
+
+function collectStaffValues() {
+    return {
+        role: document.getElementById("edit-position").value,
+        lName: document.getElementById("edit-lName").value,
+        fName: document.getElementById("edit-fName").value,
+        mName: document.getElementById("edit-mName").value,
+        suffix: document.getElementById("edit-suffix").value,
+        contact: document.getElementById("edit-contact").value,
+        birthDate: document.getElementById("edit-dob").value,
+        address: document.getElementById("edit-address").value,
+
+        p_announcement: determineEditAccessLevel("announcement"),
+        p_citizens: determineEditAccessLevel("citizens"),
+        p_vehicles: determineEditAccessLevel("vehicles"),
+        p_reports: determineEditAccessLevel("reports"),
+        p_waterLevel: determineEditAccessLevel("water"),
+        p_evacPlan: determineEditAccessLevel("evacuation"),
+        p_access: determineEditAccessLevel("management")
+    };
+}
+
+async function saveStaffChanges(staffID, originalValues, changes) {
     try {
-        const updatedData = {
-            role: document.getElementById("edit-position").value,
-            lName: document.getElementById("edit-lName").value,
-            fName: document.getElementById("edit-fName").value,
-            mName: document.getElementById("edit-mName").value,
-            suffix: document.getElementById("edit-suffix").value,
-            contact: document.getElementById("edit-contact").value,
-            birthDate: document.getElementById("edit-dob").value,
-            address: document.getElementById("edit-address").value,
-            
-            p_announcement: determineEditAccessLevel("announcement"),
-            p_citizens: determineEditAccessLevel("citizens"),
-            p_vehicles: determineEditAccessLevel("vehicles"),
-            p_reports: determineEditAccessLevel("reports"),
-            p_waterLevel: determineEditAccessLevel("water"),
-            p_evacPlan: determineEditAccessLevel("evacuation"),
-            p_access: determineEditAccessLevel("management")
-        };
+        const updatedData = collectStaffValues();
+        const originalName = `${originalValues.fName} ${originalValues.lName}`.trim() || staffID;
 
         await updateDoc(doc(firestore, "Info_Staff", staffID), updatedData);
         alert("Changes applied successfully!");
-        writeLog("Edit", "Edited Staff Info", staffID, `Updated info for ${updatedData.fName} ${updatedData.lName}`);
+        writeLog("Edit", "Edited Staff Info", staffID, describeChanges(originalName, changes));
         closeModal();
         loadStaffTable(); // Refresh table automatically
     } catch (error) {

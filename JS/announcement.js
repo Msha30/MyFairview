@@ -2,10 +2,24 @@ import { auth, firestore } from "./auth.js";
 import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.17.0/firebase-auth.js";
 import { collection, getDocs, setDoc, doc, deleteDoc, updateDoc, query, where, limit } from "https://www.gstatic.com/firebasejs/12.17.0/firebase-firestore.js";
 import { writeLog } from "./logging.js";
+import { getChanges, describeChanges, setSaveEnabled } from "./edit-tracker.js";
 
 let currentStaffId = "BFVS-26-00000"; // Default fallback staff ID
 let uploadedFiles = [];
 let activeEditId = null;
+let annOriginal = { title: "", message: "" }; // Values when the edit popup was opened
+const ANN_LABELS = { title: "title", message: "message" };
+
+function annCurrentValues() {
+    return {
+        title: document.getElementById("editAnnTitle").value,
+        message: document.getElementById("editAnnMessage").value
+    };
+}
+
+function refreshAnnSaveState() {
+    setSaveEnabled(document.getElementById("saveEditAnnBtn"), getChanges(annOriginal, annCurrentValues(), ANN_LABELS).length > 0);
+}
 
 // Track Auth User and retrieve their corresponding staffID
 onAuthStateChanged(auth, async (user) => {
@@ -178,6 +192,8 @@ async function loadAnnouncements() {
                 activeEditId = target.getAttribute("data-id");
                 document.getElementById("editAnnTitle").value = target.getAttribute("data-title");
                 document.getElementById("editAnnMessage").value = target.getAttribute("data-message");
+                annOriginal = annCurrentValues();
+                refreshAnnSaveState();
                 
                 const modal = document.getElementById("editAnnouncement");
                 if (modal) modal.style.display = "flex";
@@ -250,6 +266,10 @@ function initEditModalLogic() {
 
     if (!modal) return;
 
+    // Save stays grey/inactive until the title or message actually changes
+    document.getElementById("editAnnTitle").addEventListener("input", refreshAnnSaveState);
+    document.getElementById("editAnnMessage").addEventListener("input", refreshAnnSaveState);
+
     cancelBtn.addEventListener("click", () => {
         modal.style.display = "none";
         activeEditId = null;
@@ -264,6 +284,9 @@ function initEditModalLogic() {
 
     saveBtn.addEventListener("click", async () => {
         if (!activeEditId) return;
+
+        const annChanges = getChanges(annOriginal, annCurrentValues(), ANN_LABELS);
+        if (annChanges.length === 0) return;
 
         const newTitle = document.getElementById("editAnnTitle").value.trim();
         const newMessage = document.getElementById("editAnnMessage").value.trim();
@@ -282,7 +305,7 @@ function initEditModalLogic() {
                 title: newTitle,
                 message: newMessage
             });
-            writeLog("Edit", "Edited Announcement", activeEditId, `Updated "${newTitle}"`);
+            writeLog("Edit", "Edited Announcement", activeEditId, describeChanges(`"${annOriginal.title}"`, annChanges));
 
             modal.style.display = "none";
             activeEditId = null;
