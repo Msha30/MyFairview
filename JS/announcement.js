@@ -286,7 +286,7 @@ async function loadAnnouncements() {
             item.innerHTML = `
                 <div class="content">
                     <div class="title">${escapeHTML(ann.title || "Untitled")}</div>
-                    <div class="desc">${escapeHTML(ann.message || "")}</div>
+                    <div class="desc" style="white-space: pre-line;">${escapeHTML(ann.message || "")}</div>
                     ${photoThumbnails}
                     <div class="meta" style="margin-top: 8px;">
                         <span>${escapeHTML(ann.annID || ann.id)}</span>
