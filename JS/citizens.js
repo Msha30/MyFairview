@@ -81,8 +81,6 @@ function renderTable(usersData) {
             badgeText = "● Invalid";
         }
 
-        const sex = user.sex || "N/A"; 
-
         const row = `
             <tr class="tableRow" data-uid="${user.docId || user.uid}">
                 <td class="user-section">
@@ -93,7 +91,6 @@ function renderTable(usersData) {
                     </div>
                 </td>
                 <td>${user.area || "N/A"}</td>
-                <td>${sex}</td>
                 <td>${dob}</td>
                 <td>${user.contactMain || "N/A"}</td>
                 <td><span class="badge ${statusClass}">${badgeText}</span></td>
