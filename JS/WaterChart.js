@@ -1,20 +1,135 @@
 import {
     ref,
     onValue
-} from
-"https://www.gstatic.com/firebasejs/12.17.0/firebase-database.js";
+} from "https://www.gstatic.com/firebasejs/12.17.0/firebase-database.js";
+
+import { 
+    getFirestore, 
+    collection, 
+    onSnapshot 
+} from "https://www.gstatic.com/firebasejs/12.17.0/firebase-firestore.js";
 
 import {
-    database
+    database,
+    app
 } from "./auth.js";
 
 // ============================================================
-// CONFIGURATION
+// CONFIGURATION & DEBUG TOGGLE
 // ============================================================
 
+const ENABLE_TEST_CYCLE = false; // <-- CHANGE TO TRUE TO DEBUG & CYCLE THROUGH STATUSES AUTOMATICALLY
+
+const firestore = getFirestore(app);
 const HISTORY_PATH = "history/UL800";
 const CURRENT_PATH = "sensors/UL800";
 const MAX_POINTS = 12;
+
+// ============================================================
+// STATE & THRESHOLDS
+// ============================================================
+
+let currentReading = null;
+let lastProcessedData = null; 
+
+let thresholds = {
+    Safe: { min: 0 },
+    Monitor: { min: 0 },
+    Warning: { min: 0 },
+    Critical: { min: 0 }
+};
+
+// Listen for live threshold changes from Firestore
+onSnapshot(collection(firestore, "WaterLevel_Threshold"), (snap) => {
+    snap.forEach(doc => {
+        const data = doc.data();
+        if (thresholds[data.status]) {
+            thresholds[data.status].min = data.thresholdMin || 0;
+        }
+    });
+    
+    if (!ENABLE_TEST_CYCLE) {
+        updateCardBackground(currentReading);
+    }
+});
+
+// Helper to determine status and color gradients (Original light blue top, status color bottom)
+function getStatusInfo(level) {
+    if (level === null || level === undefined) {
+        return { text: "Safe", color: "var(--blue)", gradBottom: "#e3f2fd" }; 
+    }
+    if (level >= thresholds.Critical.min) {
+        return { text: "Critical", color: "var(--bluedark)", gradBottom: "#90caf9" }; 
+    }
+    if (level >= thresholds.Warning.min) {
+        return { text: "Warning", color: "var(--red)", gradBottom: "#ffcdd2" }; 
+    }
+    if (level >= thresholds.Monitor.min) {
+        return { text: "Monitor", color: "var(--orange)", gradBottom: "#ffe0b2" }; 
+    }
+    return { text: "Safe", color: "var(--blue)", gradBottom: "#e3f2fd" }; 
+}
+
+// ============================================================
+// DEBUG TEST MODE CYCLE (CYCLES EVERY 4 SECONDS IF TRUE)
+// ============================================================
+
+if (ENABLE_TEST_CYCLE) {
+    let testCycleIndex = 0;
+    const testStatuses = ["Safe", "Monitor", "Warning", "Critical"];
+
+    console.warn("WaterChart DEBUG TEST CYCLE is ACTIVE.");
+
+    setInterval(() => {
+        const currentTestStatus = testStatuses[testCycleIndex];
+        
+        let fakeReading = 0;
+        if (currentTestStatus === "Critical") fakeReading = thresholds.Critical.min + 0.1;
+        else if (currentTestStatus === "Warning") fakeReading = thresholds.Warning.min + 0.1;
+        else if (currentTestStatus === "Monitor") fakeReading = thresholds.Monitor.min + 0.1;
+        else fakeReading = 0;
+
+        console.log(`Debug Cycling Status -> ${currentTestStatus} (Level: ${fakeReading})`);
+        updateCardBackground(fakeReading);
+        
+        testCycleIndex = (testCycleIndex + 1) % testStatuses.length;
+    }, 4000);
+}
+
+// ============================================================
+// CARD BACKGROUND UPDATER
+// ============================================================
+
+function updateCardBackground(level) {
+    const waterCard = document.querySelector(".card.water");
+    if (!waterCard) return;
+
+    const status = getStatusInfo(level);
+    
+    waterCard.style.transition = "background-image 0.5s ease-in-out";
+    
+    // Original format: White/Light Blue top fading into status color bottom
+    waterCard.style.backgroundImage = `linear-gradient(180deg, #ffffff 0%, ${status.gradBottom} 100%)`;
+}
+
+// ============================================================
+// TOOLTIP SETUP
+// ============================================================
+
+const tooltip = document.createElement("div");
+tooltip.style.position = "absolute";
+tooltip.style.backgroundColor = "var(--bg, #ffffff)";
+tooltip.style.color = "var(--black, #1a1a1a)";
+tooltip.style.padding = "8px 12px";
+tooltip.style.borderRadius = "8px";
+tooltip.style.fontSize = "12px";
+tooltip.style.pointerEvents = "none";
+tooltip.style.boxShadow = "0 4px 12px rgba(0,0,0,0.15)";
+tooltip.style.opacity = "0";
+tooltip.style.transition = "opacity 0.2s ease";
+tooltip.style.zIndex = "9999";
+tooltip.style.fontFamily = "'Inter', sans-serif";
+document.body.appendChild(tooltip);
 
 // ============================================================
 // SAMPLE DATA (Converted from feet to meters)
@@ -40,12 +155,6 @@ const chartWidth = chartRight - chartLeft;
 const topY = 10;
 const bottomY = 106;
 const chartHeight = bottomY - topY;
-
-// ============================================================
-// CURRENT READING (from real-time sensor)
-// ============================================================
-
-let currentReading = null;
 
 // ============================================================
 // GET TODAY DATE
@@ -99,8 +208,8 @@ function processHistory(data) {
 
         if (values.length === 0) return;
 
-        const average = values.reduce((sum, v) => sum + v, 0) / values.length;
-        dailyData[date] = { average: average };
+        const maxLevel = Math.max(...values);
+        dailyData[date] = { average: maxLevel };
     });
 
     return dailyData;
@@ -205,12 +314,43 @@ function renderChart(dailyData, isSample) {
     polyline.setAttribute("stroke-linejoin", "round");
     svg.appendChild(polyline);
 
-    points.forEach(p => {
+    // Create the points and attach hover tooltips
+    points.forEach((p, i) => {
+        const val = averages[i];
+        const dateStr = dates[i];
+        const status = getStatusInfo(val);
+
         const circle = document.createElementNS(NS, "circle");
         circle.setAttribute("cx", p[0]);
         circle.setAttribute("cy", p[1]);
         circle.setAttribute("r", "4");
         circle.setAttribute("fill", "var(--blue)");
+        circle.style.cursor = "pointer";
+        circle.style.transition = "r 0.2s ease";
+
+        // Show Tooltip
+        circle.addEventListener("mouseover", () => {
+            circle.setAttribute("r", "7");
+            tooltip.style.opacity = "1";
+            tooltip.innerHTML = `
+                <div style="font-weight: bold; margin-bottom: 4px; font-size: 13px;">${formatDate(dateStr)}</div>
+                <div style="color: var(--grey);">Level: <strong style="color: var(--black);">${val.toFixed(2)} m</strong></div>
+                <div style="color: var(--grey);">Status: <strong style="color: ${status.color};">${status.text}</strong></div>
+            `;
+        });
+
+        // Follow Mouse
+        circle.addEventListener("mousemove", (e) => {
+            tooltip.style.left = (e.pageX + 15) + "px";
+            tooltip.style.top = (e.pageY - 35) + "px";
+        });
+
+        // Hide Tooltip
+        circle.addEventListener("mouseout", () => {
+            circle.setAttribute("r", "4");
+            tooltip.style.opacity = "0";
+        });
+
         svg.appendChild(circle);
     });
 
@@ -237,8 +377,8 @@ onValue(historyRef, snapshot => {
         renderChart({});
         return;
     }
-    const dailyData = processHistory(data);
-    renderChart(dailyData);
+    lastProcessedData = processHistory(data);
+    renderChart(lastProcessedData);
 });
 
 // ============================================================
@@ -248,8 +388,20 @@ onValue(historyRef, snapshot => {
 const currentRef = ref(database, CURRENT_PATH);
 onValue(currentRef, snapshot => {
     const data = snapshot.val();
-    if (!data || data.level === undefined) return;
     
-    currentReading = Number(data.level);
-    renderChart({});
+    if (!data || data.level === undefined) {
+        currentReading = null;
+    } else {
+        currentReading = Number(data.level);
+    }
+    
+    if (!ENABLE_TEST_CYCLE) {
+        updateCardBackground(currentReading);
+    }
+    
+    if (lastProcessedData) {
+        renderChart(lastProcessedData);
+    } else {
+        renderChart({});
+    }
 });
