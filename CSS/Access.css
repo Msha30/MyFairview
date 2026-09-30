@@ -215,7 +215,7 @@ body {
 }
 
 .row.post {
-    background: var(--bluefaded);
+    background: white;
 }
 
 .row.remove {
