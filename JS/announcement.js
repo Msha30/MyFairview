@@ -242,6 +242,15 @@ async function loadAnnouncements() {
             announcements.push({ id: docSnap.id, ...docSnap.data() });
         });
 
+        // Latest on top, oldest on bottom
+        const postedAt = (a) => a.createdOn && typeof a.createdOn.toDate === "function"
+            ? a.createdOn.toDate().getTime()
+            : 0;
+        announcements.sort((a, b) =>
+            postedAt(b) - postedAt(a) ||
+            String(b.annID || b.id).localeCompare(String(a.annID || a.id), undefined, { numeric: true })
+        );
+
         subTitle.textContent = `${announcements.length} published this month`;
 
         if (announcements.length === 0) {
