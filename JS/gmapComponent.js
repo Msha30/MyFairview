@@ -1,4 +1,5 @@
 import { loadGoogleMaps } from "./gmaps.js";
+import { fitMapToPositions } from "./map-helper.js";
 
 /**
  * Render a map inside a designated card div container.
@@ -61,6 +62,10 @@ export async function initCardMap(containerId, center, zoom = 15, markers = []) 
                 });
             }
         })
+
+        // Show every pin right away — no need to zoom out to find them
+        fitMapToPositions(map, markers.map(m => ({ lat: m.lat, lng: m.lng })));
+
         return map;
     } catch (err) {
         console.error("Failed to load Google Maps:", err);

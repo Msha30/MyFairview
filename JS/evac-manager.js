@@ -17,7 +17,8 @@ import { app } from "./auth.js";
 import {
     isValidLatLng,
     dropPin,
-    geopointToLatLng
+    geopointToLatLng,
+    fitMapToPositions
 } from "./map-helper.js";
 
 import { showToast } from "./toast.js";
@@ -104,6 +105,8 @@ async function loadExternalModals() {
 // EVACUATION CENTER LIST
 // ============================================================
 
+let evacMapFitted = false;
+
 function listenToEvacCenters() {
     onSnapshot(
         evacCollection,
@@ -129,6 +132,8 @@ function listenToEvacCenters() {
 
             const markerLib =
                 await maps.importLibrary("marker");
+
+            const evacPinPositions = [];
 
             // Alphabetical by place name
             Object.keys(allEvacData)
@@ -190,6 +195,7 @@ function listenToEvacCenters() {
                     );
 
                 if (isValidLatLng(loc)) {
+                    evacPinPositions.push(loc);
                     activeMarkers.push(
                         dropPin(
                             markerLib,
@@ -201,6 +207,12 @@ function listenToEvacCenters() {
                     );
                 }
             });
+
+            // Show every pin on the first load (not on later live updates, so the map doesn't jump around)
+            if (!evacMapFitted && evacPinPositions.length > 0) {
+                fitMapToPositions(evacMap, evacPinPositions);
+                evacMapFitted = true;
+            }
         },
         (err) => {
             console.error(

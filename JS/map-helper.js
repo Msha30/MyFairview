@@ -42,3 +42,24 @@ export function geopointToLatLng(gp) {
     if (!gp) return null;
     return { lat: Number(gp.latitude), lng: Number(gp.longitude) };
 }
+
+// Zooms/pans a map so every given position is visible at once (no manual zooming out).
+// One position: centers on it. Several: fits them all with padding, without zooming in too far.
+export function fitMapToPositions(map, positions, { padding = 60, maxZoom = 17 } = {}) {
+    const valid = (positions || []).filter(isValidLatLng);
+    if (!map || valid.length === 0) return;
+
+    if (valid.length === 1) {
+        map.setCenter(valid[0]);
+        return;
+    }
+
+    const bounds = new google.maps.LatLngBounds();
+    valid.forEach(p => bounds.extend(p));
+    map.fitBounds(bounds, padding);
+
+    // fitBounds can zoom in too close when pins are nearly on top of each other
+    google.maps.event.addListenerOnce(map, "idle", () => {
+        if (map.getZoom() > maxZoom) map.setZoom(maxZoom);
+    });
+}

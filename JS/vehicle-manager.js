@@ -3,7 +3,7 @@ import { getFirestore, collection, getDocs } from "https://www.gstatic.com/fireb
 import { initCardMap } from "./gmapComponent.js";
 import { loadGoogleMaps } from "./gmaps.js";
 import { database, app } from "./auth.js";
-import { isValidLatLng, dropPin, computeAndDrawRoute } from "./map-helper.js";
+import { isValidLatLng, dropPin, computeAndDrawRoute, fitMapToPositions } from "./map-helper.js";
 import { showToast } from "./toast.js";
 import { writeLog } from "./logging.js";
 import { getChanges, describeChanges, setApplyState } from "./edit-tracker.js";
@@ -65,6 +65,8 @@ async function fetchVerifiedUsers() {
 }
 
 // --- RTDB Listeners & Main Vehicle Map ---
+let vehicleMapFitted = false;
+
 function listenToVehicles() {
     onValue(ref(db, "vehicles"), async (snapshot) => {
         const listContainer = document.querySelector(".vehicle-list");
@@ -90,8 +92,12 @@ function listenToVehicles() {
             return plateA.localeCompare(plateB);
         });
 
+        const allPinPositions = [];
+
         for (const [vKey, v] of sortedEntries) {
             const isDep = v.deployed;
+            if (isValidLatLng(v.currentLoc)) allPinPositions.push(v.currentLoc);
+            if (isDep && isValidLatLng(v.targetLocCoords)) allPinPositions.push(v.targetLocCoords);
 
             // Render Sidebar Item
             const item = document.createElement("div");
@@ -160,6 +166,12 @@ function listenToVehicles() {
                     }
                 }
             }
+        }
+
+        // Show every pin on the first load (not on later live updates, so the map doesn't jump around)
+        if (!vehicleMapFitted && allPinPositions.length > 0) {
+            fitMapToPositions(vehicleMap, allPinPositions);
+            vehicleMapFitted = true;
         }
     });
 }
@@ -328,7 +340,7 @@ function setupDeployVehicle() {
                 });
             }
 
-            deployMap.panTo(selectedVehicleLoc);
+            fitDeployPins();
 
             // Re-calculate route if destination exists
             if (selectedDestLoc) {
@@ -345,6 +357,10 @@ function setupDeployVehicle() {
         selectedAddress = addr || "";
         const readout = document.getElementById("deploySelectedAddress");
         if (readout) readout.textContent = selectedAddress;
+    }
+
+    function fitDeployPins() {
+        fitMapToPositions(deployMap, [vehicleMarker ? selectedVehicleLoc : null, selectedDestLoc]);
     }
 
     function setDestination(loc) {
@@ -370,6 +386,7 @@ function setupDeployVehicle() {
 
         clearRoute();
         computeAndDrawRoute(routeLib, deployMap, selectedVehicleLoc, loc).then(p => routePolylines = p || []);
+        fitDeployPins();
     }
 
     function clearDestination() {
@@ -592,12 +609,19 @@ async function drawDeployedMap(v, recenter) {
     const routeLib = await maps.importLibrary("routes");
     const currentLoc = v.currentLoc || stationCenter;
 
+    let justCreated = false;
     if (!deployedInfoMap) {
         deployedInfoMap = new maps.Map(document.getElementById("deployedInfoMapCard"), {
             center: currentLoc, zoom: 14, disableDefaultUI: true, mapId: MAP_ID
         });
+        justCreated = true;
     } else if (recenter) {
         deployedInfoMap.setCenter(currentLoc);
+    }
+
+    // On open, show both the vehicle and its destination. Live 3-second refreshes leave the view alone.
+    if (recenter || justCreated) {
+        fitMapToPositions(deployedInfoMap, [currentLoc, v.targetLocCoords]);
     }
 
     if (isValidLatLng(currentLoc)) {

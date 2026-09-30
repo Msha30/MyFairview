@@ -152,6 +152,7 @@ window.openInfoCitizens = async function(identifier) {
             document.getElementById("pop-fName").value = user.fName || "";
             document.getElementById("pop-mName").value = user.mName || "";
             document.getElementById("pop-suffix").value = user.suffix || "";
+            document.getElementById("pop-email").value = user.email || "";
             document.getElementById("pop-contactMain").value = user.contactMain || "";
             document.getElementById("pop-contact2").value = user.contact2 || "";
             document.getElementById("pop-area").value = user.area || "";
