@@ -224,7 +224,7 @@ function setupAddVehicle() {
         if (!color) return showToast("Vehicle color is required.", "error");
         if (isNaN(capacity) || capacity <= 0) return showToast("Capacity must be greater than 0.", "error");
 
-        const activeStaff = getActiveStaffID();
+        const currentStaffId = getActiveStaffID(); // Fetch the exact staffID
 
         try {
             await set(ref(db, `vehicles/${plate.replace(/\s+/g, "")}`), {
@@ -234,7 +234,7 @@ function setupAddVehicle() {
                 capacity: capacity,
                 deployed: false, 
                 currentLoc: stationCenter, 
-                addedBy: activeStaff, // Updated dynamic staff logic
+                addedBy: currentStaffId, // <--- SAVED AS STAFF ID
                 addedOn: new Date().toISOString(), 
                 details: "", 
                 contactPerson: "", 
@@ -250,7 +250,7 @@ function setupAddVehicle() {
 
             modal.style.display = "none";
             showToast("Vehicle added.");
-            writeLog("Add", "New Vehicle", plate, `Added vehicle ${plate}`);
+            writeLog("Add", "New Vehicle", plate, `Added vehicle ${plate} by ${currentStaffId}`);
         } catch (err) {
             console.error("Failed to add vehicle:", err);
             showToast("Couldn't add vehicle.", "error");
@@ -697,8 +697,8 @@ function getActiveStaffID() {
     try {
         const rawData = sessionStorage.getItem("userData") || localStorage.getItem("userData") || "{}";
         const staffData = JSON.parse(rawData);
-        return staffData.staffID || staffData.userID || "Administrator";
+        return staffData.staffID || "BFVS-26-00000"; // Fallback to a default ID if testing
     } catch (e) {
-        return "Administrator";
+        return "BFVS-26-00000";
     }
 }

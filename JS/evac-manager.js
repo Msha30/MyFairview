@@ -189,22 +189,25 @@ function listenToEvacCenters() {
 
                 listContainer.appendChild(item);
 
-                const loc =
-                    geopointToLatLng(
-                        v.pinLocation
-                    );
+                // (Inside listenToEvacCenters loop)
+                const loc = geopointToLatLng(v.pinLocation);
 
                 if (isValidLatLng(loc)) {
                     evacPinPositions.push(loc);
-                    activeMarkers.push(
-                        dropPin(
-                            markerLib,
-                            evacMap,
-                            loc,
-                            "#1E8E3E",
-                            "#0F5C22"
-                        )
-                    );
+                    
+                    const marker = dropPin(markerLib, evacMap, loc, "#1E8E3E", "#0F5C22");
+                    
+                    if (marker) {
+                        // Show place name on hover
+                        marker.title = v.placeName;
+                        
+                        // Open Info Modal when the map pin is clicked
+                        marker.addListener("click", () => {
+                            openEvacInfo(v, id);
+                        });
+
+                        activeMarkers.push(marker);
+                    }
                 }
             });
 
@@ -499,113 +502,49 @@ function setupAddEvacCenter() {
             }
         );
 
-    document
-        .getElementById("confirmAddEvacBtn")
-        ?.addEventListener(
-            "click",
-            async () => {
-                const name =
-                    document
-                        .getElementById(
-                            "addEvacName"
-                        )
-                        .value
-                        .trim();
+    document.getElementById("confirmAddEvacBtn")?.addEventListener("click", async () => {
+        const name = document.getElementById("addEvacName").value.trim();
+        const capacityRaw = document.getElementById("addEvacCapacity").value.trim();
+        const capacity = parseInt(capacityRaw, 10);
+        const addressLabel = document.getElementById("addEvacSelectedAddress")?.textContent?.trim() || "";
 
-                const capacity =
-                    document
-                        .getElementById(
-                            "addEvacCapacity"
-                        )
-                        .value
-                        .trim();
+        // --- Input Validation ---
+        if (!name) return showToast("Place name is required.", "error");
+        if (!capacityRaw || isNaN(capacity) || capacity <= 0) return showToast("Please enter a valid capacity greater than 0.", "error");
+        if (!addressLabel) return showToast("Please provide a valid address.", "error");
+        if (!isValidLatLng(selectedLoc)) return showToast("Click the map to drop a pin for the location.", "error");
 
-                const addressLabel =
-                    document
-                        .getElementById(
-                            "addEvacSelectedAddress"
-                        )
-                        ?.textContent
-                        ?.trim() || "";
+        const outcome = await runWithLoading({
+            loadingAction: "Adding Evacuation Center",
+            loadingDescription: "add the new evacuation center",
+            successAction: "Evacuation Center Added",
+            parent: modal,
+            task: async () => {
+                const newId = await nextEvacId();
+                const currentStaffId = getActiveStaffID(); // Fetch the exact staffID
 
-                if (!name) {
-                    return showToast(
-                        "Place name is required.",
-                        "error"
-                    );
-                }
-
-                if (
-                    !isValidLatLng(
-                        selectedLoc
-                    )
-                ) {
-                    return showToast(
-                        "Click the map to drop a pin for the location.",
-                        "error"
-                    );
-                }
-
-                const outcome = await runWithLoading({
-                    loadingAction: "Adding Evacuation Center",
-                    loadingDescription: "add the new evacuation center",
-                    successAction: "Evacuation Center Added",
-                    parent: modal,
-                    task: async () => {
-                    const newId =
-                        await nextEvacId();
-
-                    await setDoc(
-                        doc(
-                            firestore,
-                            "EvacuationCenter",
-                            newId
-                        ),
-                        {
-                            evacID: newId,
-                            placeName: name,
-                            address:
-                                addressLabel,
-                            capacity:
-                                capacity || "0",
-                            pinLocation:
-                                new GeoPoint(
-                                    selectedLoc.lat,
-                                    selectedLoc.lng
-                                ),
-                            createdBy: "Admin",
-                            createdOn:
-                                Timestamp.now()
-                        }
-                    );
-
-                    writeLog(
-                        "Add",
-                        "New Evacuation Center",
-                        newId,
-                        `Added ${name}`
-                    );
-
-                    return `${name} has been added to evacuation centers successfully`;
-                    }
+                await setDoc(doc(firestore, "EvacuationCenter", newId), {
+                    evacID: newId,
+                    placeName: name,
+                    address: addressLabel,
+                    capacity: capacity, // Stored as a strict Number
+                    pinLocation: new GeoPoint(selectedLoc.lat, selectedLoc.lng),
+                    createdBy: currentStaffId, // <--- SAVED AS STAFF ID
+                    createdOn: Timestamp.now()
                 });
 
-                if (outcome.ok) {
-                    modal.style.display =
-                        "none";
-                } else {
-                    console.error(
-                        "Failed to add evacuation center:",
-                        outcome.error
-                    );
-
-                    showToast(
-                        "Couldn't add evacuation center.",
-                        "error"
-                    );
-                }
+                writeLog("Add", "New Evacuation Center", newId, `Added ${name} by ${currentStaffId}`);
+                return `${name} has been added to evacuation centers successfully`;
             }
-        );
+        });
+
+        if (outcome.ok) {
+            modal.style.display = "none";
+        } else {
+            console.error("Failed to add evacuation center:", outcome.error);
+            showToast("Couldn't add evacuation center.", "error");
+        }
+    });
 }
 
 // ============================================================
@@ -1027,94 +966,51 @@ async function openEvacInfo(v, id) {
     }
 
     if (applyBtn) {
-        applyBtn.onclick =
-            async () => {
-                const changes =
-                    collectEvacChanges();
+        applyBtn.onclick = async () => {
+            const changes = collectEvacChanges();
 
-                if (
-                    changes.length === 0
-                ) {
-                    exitEvacEdit();
-                    return;
-                }
+            if (changes.length === 0) {
+                exitEvacEdit();
+                return;
+            }
+            
+            const newName = nameInput.value.trim();
+            const newAddress = addressInput.value.trim();
+            const newCapacityRaw = capacityInput.value.trim();
+            const newCapacity = parseInt(newCapacityRaw, 10);
 
-                // Ask first — the info popup is swapped for the confirmation dialog
-                if (
-                    !(await confirmChanges(
-                        "evacuation center",
-                        modal
-                    ))
-                ) {
-                    exitEvacEdit(); // Cancelled: back to the normal viewing state
-                    return;
-                }
+            // --- Edit Validation ---
+            if (!newName) return showToast("Place name cannot be empty.", "error");
+            if (!newAddress) return showToast("Address cannot be empty.", "error");
+            if (!newCapacityRaw || isNaN(newCapacity) || newCapacity < 0) return showToast("Please enter a valid capacity.", "error");
 
-                const updates = {
-                    placeName:
-                        nameInput.value.trim(),
+            // Ask first — the info popup is swapped for the confirmation dialog
+            if (!(await confirmChanges("evacuation center", modal))) {
+                exitEvacEdit(); 
+                return;
+            }
 
-                    address:
-                        addressInput.value.trim(),
-
-                    capacity:
-                        capacityInput.value.trim()
-                };
-
-                if (
-                    isValidLatLng(
-                        evacEditedLoc
-                    )
-                ) {
-                    updates.pinLocation =
-                        new GeoPoint(
-                            evacEditedLoc.lat,
-                            evacEditedLoc.lng
-                        );
-                }
-
-                try {
-                    await updateDoc(
-                        doc(
-                            firestore,
-                            "EvacuationCenter",
-                            id
-                        ),
-                        updates
-                    );
-
-                    modal.style.display =
-                        "none";
-
-                    showToast(
-                        "Changes saved."
-                    );
-
-                    writeLog(
-                        "Edit",
-                        "Edited Evacuation Center",
-                        v.evacID || id,
-                        describeChanges(
-                            originalEvac.placeName ||
-                                id,
-                            changes
-                        )
-                    );
-                } catch (err) {
-                    console.error(
-                        "Failed to update evacuation center:",
-                        err
-                    );
-
-                    modal.style.display =
-                        "flex";
-
-                    showToast(
-                        "Couldn't save changes.",
-                        "error"
-                    );
-                }
+            const updates = {
+                placeName: newName,
+                address: newAddress,
+                capacity: newCapacity
             };
+
+            if (isValidLatLng(evacEditedLoc)) {
+                updates.pinLocation = new GeoPoint(evacEditedLoc.lat, evacEditedLoc.lng);
+            }
+
+            try {
+                await updateDoc(doc(firestore, "EvacuationCenter", id), updates);
+                modal.style.display = "none";
+                showToast("Changes saved.");
+                writeLog("Edit", "Edited Evacuation Center", v.evacID || id, describeChanges(originalEvac.placeName || id, changes));
+            } catch (err) {
+                console.error("Failed to update evacuation center:", err);
+                modal.style.display = "flex";
+                showToast("Couldn't save changes.", "error");
+            }
+        };
     }
 }
 
@@ -1172,4 +1068,14 @@ function escapeHTML(str) {
                   }[t] || t)
           )
         : "";
+}
+
+function getActiveStaffID() {
+    try {
+        const rawData = sessionStorage.getItem("userData") || localStorage.getItem("userData") || "{}";
+        const staffData = JSON.parse(rawData);
+        return staffData.staffID || "BFVS-26-00000"; // Fallback to a default ID if testing
+    } catch (e) {
+        return "BFVS-26-00000";
+    }
 }
