@@ -468,7 +468,6 @@ document.addEventListener("click", async function (e) {
         btn.disabled = true;
 
         try {
-            // Generate a random ID (e.g. BFV-24-XXXX) if they don't have one
             let currentUserID = document.getElementById("pop-userID").textContent;
             let newUserID = currentUserID;
             if (!currentUserID || currentUserID === "No ID" || currentUserID === "Loading...") {
@@ -477,20 +476,22 @@ document.addEventListener("click", async function (e) {
                 newUserID = `BFV-${year}-${rand}`;
             }
 
+            const currentStaffId = getActiveStaffID(); // Fetch active staffID
+
             const userRef = doc(firestore, "Info_User", currentOpenedDocId);
             await updateDoc(userRef, {
                 status: "Verified",
                 verifiedOn: new Date(),
-                verifiedBy: "Administrator", // Can be dynamically swapped for active admin session later
+                verifiedBy: currentStaffId, // Saved as staffID
                 userID: newUserID
             });
 
             const vFName = document.getElementById("pop-fName").value;
             const vLName = document.getElementById("pop-lName").value;
-            writeLog("Verify", "Verified Citizen", newUserID, `Verified ${vFName} ${vLName}`.trim());
+            writeLog("Verify", "Verified Citizen", newUserID, `Verified ${vFName} ${vLName} by ${currentStaffId}`.trim());
 
             document.getElementById("userAccept").style.display = "none";
-            window.openInfoCitizens(currentOpenedDocId); // Refresh main popup UI
+            window.openInfoCitizens(currentOpenedDocId);
             if (window.refreshCitizensTable) window.refreshCitizensTable();
         } catch (error) {
             console.error("Error verifying user:", error);
@@ -508,22 +509,23 @@ document.addEventListener("click", async function (e) {
         btn.disabled = true;
 
         const reason = document.getElementById("invalid-reason-select").value;
+        const currentStaffId = getActiveStaffID(); // Fetch active staffID
 
         try {
             const userRef = doc(firestore, "Info_User", currentOpenedDocId);
             await updateDoc(userRef, {
                 status: "Invalid",
                 rejectedOn: new Date(),
-                rejectedBy: "Administrator",
+                rejectedBy: currentStaffId, // Saved as staffID
                 reason: reason
             });
 
             const rFName = document.getElementById("pop-fName").value;
             const rLName = document.getElementById("pop-lName").value;
-            writeLog("Reject", "Rejected Citizen", currentOpenedDocId, `Rejected ${rFName} ${rLName} — Reason: ${reason}`.trim());
+            writeLog("Reject", "Rejected Citizen", currentOpenedDocId, `Rejected ${rFName} ${rLName} by ${currentStaffId} — Reason: ${reason}`.trim());
 
             document.getElementById("userInvalid").style.display = "none";
-            window.openInfoCitizens(currentOpenedDocId); // Refresh main popup UI
+            window.openInfoCitizens(currentOpenedDocId);
             if (window.refreshCitizensTable) window.refreshCitizensTable();
         } catch (error) {
             console.error("Error rejecting user:", error);
@@ -566,3 +568,13 @@ document.addEventListener("click", (e) => {
     const btn = e.target.closest && e.target.closest("#infoCitizens .buttons.col .button.delete");
     if (btn) removeCitizen();
 });
+
+function getActiveStaffID() {
+    try {
+        const rawData = sessionStorage.getItem("userData") || localStorage.getItem("userData") || "{}";
+        const staffData = JSON.parse(rawData);
+        return staffData.staffID || staffData.userID || "BFVS-26-00000";
+    } catch (e) {
+        return "BFVS-26-00000";
+    }
+}
