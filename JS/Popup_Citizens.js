@@ -13,6 +13,7 @@ import {
     where, 
     getDocs 
 } from "https://www.gstatic.com/firebasejs/12.17.0/firebase-firestore.js";
+import { getStorage, ref as storageRef, getDownloadURL } from "https://www.gstatic.com/firebasejs/12.17.0/firebase-storage.js";
 
 let currentOpenedDocId = null; // Store the exact Firestore Document ID for updates
 let citizenEditSnapshot = null; // Field values captured when Edit is clicked (null = not editing)
@@ -168,11 +169,23 @@ window.openInfoCitizens = async function(identifier) {
             document.getElementById("pop-rejectedBy").textContent = user.rejectedBy || "N/A";
             document.getElementById("pop-reason").textContent = user.reason || "N/A";
 
-            // 4. Attachments
+            // 4. Attachments (Fetch secure download URLs from Firebase Storage)
+            const storage = getStorage();
+            
             const validIDBtn = document.getElementById("pop-validID");
             if (user.validID) {
-                validIDBtn.textContent = "View ID File";
-                validIDBtn.href = "#"; 
+                validIDBtn.textContent = "Loading File...";
+                validIDBtn.removeAttribute("href");
+                
+                getDownloadURL(storageRef(storage, user.validID))
+                    .then((url) => {
+                        validIDBtn.href = url;
+                        validIDBtn.textContent = "View ID File";
+                    })
+                    .catch((err) => {
+                        console.error("Error loading ID file:", err);
+                        validIDBtn.textContent = "File Unavailable";
+                    });
             } else {
                 validIDBtn.textContent = "No File Attached";
                 validIDBtn.removeAttribute("href");
@@ -180,8 +193,18 @@ window.openInfoCitizens = async function(identifier) {
 
             const residencyBtn = document.getElementById("pop-residency");
             if (user.residency) {
-                residencyBtn.textContent = "View Proof File";
-                residencyBtn.href = "#"; 
+                residencyBtn.textContent = "Loading File...";
+                residencyBtn.removeAttribute("href");
+
+                getDownloadURL(storageRef(storage, user.residency))
+                    .then((url) => {
+                        residencyBtn.href = url;
+                        residencyBtn.textContent = "View Proof File";
+                    })
+                    .catch((err) => {
+                        console.error("Error loading Residency file:", err);
+                        residencyBtn.textContent = "File Unavailable";
+                    });
             } else {
                 residencyBtn.textContent = "No File Attached";
                 residencyBtn.removeAttribute("href");
