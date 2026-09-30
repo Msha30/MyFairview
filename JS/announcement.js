@@ -1,11 +1,12 @@
-import { auth, firestore } from "./auth.js";
+import { auth, firestore, storage } from "./auth.js";
 import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.17.0/firebase-auth.js";
-import { collection, getDocs, setDoc, doc, deleteDoc, updateDoc, query, where, limit } from "https://www.gstatic.com/firebasejs/12.17.0/firebase-firestore.js";
+import { collection, getDocs, getDoc, setDoc, doc, deleteDoc, updateDoc, query, where, limit } from "https://www.gstatic.com/firebasejs/12.17.0/firebase-firestore.js";
+import { ref, uploadBytes, getDownloadURL, deleteObject } from "https://www.gstatic.com/firebasejs/12.17.0/firebase-storage.js";
 import { writeLog } from "./logging.js";
 import { getChanges, describeChanges, setSaveEnabled } from "./edit-tracker.js";
 
 let currentStaffId = "BFVS-26-00000"; // Default fallback staff ID
-let uploadedFiles = [];
+let uploadedFiles = []; // Holds actual JS File objects
 let activeEditId = null;
 let annOriginal = { title: "", message: "" }; // Values when the edit popup was opened
 const ANN_LABELS = { title: "title", message: "message" };
@@ -21,24 +22,43 @@ function refreshAnnSaveState() {
     setSaveEnabled(document.getElementById("saveEditAnnBtn"), getChanges(annOriginal, annCurrentValues(), ANN_LABELS).length > 0);
 }
 
+// Helper: Cleans up file metadata and attaches the count index (e.g. 1_barangay_event.png)
+function sanitizeFileName(originalName, index) {
+    const extMatch = originalName.match(/\.([a-zA-Z0-9]+)$/);
+    const ext = extMatch ? extMatch[1].toLowerCase() : "jpg";
+    
+    const nameWithoutExt = originalName.replace(/\.[^/.]+$/, "");
+    const cleanName = nameWithoutExt
+        .toLowerCase()
+        .replace(/[^a-z0-9]/g, "_")
+        .replace(/_+/g, "_")
+        .replace(/^_+|_+$/g, "");
+
+    return `${index + 1}_${cleanName || "image"}.${ext}`;
+}
+
+// Track Auth User and retrieve their corresponding staffID
 // Track Auth User and retrieve their corresponding staffID
 onAuthStateChanged(auth, async (user) => {
     if (user) {
         try {
-            // Query your staff/users collection to find the document matching this auth UID
-            // (Adjust "Users" or "Staff" to match your actual Firestore collection name)
-            const staffQuery = query(collection(firestore, "Users"), where("uid", "==", user.uid), limit(1));
-            const staffSnap = await getDocs(staffQuery);
-            
-            if (!staffSnap.empty) {
-                const staffData = staffSnap.docs[0].data();
-                // Use staffID if available in the document, otherwise fallback to doc id or user property
-                currentStaffId = staffData.staffID || staffSnap.docs[0].id;
+            // 1. Direct document lookup by Auth UID (Standard Firestore structure)
+            const userDocRef = doc(firestore, "Users", user.uid);
+            const userSnap = await getDoc(userDocRef);
+
+            if (userSnap.exists()) {
+                const userData = userSnap.data();
+                // Checks for staffID or staffId field, fallback to user.uid if neither exists
+                currentStaffId = userData.staffID || userData.staffId || user.uid;
             } else {
-                // Fallback check if user email/uid document itself uses staffID
-                const directDoc = await getDocs(doc(firestore, "Users", user.uid));
-                // Alternatively, if you store staff ID directly in custom claims or profile
-                currentStaffId = user.uid; // Fallback
+                // 2. Fallback query in case document ID is auto-generated and "uid" is a field
+                const staffQuery = query(collection(firestore, "Users"), where("uid", "==", user.uid), limit(1));
+                const staffSnap = await getDocs(staffQuery);
+
+                if (!staffSnap.empty) {
+                    const staffData = staffSnap.docs[0].data();
+                    currentStaffId = staffData.staffID || staffData.staffId || user.uid;
+                }
             }
         } catch (err) {
             console.error("Error fetching staff ID profile:", err);
@@ -61,17 +81,28 @@ document.addEventListener("DOMContentLoaded", async () => {
     // 2. Fetch and render announcements
     await loadAnnouncements();
 
-    // 3. Media emulation setup
+    // 3. Real file selection setup
     const addMediaBtn = document.getElementById("addMediaBtn");
-    if (addMediaBtn) {
+    const mediaFileInput = document.getElementById("mediaFileInput");
+
+    if (addMediaBtn && mediaFileInput) {
         addMediaBtn.addEventListener("click", () => {
             if (uploadedFiles.length >= 5) {
                 alert("Cannot exceed 5 photos.");
                 return;
             }
-            const sampleNames = ["barangay_event.jpeg", "community_meeting.png", "advisory_banner.jpg", "flood_map.png", "notice_photo.jpeg"];
-            const randomName = sampleNames[Math.floor(Math.random() * sampleNames.length)];
-            uploadedFiles.push(randomName);
+            mediaFileInput.click();
+        });
+
+        mediaFileInput.addEventListener("change", (e) => {
+            const selectedFiles = Array.from(e.target.files);
+            if (uploadedFiles.length + selectedFiles.length > 5) {
+                alert("Cannot exceed 5 photos in total.");
+                mediaFileInput.value = "";
+                return;
+            }
+            uploadedFiles.push(...selectedFiles);
+            mediaFileInput.value = ""; // Reset file input selection
             renderMediaList();
         });
     }
@@ -83,7 +114,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     }
 });
 
-// Render simulated file attachments
+// Render selected file previews
 function renderMediaList() {
     const container = document.getElementById("mediaListContainer");
     const countNote = document.getElementById("mediaCountNote");
@@ -92,15 +123,16 @@ function renderMediaList() {
     countNote.textContent = `${uploadedFiles.length} / 5`;
     container.innerHTML = "";
 
-    uploadedFiles.forEach((filename, index) => {
+    uploadedFiles.forEach((file, index) => {
+        const previewUrl = URL.createObjectURL(file);
         const item = document.createElement("div");
         item.className = "media-item";
         item.innerHTML = `
             <img src="../Icons/ic_drag.svg" alt="" />
             <div class="media">
-                <img src="../Images/imgplaceholder.png" alt="" />
+                <img src="${previewUrl}" alt="${escapeHTML(file.name)}" style="width: 100%; height: 100%; object-fit: cover;" />
             </div>
-            <span class="media-filename">${filename}</span>
+            <span class="media-filename">${escapeHTML(file.name)}</span>
             <button class="media-delete-btn" data-index="${index}" type="button" title="Remove">
                 <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                     <polyline points="3 6 5 6 21 6" />
@@ -152,13 +184,30 @@ async function loadAnnouncements() {
                                 ann.createdOn.toDate().toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit", hour12: true });
             }
 
+            // --- Robust photo parser: handles both Arrays and comma-separated Strings ---
+            let photoList = [];
+            if (Array.isArray(ann.photos)) {
+                photoList = ann.photos.map(p => String(p).trim()).filter(Boolean);
+            } else if (typeof ann.photos === "string" && ann.photos.trim() !== "") {
+                photoList = ann.photos.split(",").map(p => p.trim()).filter(Boolean);
+            }
+
+            // Render thumbnail previews
+            let photoThumbnails = "";
+            if (photoList.length > 0) {
+                photoThumbnails = `<div class="photo-preview-list" style="display:flex; gap:6px; margin-top:8px;">` +
+                    photoList.map(url => `<img src="${escapeHTML(url)}" style="width:48px; height:48px; object-fit:cover; border-radius:4px;" />`).join("") +
+                    `</div>`;
+            }
+
             const item = document.createElement("div");
             item.className = "announce-item";
             item.innerHTML = `
                 <div class="content">
                     <div class="title">${escapeHTML(ann.title || "Untitled")}</div>
                     <div class="desc">${escapeHTML(ann.message || "")}</div>
-                    <div class="meta">
+                    ${photoThumbnails}
+                    <div class="meta" style="margin-top: 8px;">
                         <span>${escapeHTML(ann.annID || ann.id)}</span>
                         <span>${formattedDate}</span>
                         <span>${escapeHTML(ann.category || "General")}</span>
@@ -167,20 +216,41 @@ async function loadAnnouncements() {
                 </div>
                 <div class="actions">
                     <button class="btn edit" data-id="${ann.id}" data-title="${escapeHTML(ann.title)}" data-message="${escapeHTML(ann.message)}">Edit</button>
-                    <button class="btn del" data-id="${ann.id}">Delete</button>
+                    <button class="btn del" data-id="${ann.id}" data-photos="${escapeHTML(photoList.join(","))}">Delete</button>
                 </div>
             `;
             listContainer.appendChild(item);
         });
 
-        // Bind delete action triggers
+        // Bind delete action triggers (Deletes images in Storage + document in Firestore)
         listContainer.querySelectorAll(".btn.del").forEach(btn => {
             btn.addEventListener("click", async (e) => {
                 const docId = e.currentTarget.getAttribute("data-id");
+                const photosStr = e.currentTarget.getAttribute("data-photos");
+
                 if (confirm("Are you sure you want to delete this announcement?")) {
-                    await deleteDoc(doc(firestore, "Announcement", docId));
-                    writeLog("Delete", "Removed Announcement", docId, `Deleted announcement ${docId}`);
-                    await loadAnnouncements();
+                    try {
+                        // Delete associated image files from Firebase Storage if present
+                        if (photosStr) {
+                            const photoUrls = photosStr.split(",").map(p => p.trim()).filter(Boolean);
+                            for (const url of photoUrls) {
+                                try {
+                                    const photoRef = ref(storage, url);
+                                    await deleteObject(photoRef);
+                                } catch (imgErr) {
+                                    console.warn(`Could not delete image (${url}) from Storage:`, imgErr);
+                                }
+                            }
+                        }
+
+                        // Delete the announcement document from Firestore
+                        await deleteDoc(doc(firestore, "Announcement", docId));
+                        writeLog("Delete", "Removed Announcement", docId, `Deleted announcement ${docId}`);
+                        await loadAnnouncements();
+                    } catch (err) {
+                        console.error("Error deleting announcement:", err);
+                        alert("Failed to delete announcement.");
+                    }
                 }
             });
         });
@@ -205,11 +275,12 @@ async function loadAnnouncements() {
     }
 }
 
-// Handle Publishing New Announcement with Custom ID Generation (AN26-00xx)
+// Upload selected files to Firebase Storage in "announcement/(postID)/(count_cleanedFileName)" format
 async function handlePublishAnnouncement() {
     const titleInput = document.getElementById("annTitleInput");
     const msgInput = document.getElementById("annMessageInput");
     const categorySelect = document.getElementById("annCategorySelect");
+    const publishBtn = document.getElementById("publishAnnBtn");
 
     const title = titleInput.value.trim();
     const message = msgInput.value.trim();
@@ -221,25 +292,40 @@ async function handlePublishAnnouncement() {
     }
 
     try {
-        // Generate unique sequential custom ID like AN26-0001
+        publishBtn.disabled = true;
+        publishBtn.textContent = "Publishing...";
+
+        // 1. Generate unique sequential custom ID like AN26-0001
         const querySnapshot = await getDocs(collection(firestore, "Announcement"));
         let nextNum = querySnapshot.size + 1;
         let annID = `AN26-${String(nextNum).padStart(4, '0')}`;
         
-        // Ensure uniqueness check loop fallback
         while(querySnapshot.docs.some(d => d.data().annID === annID)) {
             nextNum++;
             annID = `AN26-${String(nextNum).padStart(4, '0')}`;
         }
 
-        const newDocRef = doc(collection(firestore, "Announcement"), annID); // Use custom ID as document ID
+        // 2. Upload files to Firebase Storage using format: announcement/(postID)/(count_cleanedName)
+        const downloadUrls = [];
+        for (let i = 0; i < uploadedFiles.length; i++) {
+            const file = uploadedFiles[i];
+            const cleanName = sanitizeFileName(file.name, i);
+            const fileRef = ref(storage, `announcement/${annID}/${cleanName}`);
+            
+            const snapshot = await uploadBytes(fileRef, file);
+            const url = await getDownloadURL(snapshot.ref);
+            downloadUrls.push(url);
+        }
+
+        // 3. Save announcement with image URLs to Firestore
+        const newDocRef = doc(collection(firestore, "Announcement"), annID);
         await setDoc(newDocRef, {
             annID: annID,
             category: category,
-            createdBy: currentStaffId, // Uses the resolved staffID instead of raw auth UID
+            createdBy: currentStaffId,
             createdOn: new Date(),
             message: message,
-            photos: uploadedFiles.join(", "),
+            photos: downloadUrls,
             title: title
         });
 
@@ -254,7 +340,16 @@ async function handlePublishAnnouncement() {
         await loadAnnouncements();
     } catch (err) {
         console.error("Error publishing announcement:", err);
-        alert("Failed to publish announcement.");
+        alert("Failed to publish announcement: " + err.message);
+    } finally {
+        publishBtn.disabled = false;
+        publishBtn.innerHTML = `
+            <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+                <line x1="22" y1="2" x2="11" y2="13" />
+                <polygon points="22 2 15 22 11 13 2 9 22 2" />
+            </svg>
+            Publish
+        `;
     }
 }
 
@@ -266,7 +361,6 @@ function initEditModalLogic() {
 
     if (!modal) return;
 
-    // Save stays grey/inactive until the title or message actually changes
     document.getElementById("editAnnTitle").addEventListener("input", refreshAnnSaveState);
     document.getElementById("editAnnMessage").addEventListener("input", refreshAnnSaveState);
 

@@ -56,10 +56,12 @@
                     Add photos
                     <span id="mediaCountNote" class="media-count-note">0 / 5</span>
                 </button>
+                <!-- Hidden file input triggered by addMediaBtn -->
+                <input type="file" id="mediaFileInput" accept="image/*" multiple style="display: none;">
             </div>
             <div class="card-scroll">
                 <div id="mediaListContainer" class="media-list">
-                    <!-- Dynamically injected simulated media items will appear here -->
+                    <!-- Dynamically injected file attachments will appear here -->
                 </div>
             </div>
             <div class="form-footer">
