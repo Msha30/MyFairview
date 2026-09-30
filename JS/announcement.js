@@ -143,8 +143,13 @@ function renderMediaList() {
                 </svg>
             </button>
         `;
+        item.dataset.index = index;
+        item.style.cursor = "grab";
+        item.style.touchAction = "none";
         container.appendChild(item);
     });
+
+    enableMediaReorder(container);
 
     // Attach delete handlers for media items
     container.querySelectorAll(".media-delete-btn").forEach(btn => {
@@ -152,6 +157,72 @@ function renderMediaList() {
             const idx = parseInt(e.currentTarget.getAttribute("data-index"));
             uploadedFiles.splice(idx, 1);
             renderMediaList();
+        });
+    });
+}
+
+// Drag-to-reorder for the media list: grab an item and move it up/down.
+// The final order is what gets uploaded (and shown) as the announcement's photo order.
+function enableMediaReorder(container) {
+    container.querySelectorAll(".media-item").forEach(item => {
+        item.addEventListener("pointerdown", (e) => {
+            if (e.button !== undefined && e.button !== 0) return;
+            if (e.target.closest(".media-delete-btn")) return; // Let the delete button work normally
+            if (container.children.length < 2) return;
+
+            e.preventDefault();
+            item.setPointerCapture(e.pointerId);
+
+            let startY = e.clientY;
+            item.style.cursor = "grabbing";
+            item.style.position = "relative";
+            item.style.zIndex = "10";
+            item.style.boxShadow = "0 6px 18px rgba(0,0,0,0.15)";
+            item.style.userSelect = "none";
+
+            const onMove = (ev) => {
+                let dy = ev.clientY - startY;
+                item.style.transform = `translateY(${dy}px)`;
+
+                // Swap places with a neighbour once the dragged item's middle passes the neighbour's middle
+                const swapWith = (neighbour, after) => {
+                    const visualTop = item.getBoundingClientRect().top;
+                    container.insertBefore(item, after ? neighbour.nextSibling : neighbour);
+                    item.style.transform = "none";
+                    dy = visualTop - item.getBoundingClientRect().top;
+                    startY = ev.clientY - dy;
+                    item.style.transform = `translateY(${dy}px)`;
+                };
+
+                const rect = item.getBoundingClientRect();
+                const mid = rect.top + rect.height / 2;
+                const next = item.nextElementSibling;
+                const prev = item.previousElementSibling;
+
+                if (next) {
+                    const r = next.getBoundingClientRect();
+                    if (mid > r.top + r.height / 2) return swapWith(next, true);
+                }
+                if (prev) {
+                    const r = prev.getBoundingClientRect();
+                    if (mid < r.top + r.height / 2) return swapWith(prev, false);
+                }
+            };
+
+            const onEnd = () => {
+                item.removeEventListener("pointermove", onMove);
+                item.removeEventListener("pointerup", onEnd);
+                item.removeEventListener("pointercancel", onEnd);
+
+                const newOrder = Array.from(container.children).map(el => Number(el.dataset.index));
+                const changed = newOrder.some((oldIdx, i) => oldIdx !== i);
+                if (changed) uploadedFiles = newOrder.map(i => uploadedFiles[i]);
+                renderMediaList(); // Re-draw in the new order (also resets the drag styling)
+            };
+
+            item.addEventListener("pointermove", onMove);
+            item.addEventListener("pointerup", onEnd);
+            item.addEventListener("pointercancel", onEnd);
         });
     });
 }
@@ -197,7 +268,7 @@ async function loadAnnouncements() {
             let photoThumbnails = "";
             if (photoList.length > 0) {
                 photoThumbnails = `<div class="photo-preview-list" style="display:flex; gap:6px; margin-top:8px;">` +
-                    photoList.map(url => `<img src="${escapeHTML(url)}" style="width:48px; height:48px; object-fit:cover; border-radius:4px;" />`).join("") +
+                    photoList.map(url => `<img src="${escapeHTML(url)}" style="width:75px; height:75px; object-fit:cover; border-radius:4px;" />`).join("") +
                     `</div>`;
             }
 
