@@ -1,4 +1,4 @@
-import { getDatabase, ref, onValue, set, remove, update } from "https://www.gstatic.com/firebasejs/12.17.0/firebase-database.js";
+import { getDatabase, ref, onValue, get, set, remove, update } from "https://www.gstatic.com/firebasejs/12.17.0/firebase-database.js";
 import { getFirestore, collection, getDocs } from "https://www.gstatic.com/firebasejs/12.17.0/firebase-firestore.js";
 import { initCardMap } from "./gmapComponent.js";
 import { loadGoogleMaps } from "./gmaps.js";
@@ -512,46 +512,41 @@ function openAvailableInfo(v, vId) {
 let deployedInfoMap = null;
 let deployedInfoMarkers = [];
 let deployedInfoPolylines = [];
+let deployedInfoInterval = null;
+let deployedInfoObserver = null;
 
 async function openDeployedInfo(v, vId) {
     const modal = document.getElementById("infoDeployedVehicleModal");
 
-    setText("deployedInfoPlate", v.plateNo);
-    setText("deployedInfoModel", v.vehicleModel);
-    setText("deployedInfoColor", v.vehicleColor);
-    setText("deployedInfoCapacity", v.capacity);
-    setText("deployedInfoContact", v.contactPerson);
-    setText("deployedInfoAddress", v.targetLoc);
-    setText("deployedInfoDetails", v.details);
-
+    renderDeployedInfo(v);
     modal.style.display = "flex";
+    await drawDeployedMap(v, /* recenter */ true);
 
-    deployedInfoMarkers.forEach(m => { if (m) m.map = null; });
-    deployedInfoMarkers = [];
-    deployedInfoPolylines.forEach(p => { if (p) p.setMap(null); });
-    deployedInfoPolylines = [];
+    // --- Keep the pin/route live while the popup stays open, polling
+    // Realtime Database every 3s, instead of requiring a close + reopen. ---
+    if (deployedInfoInterval) clearInterval(deployedInfoInterval);
+    deployedInfoInterval = setInterval(async () => {
+        try {
+            const snap = await get(ref(db, `vehicles/${vId}`));
+            if (!snap.exists()) return;
+            const latestV = snap.val();
+            renderDeployedInfo(latestV);
+            await drawDeployedMap(latestV, /* recenter */ false);
+        } catch (err) {
+            console.error("Failed to refresh deployed vehicle info:", err);
+        }
+    }, 3000);
 
-    const maps = await loadGoogleMaps();
-    const markerLib = await maps.importLibrary("marker");
-    const routeLib = await maps.importLibrary("routes");
-    const currentLoc = v.currentLoc || stationCenter;
-
-    if (!deployedInfoMap) {
-        deployedInfoMap = new maps.Map(document.getElementById("deployedInfoMapCard"), {
-            center: currentLoc, zoom: 14, disableDefaultUI: true, mapId: MAP_ID
-        });
-    } else {
-        deployedInfoMap.setCenter(currentLoc);
-    }
-
-    if (isValidLatLng(currentLoc)) {
-        deployedInfoMarkers.push(dropPin(markerLib, deployedInfoMap, currentLoc, "#1A73E8", "#0B4EA2"));
-    }
-
-    if (isValidLatLng(v.targetLocCoords)) {
-        deployedInfoMarkers.push(dropPin(markerLib, deployedInfoMap, v.targetLocCoords, "#EA4335", "#B31412"));
-        deployedInfoPolylines = await computeAndDrawRoute(routeLib, deployedInfoMap, currentLoc, v.targetLocCoords) || [];
-    }
+    // Stop polling whenever the popup closes, however that happens
+    // (Recall button, clicking the overlay background, etc).
+    if (deployedInfoObserver) deployedInfoObserver.disconnect();
+    deployedInfoObserver = new MutationObserver(() => {
+        if (modal.style.display === "none" && deployedInfoInterval) {
+            clearInterval(deployedInfoInterval);
+            deployedInfoInterval = null;
+        }
+    });
+    deployedInfoObserver.observe(modal, { attributes: true, attributeFilter: ["style"] });
 
     const acceptBtn = modal.querySelector(".button.accept");
     if (acceptBtn) {
@@ -573,6 +568,45 @@ async function openDeployedInfo(v, vId) {
                 showToast("Couldn't recall vehicle.", "error");
             }
         };
+    }
+}
+
+function renderDeployedInfo(v) {
+    setText("deployedInfoPlate", v.plateNo);
+    setText("deployedInfoModel", v.vehicleModel);
+    setText("deployedInfoColor", v.vehicleColor);
+    setText("deployedInfoCapacity", v.capacity);
+    setText("deployedInfoContact", v.contactPerson);
+    setText("deployedInfoAddress", v.targetLoc);
+    setText("deployedInfoDetails", v.details);
+}
+
+async function drawDeployedMap(v, recenter) {
+    deployedInfoMarkers.forEach(m => { if (m) m.map = null; });
+    deployedInfoMarkers = [];
+    deployedInfoPolylines.forEach(p => { if (p) p.setMap(null); });
+    deployedInfoPolylines = [];
+
+    const maps = await loadGoogleMaps();
+    const markerLib = await maps.importLibrary("marker");
+    const routeLib = await maps.importLibrary("routes");
+    const currentLoc = v.currentLoc || stationCenter;
+
+    if (!deployedInfoMap) {
+        deployedInfoMap = new maps.Map(document.getElementById("deployedInfoMapCard"), {
+            center: currentLoc, zoom: 14, disableDefaultUI: true, mapId: MAP_ID
+        });
+    } else if (recenter) {
+        deployedInfoMap.setCenter(currentLoc);
+    }
+
+    if (isValidLatLng(currentLoc)) {
+        deployedInfoMarkers.push(dropPin(markerLib, deployedInfoMap, currentLoc, "#1A73E8", "#0B4EA2"));
+    }
+
+    if (isValidLatLng(v.targetLocCoords)) {
+        deployedInfoMarkers.push(dropPin(markerLib, deployedInfoMap, v.targetLocCoords, "#EA4335", "#B31412"));
+        deployedInfoPolylines = await computeAndDrawRoute(routeLib, deployedInfoMap, currentLoc, v.targetLocCoords) || [];
     }
 }
 
