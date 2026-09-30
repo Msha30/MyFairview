@@ -446,7 +446,7 @@ function setupDeployVehicle() {
             });
             modal.style.display = "none";
             showToast("Vehicle deployed.");
-            writeLog("Edit", "Deployed Vehicle", vId, `Deployed ${vId} to ${contactToSave}`);
+            writeLog("Verify", "Deployed Vehicle", vId, `Deployed ${vId} to ${contactToSave}`);
         } catch (err) {
             console.error("Failed to deploy vehicle:", err);
             showToast("Couldn't deploy vehicle.", "error");
