@@ -2,28 +2,28 @@ import { getDatabase, ref, onValue, set, remove, update } from "https://www.gsta
 import { getFirestore, collection, getDocs } from "https://www.gstatic.com/firebasejs/12.17.0/firebase-firestore.js";
 import { initCardMap } from "./gmapComponent.js";
 import { loadGoogleMaps } from "./gmaps.js";
-import { database, app } from "./auth.js"; // Ensure app is exported from auth.js to init firestore
+import { database, app } from "./auth.js";
 import { isValidLatLng, dropPin, computeAndDrawRoute } from "./map-helper.js";
 import { showToast } from "./toast.js";
 import { writeLog } from "./logging.js";
 import { getChanges, describeChanges, setApplyState } from "./edit-tracker.js";
-import { confirmChanges, confirmDelete, runWithLoading } from "./dialogs.js";
 
 const db = database;
 const firestore = getFirestore(app);
 
 let vehicleMap = null;
 let activeMarkers = [];
+let activePolylines = [];
 let allVehiclesData = {};
-let verifiedUsers = []; // Cache for Firestore users
+let verifiedUsers = [];
 const stationCenter = { lat: 14.6760, lng: 121.0437 };
-const MAP_ID = "MYFAIRVIEW_MAP_ID"; // Required for AdvancedMarkerElement / Route markers
+const MAP_ID = "MYFAIRVIEW_MAP_ID";
 
 document.addEventListener("DOMContentLoaded", async () => {
     await loadExternalModals();
     vehicleMap = await initCardMap("vehicleMapCard", stationCenter, 14, []);
     listenToVehicles();
-    fetchVerifiedUsers(); // Pre-fetch users for the search dropdown
+    fetchVerifiedUsers();
     setupAllModals();
 });
 
@@ -58,13 +58,13 @@ async function fetchVerifiedUsers() {
         verifiedUsers = [];
         querySnapshot.forEach((doc) => {
             const data = doc.data();
-            data.docId = doc.id; // Capture document ID for the BFV ID
+            data.docId = doc.id;
             if (data.status === "Verified") verifiedUsers.push(data);
         });
     } catch (e) { console.error("Error fetching users: ", e); }
 }
 
-// --- RTDB Listeners & UI List ---
+// --- RTDB Listeners & Main Vehicle Map ---
 function listenToVehicles() {
     onValue(ref(db, "vehicles"), async (snapshot) => {
         const listContainer = document.querySelector(".vehicle-list");
@@ -78,8 +78,9 @@ function listenToVehicles() {
         }
         allVehiclesData = snapshot.val();
         const maps = await loadGoogleMaps();
+        const markerLib = await maps.importLibrary("marker");
+        const routeLib = await maps.importLibrary("routes");
 
-        // Available vehicles first (alphabetical), then deployed (alphabetical)
         const sortedEntries = Object.entries(allVehiclesData).sort(([keyA, a], [keyB, b]) => {
             const depA = a.deployed ? 1 : 0;
             const depB = b.deployed ? 1 : 0;
@@ -89,9 +90,10 @@ function listenToVehicles() {
             return plateA.localeCompare(plateB);
         });
 
-        sortedEntries.forEach(([vKey, v]) => {
+        for (const [vKey, v] of sortedEntries) {
             const isDep = v.deployed;
 
+            // Render Sidebar Item
             const item = document.createElement("div");
             item.className = `vehicle ${isDep ? "deployed" : "available"}`;
             item.setAttribute("data-id", vKey);
@@ -108,26 +110,82 @@ function listenToVehicles() {
             `;
             listContainer.appendChild(item);
 
-            if (v.currentLoc && typeof v.currentLoc.lat === "number") {
-                const mOpts = { position: v.currentLoc, map: vehicleMap, title: v.plateNo };
-                const marker = (maps.marker && maps.marker.AdvancedMarkerElement) ? new maps.marker.AdvancedMarkerElement(mOpts) : new maps.Marker(mOpts);
-                activeMarkers.push(marker);
+            // Render Current Vehicle Pins on Main Map
+            if (isValidLatLng(v.currentLoc)) {
+                const pinColor = isDep ? "#FF6D00" : "#34A853";
+                const pinBorder = isDep ? "#B34A00" : "#1E7E34";
+
+                const marker = dropPin(markerLib, vehicleMap, v.currentLoc, pinColor, pinBorder);
+                if (marker) {
+                    const infoWindow = new google.maps.InfoWindow({
+                        content: `
+                            <div style="font-family: 'Inter', sans-serif; padding: 4px; color: #1a1a1a;">
+                                <strong style="font-size: 14px;">${escapeHTML(v.plateNo)} (${escapeHTML(v.vehicleModel)})</strong><br/>
+                                <span style="font-size: 12px; color: #666;">Color: ${escapeHTML(v.vehicleColor)}</span><br/>
+                                ${v.targetLoc ? `<span style="font-size: 12px; color: #666;">Target: ${escapeHTML(v.targetLoc)}</span><br/>` : ''}
+                                <span style="font-size: 12px; font-weight: bold; color: ${isDep ? '#d32f2f' : '#2e7d32'};">
+                                    ${isDep ? '◉ Deployed' : '● Available'}
+                                </span>
+                            </div>
+                        `
+                    });
+
+                    marker.addListener("click", () => {
+                        infoWindow.open({ anchor: marker, map: vehicleMap });
+                    });
+
+                    activeMarkers.push(marker);
+                }
             }
-        });
+
+            // Render Ongoing Routes & Destination Pins for Deployed Vehicles
+            if (isDep && isValidLatLng(v.targetLocCoords)) {
+                const destMarker = dropPin(markerLib, vehicleMap, v.targetLocCoords, "#EA4335", "#B31412");
+                if (destMarker) {
+                    const destInfoWindow = new google.maps.InfoWindow({
+                        content: `<div style="font-family: sans-serif; padding: 4px;"><strong>Target: ${escapeHTML(v.plateNo)}</strong><br/><span style="font-size:12px; color:#555;">${escapeHTML(v.targetLoc || '')}</span></div>`
+                    });
+                    
+                    // Fixed: gmp-click replaced with marker listener
+                    destMarker.addListener("click", () => {
+                        destInfoWindow.open({ anchor: destMarker, map: vehicleMap });
+                    });
+                    activeMarkers.push(destMarker);
+                }
+
+                if (isValidLatLng(v.currentLoc)) {
+                    const polylines = await computeAndDrawRoute(routeLib, vehicleMap, v.currentLoc, v.targetLocCoords);
+                    if (polylines && polylines.length > 0) {
+                        activePolylines.push(...polylines);
+                    }
+                }
+            }
+        }
     });
 }
-function clearMapMarkers() { activeMarkers.forEach((m) => (m.map = null)); activeMarkers = []; }
+
+function clearMapMarkers() { 
+    activeMarkers.forEach((m) => { if (m) m.map = null; }); 
+    activeMarkers = []; 
+
+    activePolylines.forEach((p) => { if (p) p.setMap(null); });
+    activePolylines = [];
+}
 
 // --- Popup Interactions ---
 function setupAllModals() {
     setupAddVehicle();
     setupDeployVehicle();
 
-    document.querySelector(".vehicle-list").addEventListener("click", (e) => {
+    document.querySelector(".vehicle-list")?.addEventListener("click", (e) => {
         const item = e.target.closest(".vehicle");
         if (!item) return;
         const vId = item.getAttribute("data-id");
-        allVehiclesData[vId].deployed ? openDeployedInfo(allVehiclesData[vId], vId) : openAvailableInfo(allVehiclesData[vId], vId);
+        if (!allVehiclesData[vId]) return;
+
+        allVehiclesData[vId].deployed 
+            ? openDeployedInfo(allVehiclesData[vId], vId) 
+            : openAvailableInfo(allVehiclesData[vId], vId);
     });
 
     document.querySelectorAll(".modal-overlay").forEach(modal => {
@@ -144,37 +202,38 @@ function setupAddVehicle() {
     document.getElementById("confirmAddVehicleBtn")?.addEventListener("click", async () => {
         const plate = document.getElementById("addPlateNo").value.trim().toUpperCase();
         if (!plate) return showToast("Plate number is required.", "error");
-        const outcome = await runWithLoading({
-            loadingAction: "Adding Vehicle",
-            loadingDescription: "add the new vehicle",
-            successAction: "Vehicle Added",
-            parent: modal,
-            task: async () => {
-                await set(ref(db, `vehicles/${plate.replace(/\s+/g, "")}`), {
-                    plateNo: plate, vehicleModel: document.getElementById("addModel").value.trim(),
-                    vehicleColor: document.getElementById("addColor").value.trim(), capacity: parseInt(document.getElementById("addCapacity").value) || 0,
-                    deployed: false, currentLoc: stationCenter, addedBy: "Admin", addedOn: new Date().toISOString(), details: "", contactPerson: "", targetLoc: ""
-                });
-                writeLog("Add", "New Vehicle", plate, `Added vehicle ${plate}`);
-                return `${plate} has been added to vehicles successfully`;
-            }
-        });
-        if (outcome.ok) {
+        try {
+            await set(ref(db, `vehicles/${plate.replace(/\s+/g, "")}`), {
+                plateNo: plate, 
+                vehicleModel: document.getElementById("addModel").value.trim(),
+                vehicleColor: document.getElementById("addColor").value.trim(), 
+                capacity: parseInt(document.getElementById("addCapacity").value) || 0,
+                deployed: false, 
+                currentLoc: stationCenter, 
+                addedBy: "Admin", 
+                addedOn: new Date().toISOString(), 
+                details: "", 
+                contactPerson: "", 
+                targetLoc: "",
+                targetLocCoords: null
+            });
             modal.style.display = "none";
-        } else {
-            console.error("Failed to add vehicle:", outcome.error);
+            showToast("Vehicle added.");
+            writeLog("Add", "New Vehicle", plate, `Added vehicle ${plate}`);
+        } catch (err) {
+            console.error("Failed to add vehicle:", err);
             showToast("Couldn't add vehicle.", "error");
         }
     });
 }
 
-// === B. DEPLOY VEHICLE LOGIC (Google Maps Routes Library & Firestore) ===
+// === B. DEPLOY VEHICLE LOGIC (Google Maps Routes, Vehicle Pins, & Destination Pins) ===
 function setupDeployVehicle() {
     const modal = document.getElementById("deployVehicle");
-    let deployMap, routeLib, markerLib, destMarker, addressAutocomplete;
+    let deployMap, routeLib, markerLib, destMarker, vehicleMarker, addressAutocomplete;
     let selectedVehicleLoc = stationCenter;
-    let selectedAddress = "";   // Human-readable label only — never used as coordinates
-    let selectedDestLoc = null; // Real {lat,lng} — the only thing that ever drives the pin/route
+    let selectedAddress = "";
+    let selectedDestLoc = null;
     let routePolylines = [];
 
     document.getElementById("openDeployVehicleBtn")?.addEventListener("click", async (e) => {
@@ -185,9 +244,8 @@ function setupDeployVehicle() {
             if (!allVehiclesData[id].deployed) select.innerHTML += `<option value="${id}">${allVehiclesData[id].plateNo}</option>`;
         });
 
-        // Reset inputs and destination state each time the modal opens
         const callerInput = document.getElementById("callerInput");
-        if(callerInput) {
+        if (callerInput) {
             callerInput.value = "";
             delete callerInput.dataset.userid;
         }
@@ -196,10 +254,10 @@ function setupDeployVehicle() {
         selectedDestLoc = null;
         clearRoute();
         if (destMarker) { destMarker.map = null; destMarker = null; }
+        if (vehicleMarker) { vehicleMarker.map = null; vehicleMarker = null; }
 
         modal.style.display = "flex";
 
-        // Initialize Map & Libraries (dynamic imports pull in whichever libs are needed)
         const maps = await loadGoogleMaps();
         const placesLib = await maps.importLibrary("places");
         routeLib = await maps.importLibrary("routes");
@@ -210,63 +268,110 @@ function setupDeployVehicle() {
                 center: stationCenter, zoom: 14, disableDefaultUI: true, mapId: MAP_ID
             });
 
-            // --- New Place Autocomplete widget (replaces google.maps.places.Autocomplete) ---
             addressAutocomplete = new placesLib.PlaceAutocompleteElement({
                 componentRestrictions: { country: "ph" }
             });
             addressAutocomplete.id = "deployAddressInput";
             const addressContainer = document.getElementById("deployAddressContainer");
-            addressContainer.innerHTML = "";
-            addressContainer.appendChild(addressAutocomplete);
+            if (addressContainer) {
+                addressContainer.innerHTML = "";
+                addressContainer.appendChild(addressAutocomplete);
+            }
 
-            addressAutocomplete.addEventListener("gmp-select", async ({ placePrediction }) => {
+            const handlePlaceSelect = async (e) => {
+                const placePrediction = e.placePrediction || e.detail?.placePrediction;
+                if (!placePrediction) return;
                 const place = placePrediction.toPlace();
                 await place.fetchFields({ fields: ["location", "formattedAddress"] });
                 const loc = { lat: place.location.lat(), lng: place.location.lng() };
                 setSelectedAddress(place.formattedAddress || "");
                 setDestination(loc);
-            });
+            };
 
-            // Map click is the primary, always-accurate way to set the destination
+            addressAutocomplete.addEventListener("gmp-placeselect", handlePlaceSelect);
+            addressAutocomplete.addEventListener("gmp-select", handlePlaceSelect);
+
             const geocoder = new maps.Geocoder();
             deployMap.addListener("click", (e) => {
                 const loc = { lat: e.latLng.lat(), lng: e.latLng.lng() };
                 setDestination(loc);
-                // Reverse geocode just to fill in a human-readable label
                 geocoder.geocode({ location: e.latLng }, (results, status) => {
-                    if (status === "OK" && results[0]) setSelectedAddress(results[0].formatted_address);
+                    if (status === "OK" && results && results[0]) setSelectedAddress(results[0].formatted_address);
                 });
             });
+        } else {
+            deployMap.setCenter(stationCenter);
         }
     });
 
-    // Update start loc when vehicle selected
+    // Update vehicle pin & route when a vehicle is selected from dropdown
     document.getElementById("deployVehicleSelect")?.addEventListener("change", (e) => {
-        if (e.target.value) selectedVehicleLoc = allVehiclesData[e.target.value].currentLoc || stationCenter;
+        const selectedId = e.target.value;
+        if (selectedId && allVehiclesData[selectedId]) {
+            const vehicle = allVehiclesData[selectedId];
+            selectedVehicleLoc = vehicle.currentLoc || stationCenter;
+
+            // Render Blue Vehicle Pin
+            if (vehicleMarker) vehicleMarker.map = null;
+            vehicleMarker = dropPin(markerLib, deployMap, selectedVehicleLoc, "#1A73E8", "#0B4EA2");
+            if (vehicleMarker) {
+                const infoWindow = new google.maps.InfoWindow({
+                    content: `<div style="font-family: sans-serif; padding: 4px;">
+                                <strong>${escapeHTML(vehicle.plateNo)}</strong><br/>
+                                <span style="font-size: 12px; color: #555;">${escapeHTML(vehicle.vehicleModel)} (${escapeHTML(vehicle.vehicleColor)})</span>
+                              </div>`
+                });
+
+                // Fixed: gmp-click replaced with marker listener
+                vehicleMarker.addListener("click", () => {
+                    infoWindow.open({ anchor: vehicleMarker, map: deployMap });
+                });
+            }
+
+            deployMap.panTo(selectedVehicleLoc);
+
+            // Re-calculate route if destination exists
+            if (selectedDestLoc) {
+                clearRoute();
+                computeAndDrawRoute(routeLib, deployMap, selectedVehicleLoc, selectedDestLoc).then(p => routePolylines = p || []);
+            }
+        } else {
+            if (vehicleMarker) { vehicleMarker.map = null; vehicleMarker = null; }
+            clearRoute();
+        }
     });
 
-    // Helper: track + display the chosen destination label
     function setSelectedAddress(addr) {
         selectedAddress = addr || "";
         const readout = document.getElementById("deploySelectedAddress");
         if (readout) readout.textContent = selectedAddress;
     }
 
-    // Helper: set the real destination coordinates and update the pin + route to match
     function setDestination(loc) {
         if (!isValidLatLng(loc)) {
-            console.warn("setDestination: ignored invalid location", loc);
             clearDestination();
             return;
         }
         selectedDestLoc = loc;
         if (destMarker) destMarker.map = null;
-        destMarker = dropPin(markerLib, deployMap, loc);
+
+        // Render Red Target/Destination Pin
+        destMarker = dropPin(markerLib, deployMap, loc, "#EA4335", "#B31412");
+        if (destMarker) {
+            const infoWindow = new google.maps.InfoWindow({
+                content: `<div style="font-family: sans-serif; padding: 4px;"><strong>Target Destination</strong></div>`
+            });
+
+            // Fixed: gmp-click replaced with marker listener
+            destMarker.addListener("click", () => {
+                infoWindow.open({ anchor: destMarker, map: deployMap });
+            });
+        }
+
         clearRoute();
-        computeAndDrawRoute(routeLib, deployMap, selectedVehicleLoc, loc).then(p => routePolylines = p);
+        computeAndDrawRoute(routeLib, deployMap, selectedVehicleLoc, loc).then(p => routePolylines = p || []);
     }
 
-    // Helper: clear the pin + route when there's no real destination to show
     function clearDestination() {
         selectedDestLoc = null;
         if (destMarker) { destMarker.map = null; destMarker = null; }
@@ -274,7 +379,7 @@ function setupDeployVehicle() {
     }
 
     function clearRoute() {
-        routePolylines.forEach(p => p.setMap(null));
+        routePolylines.forEach(p => { if (p) p.setMap(null); });
         routePolylines = [];
     }
 
@@ -283,10 +388,9 @@ function setupDeployVehicle() {
     const callerDropdown = document.getElementById("callerDropdown");
 
     callerInput?.addEventListener("input", (e) => {
-        // Clear saved user ID dataset if the user modifies the input manually
-        delete e.target.dataset.userid; 
-
+        delete e.target.dataset.userid;
         const val = e.target.value.toLowerCase();
+        if (!callerDropdown) return;
         callerDropdown.innerHTML = "";
         if (!val) { callerDropdown.style.display = "none"; return; }
 
@@ -295,17 +399,12 @@ function setupDeployVehicle() {
             callerDropdown.style.display = "block";
             matches.forEach(m => {
                 const div = document.createElement("div");
-                div.innerHTML = `<span class="title">${m.fName} ${m.lName}</span><span class="sub">${m.contactMain}</span>`;
+                div.innerHTML = `<span class="title">${escapeHTML(m.fName)} ${escapeHTML(m.lName)}</span><span class="sub">${escapeHTML(m.contactMain || '')}</span>`;
                 div.onclick = async () => {
                     callerInput.value = `${m.fName} ${m.lName}`;
-                    
-                    // Bind the BFV-26-**** userID to the dataset for database extraction
-                    callerInput.dataset.userid = m.userID || m.docId || ""; 
+                    callerInput.dataset.userid = m.userID || m.docId || "";
                     callerDropdown.style.display = "none";
 
-                    // Firestore GeoPoint exposes .latitude / .longitude, but never trust
-                    // it blindly — validate as real finite numbers before touching the map.
-                    // If it's missing or malformed, we do NOT use the user's position at all.
                     const lat = Number(m.pinLocation?.latitude);
                     const lng = Number(m.pinLocation?.longitude);
                     const hasValidPin = Number.isFinite(lat) && Number.isFinite(lng);
@@ -314,9 +413,6 @@ function setupDeployVehicle() {
                         setSelectedAddress(m.address || "Saved Pin Location");
                         setDestination({ lat, lng });
                     } else if (m.address) {
-                        // m.address is just text typed by the user at signup — it is NOT
-                        // coordinates, so we don't geocode it or drop a pin from it. Just
-                        // show it as a label and let the map (click / search) set the real spot.
                         setSelectedAddress(m.address);
                         clearDestination();
                     } else {
@@ -331,102 +427,95 @@ function setupDeployVehicle() {
         }
     });
 
-    // Close logic
-    document.getElementById("cancelDeployBtn").onclick = () => { modal.style.display = "none"; };
+    document.getElementById("cancelDeployBtn")?.addEventListener("click", () => { modal.style.display = "none"; });
 
-    // Deploy logic
-    document.getElementById("confirmDeployBtn").onclick = async () => {
+    document.getElementById("confirmDeployBtn")?.addEventListener("click", async () => {
         const vId = document.getElementById("deployVehicleSelect").value;
         if (!vId) return showToast("Select a vehicle first.", "error");
 
-        // Attempt to extract the BFV ID from the dataset, fallback to value if they typed manually
         const callerInputElem = document.getElementById("callerInput");
-        const contactToSave = callerInputElem.dataset.userid || callerInputElem.value;
+        const contactToSave = callerInputElem?.dataset.userid || callerInputElem?.value || "";
 
         try {
             await update(ref(db, `vehicles/${vId}`), {
                 deployed: true,
                 contactPerson: contactToSave,
                 targetLoc: selectedAddress,
-                targetLocCoords: selectedDestLoc, // real {lat,lng} if we have one, else null
-                details: document.getElementById("deployDetailsInput").value
+                targetLocCoords: selectedDestLoc,
+                details: document.getElementById("deployDetailsInput")?.value || ""
             });
-            modal.style.display = "none"; // Close first so the toast reads as confirmation, not an interruption
+            modal.style.display = "none";
             showToast("Vehicle deployed.");
             writeLog("Edit", "Deployed Vehicle", vId, `Deployed ${vId} to ${contactToSave}`);
         } catch (err) {
             console.error("Failed to deploy vehicle:", err);
             showToast("Couldn't deploy vehicle.", "error");
         }
-    };
+    });
 }
 
 // === C. INFO & REMOVE VEHICLE LOGIC ===
 function openAvailableInfo(v, vId) {
     const modal = document.getElementById("infoVehicle");
     const inputs = modal.querySelectorAll(".input");
-    inputs[0].value = v.plateNo; inputs[1].value = v.vehicleModel;
-    inputs[2].value = v.vehicleColor; inputs[3].value = v.capacity;
+    inputs[0].value = v.plateNo || ""; inputs[1].value = v.vehicleModel || "";
+    inputs[2].value = v.vehicleColor || ""; inputs[3].value = v.capacity || 0;
     modal.style.display = "flex";
 
-    // Only log/save when something actually changed; otherwise the button is a grey "Cancel"
     const VEHICLE_LABELS = { plateNo: "plate number", vehicleModel: "model", vehicleColor: "color", capacity: "capacity" };
     const readVehicle = () => ({ plateNo: inputs[0].value, vehicleModel: inputs[1].value, vehicleColor: inputs[2].value, capacity: inputs[3].value });
     const originalVehicle = readVehicle();
     const applyBtn = modal.querySelector(".button.accept");
+    const deleteBtn = modal.querySelector(".button.delete");
+
     const refreshApply = () => setApplyState(applyBtn, getChanges(originalVehicle, readVehicle(), VEHICLE_LABELS).length > 0);
     inputs.forEach(i => { i.oninput = refreshApply; });
     refreshApply();
 
-    modal.querySelector(".button.delete").onclick = async () => {
-        if (!(await confirmDelete({ id: vId, name: v.plateNo, type: "Vehicles", parent: modal }))) return;
-        try {
-            await remove(ref(db, `vehicles/${vId}`));
-            modal.style.display = "none"; // Close first so the toast reads as confirmation
-            showToast("Vehicle removed.");
-            writeLog("Delete", "Removed Vehicle", vId, `Removed vehicle ${vId}`);
-        } catch (err) {
-            console.error("Failed to remove vehicle:", err);
-            modal.style.display = "flex";
-            showToast("Couldn't remove vehicle.", "error");
-        }
-    };
-    applyBtn.onclick = async () => {
-        const changes = getChanges(originalVehicle, readVehicle(), VEHICLE_LABELS);
-        if (changes.length === 0) { modal.style.display = "none"; return; } // Cancel
+    if (deleteBtn) {
+        deleteBtn.onclick = async () => {
+            if (!confirm(`Remove ${v.plateNo}?`)) return;
+            try {
+                await remove(ref(db, `vehicles/${vId}`));
+                modal.style.display = "none";
+                showToast("Vehicle removed.");
+                writeLog("Delete", "Removed Vehicle", vId, `Removed vehicle ${vId}`);
+            } catch (err) {
+                console.error("Failed to remove vehicle:", err);
+                showToast("Couldn't remove vehicle.", "error");
+            }
+        };
+    }
 
-        // Ask first — the info popup is swapped for the confirmation dialog
-        if (!(await confirmChanges("vehicle", modal))) {
-            // Cancelled: back to the original details
-            inputs[0].value = originalVehicle.plateNo; inputs[1].value = originalVehicle.vehicleModel;
-            inputs[2].value = originalVehicle.vehicleColor; inputs[3].value = originalVehicle.capacity;
-            refreshApply();
-            return;
-        }
-        try {
-            await update(ref(db, `vehicles/${vId}`), {
-                plateNo: inputs[0].value, vehicleModel: inputs[1].value,
-                vehicleColor: inputs[2].value, capacity: parseInt(inputs[3].value) || 0
-            });
-            modal.style.display = "none";
-            showToast("Changes saved.");
-            writeLog("Edit", "Edited Vehicle Info", vId, describeChanges(originalVehicle.plateNo || vId, changes));
-        } catch (err) {
-            console.error("Failed to update vehicle:", err);
-            modal.style.display = "flex";
-            showToast("Couldn't save changes.", "error");
-        }
-    };
+    if (applyBtn) {
+        applyBtn.onclick = async () => {
+            const changes = getChanges(originalVehicle, readVehicle(), VEHICLE_LABELS);
+            if (changes.length === 0) { modal.style.display = "none"; return; }
+            try {
+                await update(ref(db, `vehicles/${vId}`), {
+                    plateNo: inputs[0].value, 
+                    vehicleModel: inputs[1].value,
+                    vehicleColor: inputs[2].value, 
+                    capacity: parseInt(inputs[3].value) || 0
+                });
+                modal.style.display = "none";
+                showToast("Changes saved.");
+                writeLog("Edit", "Edited Vehicle Info", vId, describeChanges(originalVehicle.plateNo || vId, changes));
+            } catch (err) {
+                console.error("Failed to update vehicle:", err);
+                showToast("Couldn't save changes.", "error");
+            }
+        };
+    }
 }
 
-let deployedInfoMap = null; // Reused across opens of the deployed-info modal
+let deployedInfoMap = null;
 let deployedInfoMarkers = [];
 let deployedInfoPolylines = [];
 
 async function openDeployedInfo(v, vId) {
     const modal = document.getElementById("infoDeployedVehicleModal");
 
-    // Populate the info table with the vehicle's actual data
     setText("deployedInfoPlate", v.plateNo);
     setText("deployedInfoModel", v.vehicleModel);
     setText("deployedInfoColor", v.vehicleColor);
@@ -437,10 +526,9 @@ async function openDeployedInfo(v, vId) {
 
     modal.style.display = "flex";
 
-    // Clear whatever was drawn for the previously-viewed vehicle
     deployedInfoMarkers.forEach(m => { if (m) m.map = null; });
     deployedInfoMarkers = [];
-    deployedInfoPolylines.forEach(p => p.setMap(null));
+    deployedInfoPolylines.forEach(p => { if (p) p.setMap(null); });
     deployedInfoPolylines = [];
 
     const maps = await loadGoogleMaps();
@@ -456,31 +544,36 @@ async function openDeployedInfo(v, vId) {
         deployedInfoMap.setCenter(currentLoc);
     }
 
-    // The vehicle's currentLoc is always real coordinates — always show it.
     if (isValidLatLng(currentLoc)) {
         deployedInfoMarkers.push(dropPin(markerLib, deployedInfoMap, currentLoc, "#1A73E8", "#0B4EA2"));
     }
 
-    // Only draw a destination pin/route if we actually captured real coordinates for it
-    // (map click, resolved address search, or a contact's saved pinLocation). A plain
-    // address string is never treated as a location.
     if (isValidLatLng(v.targetLocCoords)) {
-        deployedInfoMarkers.push(dropPin(markerLib, deployedInfoMap, v.targetLocCoords));
-        deployedInfoPolylines = await computeAndDrawRoute(routeLib, deployedInfoMap, currentLoc, v.targetLocCoords);
+        deployedInfoMarkers.push(dropPin(markerLib, deployedInfoMap, v.targetLocCoords, "#EA4335", "#B31412"));
+        deployedInfoPolylines = await computeAndDrawRoute(routeLib, deployedInfoMap, currentLoc, v.targetLocCoords) || [];
     }
 
-    modal.querySelector(".button.accept").onclick = async () => {
-        if (!confirm(`Recall ${v.plateNo}?`)) return;
-        try {
-            await update(ref(db, `vehicles/${vId}`), { deployed: false, details: "", targetLoc: "", targetLocCoords: null, contactPerson: "" });
-            modal.style.display = "none"; // Close first so the toast reads as confirmation
-            showToast("Vehicle recalled.");
-            writeLog("Edit", "Recalled Vehicle", vId, `Recalled vehicle ${vId}`);
-        } catch (err) {
-            console.error("Failed to recall vehicle:", err);
-            showToast("Couldn't recall vehicle.", "error");
-        }
-    };
+    const acceptBtn = modal.querySelector(".button.accept");
+    if (acceptBtn) {
+        acceptBtn.onclick = async () => {
+            if (!confirm(`Recall ${v.plateNo}?`)) return;
+            try {
+                await update(ref(db, `vehicles/${vId}`), { 
+                    deployed: false, 
+                    details: "", 
+                    targetLoc: "", 
+                    targetLocCoords: null, 
+                    contactPerson: "" 
+                });
+                modal.style.display = "none";
+                showToast("Vehicle recalled.");
+                writeLog("Edit", "Recalled Vehicle", vId, `Recalled vehicle ${vId}`);
+            } catch (err) {
+                console.error("Failed to recall vehicle:", err);
+                showToast("Couldn't recall vehicle.", "error");
+            }
+        };
+    }
 }
 
 function setText(id, value) {
@@ -488,4 +581,6 @@ function setText(id, value) {
     if (el) el.textContent = (value === undefined || value === null || value === "") ? "—" : value;
 }
 
-function escapeHTML(str) { return str ? String(str).replace(/[&<>'"]/g, t => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;' }[t] || t)) : ""; }
+function escapeHTML(str) { 
+    return str ? String(str).replace(/[&<>'"]/g, t => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;' }[t] || t)) : ""; 
+}
