@@ -222,7 +222,6 @@ body {
     background: var(--redfaded);
 }
 
-.row:first-child { padding-top: 10px;}
 .row:last-child { border-bottom: none; }
 
 .logtitle {

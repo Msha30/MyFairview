@@ -98,3 +98,32 @@ function setField(row, field, value) {
     const cell = row.querySelector(`[data-field="${field}"]`);
     if (cell) cell.textContent = value.toLocaleString();
 }
+
+
+// ── "Details >" badges: jump to the matching page ───────────────────────────
+const DETAILS_LINKS = {
+    aa: "MainPages/Reports.html",      // Total Unresolved Reports
+    bb: "MainPages/Vehicles.html",     // Available Barangay Vehicles
+    cc: "MainPages/Citizens.html",     // Total Registered Citizens
+    dd: "MainPages/WaterLevel.html"    // Current Water Level
+};
+
+Object.entries(DETAILS_LINKS).forEach(([cls, page]) => {
+    const badge = document.querySelector(`.stat-trend.${cls}`);
+    if (!badge) return;
+    badge.style.cursor = "pointer";
+    badge.addEventListener("click", () => {
+        // This page lives inside MainLayout's iframe, so ask the layout to switch pages
+        // (it also moves the highlight in the sidebar).
+        try {
+            const layout = window.parent;
+            const menuItem = Array.from(layout.document.querySelectorAll(".menu-item"))
+                .find(item => (item.getAttribute("onclick") || "").includes(page));
+            if (layout !== window && typeof layout.loadPage === "function" && menuItem) {
+                layout.loadPage(menuItem, page);
+                return;
+            }
+        } catch { /* fall through */ }
+        window.location.href = page.replace("MainPages/", "");
+    });
+});

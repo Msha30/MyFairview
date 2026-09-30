@@ -195,10 +195,6 @@ body {
     border-radius: var(--radsmall);
 }
 
-.announce-item:first-child {
-    padding-top: 10px;
-}
-
 .announce-item:last-child {
     border-bottom: none;
 }
