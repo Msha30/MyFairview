@@ -242,6 +242,15 @@ function renderTable(data) {
 
     tableBody.innerHTML = '';
 
+    // Latest on top, oldest on bottom
+    const timeOf = (r) => r.createdOn && typeof r.createdOn.toDate === 'function'
+        ? r.createdOn.toDate().getTime()
+        : 0;
+    data = [...data].sort((a, b) =>
+        timeOf(b) - timeOf(a) ||
+        String(b.reportID || '').localeCompare(String(a.reportID || ''), undefined, { numeric: true })
+    );
+
     data.forEach(report => {
 
         const dateObj =

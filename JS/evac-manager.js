@@ -130,7 +130,16 @@ function listenToEvacCenters() {
             const markerLib =
                 await maps.importLibrary("marker");
 
-            Object.keys(allEvacData).forEach((id) => {
+            // Alphabetical by place name
+            Object.keys(allEvacData)
+                .sort((a, b) =>
+                    String(allEvacData[a].placeName || "").localeCompare(
+                        String(allEvacData[b].placeName || ""),
+                        undefined,
+                        { sensitivity: "base", numeric: true }
+                    )
+                )
+                .forEach((id) => {
                 const v = allEvacData[id];
 
                 const item =
