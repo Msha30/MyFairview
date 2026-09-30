@@ -7,6 +7,7 @@ import { isValidLatLng, dropPin, computeAndDrawRoute, fitMapToPositions } from "
 import { showToast } from "./toast.js";
 import { writeLog } from "./logging.js";
 import { getChanges, describeChanges, setApplyState } from "./edit-tracker.js";
+import { confirmChanges, confirmDelete } from "./dialogs.js";
 
 const db = database;
 const firestore = getFirestore(app);
@@ -212,23 +213,41 @@ function setupAddVehicle() {
     document.getElementById("cancelAddVehicleBtn")?.addEventListener("click", () => modal.style.display = "none");
 
     document.getElementById("confirmAddVehicleBtn")?.addEventListener("click", async () => {
+        // Validation Checks
         const plate = document.getElementById("addPlateNo").value.trim().toUpperCase();
+        const model = document.getElementById("addModel").value.trim();
+        const color = document.getElementById("addColor").value.trim();
+        const capacity = parseInt(document.getElementById("addCapacity").value);
+
         if (!plate) return showToast("Plate number is required.", "error");
+        if (!model) return showToast("Vehicle model is required.", "error");
+        if (!color) return showToast("Vehicle color is required.", "error");
+        if (isNaN(capacity) || capacity <= 0) return showToast("Capacity must be greater than 0.", "error");
+
+        const activeStaff = getActiveStaffID();
+
         try {
             await set(ref(db, `vehicles/${plate.replace(/\s+/g, "")}`), {
                 plateNo: plate, 
-                vehicleModel: document.getElementById("addModel").value.trim(),
-                vehicleColor: document.getElementById("addColor").value.trim(), 
-                capacity: parseInt(document.getElementById("addCapacity").value) || 0,
+                vehicleModel: model,
+                vehicleColor: color, 
+                capacity: capacity,
                 deployed: false, 
                 currentLoc: stationCenter, 
-                addedBy: "Admin", 
+                addedBy: activeStaff, // Updated dynamic staff logic
                 addedOn: new Date().toISOString(), 
                 details: "", 
                 contactPerson: "", 
                 targetLoc: "",
                 targetLocCoords: null
             });
+            
+            // Clear inputs after success
+            document.getElementById("addPlateNo").value = "";
+            document.getElementById("addModel").value = "";
+            document.getElementById("addColor").value = "";
+            document.getElementById("addCapacity").value = "";
+
             modal.style.display = "none";
             showToast("Vehicle added.");
             writeLog("Add", "New Vehicle", plate, `Added vehicle ${plate}`);
@@ -477,6 +496,18 @@ function openAvailableInfo(v, vId) {
     const inputs = modal.querySelectorAll(".input");
     inputs[0].value = v.plateNo || ""; inputs[1].value = v.vehicleModel || "";
     inputs[2].value = v.vehicleColor || ""; inputs[3].value = v.capacity || 0;
+    
+    // Inject Dynamic "Added on" and "Added by" details
+    const addedOnEl = document.getElementById("infoVehicleAddedOn");
+    const addedByEl = document.getElementById("infoVehicleAddedBy");
+    if (addedOnEl) {
+        const d = v.addedOn ? new Date(v.addedOn) : null;
+        addedOnEl.textContent = (d && !isNaN(d)) 
+            ? d.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })
+            : "—";
+    }
+    if (addedByEl) addedByEl.textContent = v.addedBy || "—";
+
     modal.style.display = "flex";
 
     const VEHICLE_LABELS = { plateNo: "plate number", vehicleModel: "model", vehicleColor: "color", capacity: "capacity" };
@@ -491,7 +522,9 @@ function openAvailableInfo(v, vId) {
 
     if (deleteBtn) {
         deleteBtn.onclick = async () => {
-            if (!confirm(`Remove ${v.plateNo}?`)) return;
+            // Trigger customized confirmation dialog instead of browser alert
+            if (!(await confirmDelete({ id: vId, name: v.plateNo, type: "Vehicles", parent: modal }))) return;
+            
             try {
                 await remove(ref(db, `vehicles/${vId}`));
                 modal.style.display = "none";
@@ -499,6 +532,7 @@ function openAvailableInfo(v, vId) {
                 writeLog("Delete", "Removed Vehicle", vId, `Removed vehicle ${vId}`);
             } catch (err) {
                 console.error("Failed to remove vehicle:", err);
+                if (modal) modal.style.display = "flex";
                 showToast("Couldn't remove vehicle.", "error");
             }
         };
@@ -508,12 +542,28 @@ function openAvailableInfo(v, vId) {
         applyBtn.onclick = async () => {
             const changes = getChanges(originalVehicle, readVehicle(), VEHICLE_LABELS);
             if (changes.length === 0) { modal.style.display = "none"; return; }
+
+            // Trigger customized confirmation dialog
+            if (!(await confirmChanges("vehicle", modal))) return;
+            if (modal) modal.style.display = "flex";
+
+            // Validate edits before saving
+            const newPlate = inputs[0].value.trim().toUpperCase();
+            const newModel = inputs[1].value.trim();
+            const newColor = inputs[2].value.trim();
+            const newCap = parseInt(inputs[3].value);
+            
+            if (!newPlate || !newModel || !newColor || isNaN(newCap) || newCap <= 0) {
+                 showToast("Please provide valid vehicle details.", "error");
+                 return;
+            }
+
             try {
                 await update(ref(db, `vehicles/${vId}`), {
-                    plateNo: inputs[0].value, 
-                    vehicleModel: inputs[1].value,
-                    vehicleColor: inputs[2].value, 
-                    capacity: parseInt(inputs[3].value) || 0
+                    plateNo: newPlate, 
+                    vehicleModel: newModel,
+                    vehicleColor: newColor, 
+                    capacity: newCap
                 });
                 modal.style.display = "none";
                 showToast("Changes saved.");
@@ -641,4 +691,14 @@ function setText(id, value) {
 
 function escapeHTML(str) { 
     return str ? String(str).replace(/[&<>'"]/g, t => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;' }[t] || t)) : ""; 
+}
+
+function getActiveStaffID() {
+    try {
+        const rawData = sessionStorage.getItem("userData") || localStorage.getItem("userData") || "{}";
+        const staffData = JSON.parse(rawData);
+        return staffData.staffID || staffData.userID || "Administrator";
+    } catch (e) {
+        return "Administrator";
+    }
 }
