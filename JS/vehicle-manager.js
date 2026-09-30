@@ -562,7 +562,7 @@ async function openDeployedInfo(v, vId) {
                 });
                 modal.style.display = "none";
                 showToast("Vehicle recalled.");
-                writeLog("Edit", "Recalled Vehicle", vId, `Recalled vehicle ${vId}`);
+                writeLog("Verify", "Recalled Vehicle", vId, `Recalled vehicle ${vId}`);
             } catch (err) {
                 console.error("Failed to recall vehicle:", err);
                 showToast("Couldn't recall vehicle.", "error");
