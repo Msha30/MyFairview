@@ -7,6 +7,7 @@ import { isValidLatLng, dropPin, computeAndDrawRoute } from "./map-helper.js";
 import { showToast } from "./toast.js";
 import { writeLog } from "./logging.js";
 import { getChanges, describeChanges, setApplyState } from "./edit-tracker.js";
+import { confirmChanges, confirmDelete, runWithLoading } from "./dialogs.js";
 
 const db = database;
 const firestore = getFirestore(app);
@@ -143,17 +144,25 @@ function setupAddVehicle() {
     document.getElementById("confirmAddVehicleBtn")?.addEventListener("click", async () => {
         const plate = document.getElementById("addPlateNo").value.trim().toUpperCase();
         if (!plate) return showToast("Plate number is required.", "error");
-        try {
-            await set(ref(db, `vehicles/${plate.replace(/\s+/g, "")}`), {
-                plateNo: plate, vehicleModel: document.getElementById("addModel").value.trim(),
-                vehicleColor: document.getElementById("addColor").value.trim(), capacity: parseInt(document.getElementById("addCapacity").value) || 0,
-                deployed: false, currentLoc: stationCenter, addedBy: "Admin", addedOn: new Date().toISOString(), details: "", contactPerson: "", targetLoc: ""
-            });
-            modal.style.display = "none"; // Close first so the toast reads as confirmation, not an interruption
-            showToast("Vehicle added.");
-            writeLog("Add", "New Vehicle", plate, `Added vehicle ${plate}`);
-        } catch (err) {
-            console.error("Failed to add vehicle:", err);
+        const outcome = await runWithLoading({
+            loadingAction: "Adding Vehicle",
+            loadingDescription: "add the new vehicle",
+            successAction: "Vehicle Added",
+            parent: modal,
+            task: async () => {
+                await set(ref(db, `vehicles/${plate.replace(/\s+/g, "")}`), {
+                    plateNo: plate, vehicleModel: document.getElementById("addModel").value.trim(),
+                    vehicleColor: document.getElementById("addColor").value.trim(), capacity: parseInt(document.getElementById("addCapacity").value) || 0,
+                    deployed: false, currentLoc: stationCenter, addedBy: "Admin", addedOn: new Date().toISOString(), details: "", contactPerson: "", targetLoc: ""
+                });
+                writeLog("Add", "New Vehicle", plate, `Added vehicle ${plate}`);
+                return `${plate} has been added to vehicles successfully`;
+            }
+        });
+        if (outcome.ok) {
+            modal.style.display = "none";
+        } else {
+            console.error("Failed to add vehicle:", outcome.error);
             showToast("Couldn't add vehicle.", "error");
         }
     });
@@ -370,7 +379,7 @@ function openAvailableInfo(v, vId) {
     refreshApply();
 
     modal.querySelector(".button.delete").onclick = async () => {
-        if (!confirm(`Remove ${v.plateNo}?`)) return;
+        if (!(await confirmDelete({ id: vId, name: v.plateNo, type: "Vehicles", parent: modal }))) return;
         try {
             await remove(ref(db, `vehicles/${vId}`));
             modal.style.display = "none"; // Close first so the toast reads as confirmation
@@ -378,12 +387,22 @@ function openAvailableInfo(v, vId) {
             writeLog("Delete", "Removed Vehicle", vId, `Removed vehicle ${vId}`);
         } catch (err) {
             console.error("Failed to remove vehicle:", err);
+            modal.style.display = "flex";
             showToast("Couldn't remove vehicle.", "error");
         }
     };
     applyBtn.onclick = async () => {
         const changes = getChanges(originalVehicle, readVehicle(), VEHICLE_LABELS);
         if (changes.length === 0) { modal.style.display = "none"; return; } // Cancel
+
+        // Ask first — the info popup is swapped for the confirmation dialog
+        if (!(await confirmChanges("vehicle", modal))) {
+            // Cancelled: back to the original details
+            inputs[0].value = originalVehicle.plateNo; inputs[1].value = originalVehicle.vehicleModel;
+            inputs[2].value = originalVehicle.vehicleColor; inputs[3].value = originalVehicle.capacity;
+            refreshApply();
+            return;
+        }
         try {
             await update(ref(db, `vehicles/${vId}`), {
                 plateNo: inputs[0].value, vehicleModel: inputs[1].value,
@@ -394,6 +413,7 @@ function openAvailableInfo(v, vId) {
             writeLog("Edit", "Edited Vehicle Info", vId, describeChanges(originalVehicle.plateNo || vId, changes));
         } catch (err) {
             console.error("Failed to update vehicle:", err);
+            modal.style.display = "flex";
             showToast("Couldn't save changes.", "error");
         }
     };

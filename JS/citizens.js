@@ -1,5 +1,6 @@
 import { firestore } from "./auth.js"; 
 import { collection, getDocs } from "https://www.gstatic.com/firebasejs/12.17.0/firebase-firestore.js";
+import { confirmExport, runWithLoading, downloadCSV, todayStamp } from "./dialogs.js";
 
 // 1. Global Array to store users so we don't query Firestore on every keystroke
 let allCitizens = [];
@@ -174,3 +175,55 @@ if (statusEl) statusEl.addEventListener("change", filterTable); // Triggers on d
 
 // 6. Start Initial Fetch
 window.refreshCitizensTable();
+
+// 7. Export CSV (only records matching the Subdivision + Status dropdowns)
+function citizenDate(ts) {
+    if (!ts) return "";
+    const d = typeof ts.toDate === "function" ? ts.toDate() : new Date(ts);
+    return isNaN(d) ? "" : d.toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" });
+}
+
+document.querySelector(".btn.export")?.addEventListener("click", async (e) => {
+    e.preventDefault();
+
+    const areaLabel = areaEl.options[areaEl.selectedIndex].text;
+    const statusLabel = statusEl.options[statusEl.selectedIndex].text;
+
+    if (!(await confirmExport({ type: "Citizens", filters: [areaLabel, statusLabel] }))) return;
+
+    const areaValue = areaEl.value.toLowerCase();
+    const statusValue = statusEl.value.toLowerCase();
+
+    const rows = allCitizens
+        .filter(user => {
+            const userArea = (user.area || "").toLowerCase();
+            const userStatus = (user.status || "unverified").toLowerCase();
+            const matchesArea = areaValue === "all" || userArea === areaValue;
+            const matchesStatus = statusValue === "all"
+                ? true
+                : statusValue === "invalid"
+                    ? (userStatus === "invalid" || userStatus === "rejected")
+                    : userStatus === statusValue;
+            return matchesArea && matchesStatus;
+        })
+        .sort((a, b) => (a.lName || "").localeCompare(b.lName || ""))
+        .map(u => [
+            u.userID || u.docId, u.lName, u.fName, u.mName, u.suffix,
+            u.contactMain, u.contact2, citizenDate(u.birthdate), u.area, u.address,
+            u.status || "Unverified", citizenDate(u.regDate)
+        ]);
+
+    await runWithLoading({
+        loadingAction: "Exporting Citizens",
+        loadingDescription: "generate your CSV file",
+        successAction: "Export Successful",
+        task: async () => {
+            downloadCSV(
+                `citizens_${todayStamp()}.csv`,
+                ["User ID", "Last Name", "First Name", "Middle Name", "Suffix", "Contact Number", "Secondary Contact", "Birthdate", "Subdivision", "Address", "Status", "Registered On"],
+                rows
+            );
+            return `${rows.length} citizen record${rows.length === 1 ? "" : "s"} exported successfully`;
+        }
+    });
+});

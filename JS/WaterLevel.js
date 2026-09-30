@@ -3,6 +3,7 @@ import { getFirestore, doc, onSnapshot, writeBatch } from "https://www.gstatic.c
 import { database, app } from "./auth.js";
 import { writeLog } from "./logging.js";
 import { getChanges, describeChanges, setSaveEnabled } from "./edit-tracker.js";
+import { confirmChanges } from "./dialogs.js";
 
 // ============================================================
 // CONFIGURATION & SETUP
@@ -231,6 +232,10 @@ document.addEventListener("DOMContentLoaded", () => {
                 alert(`Thresholds can't be higher than the highest level (${highest}). Please fix the dropdowns that exceed it.`);
                 return;
             }
+
+            // Ask first — the threshold popup is swapped for the confirmation dialog
+            if (!(await confirmChanges("water level threshold", modal))) return;
+
             saveBtn.textContent = "Saving...";
             saveBtn.disabled = true;
             
@@ -260,6 +265,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 modal.style.display = "none";
             } catch (err) {
                 console.error("Error updating thresholds:", err);
+                modal.style.display = "flex";
                 alert("Failed to save thresholds. Check console.");
             } finally {
                 saveBtn.textContent = "Save";
@@ -381,7 +387,12 @@ function renderHistory(dailyData) {
         };
     }
 
-    const dates = Object.keys(dailyData).sort().reverse().slice(0, 30);
+    // Only the last 30 days (today + the 29 days before it)
+    const cutoff = new Date();
+    cutoff.setHours(0, 0, 0, 0);
+    cutoff.setDate(cutoff.getDate() - 29);
+    const cutoffStr = `${cutoff.getFullYear()}-${String(cutoff.getMonth() + 1).padStart(2, "0")}-${String(cutoff.getDate()).padStart(2, "0")}`;
+    const dates = Object.keys(dailyData).filter(d => d >= cutoffStr).sort().reverse();
     if (dates.length === 0) return historyElement.innerHTML = "<div>No history available.</div>";
 
     dates.forEach(date => {

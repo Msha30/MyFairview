@@ -1,10 +1,13 @@
 import { firestore } from "./auth.js";
 import { writeLog } from "./logging.js";
 import { getChanges, describeChanges, setApplyState } from "./edit-tracker.js";
+import { confirmChanges, confirmDelete } from "./dialogs.js";
+import { showToast } from "./toast.js";
 import { 
     doc, 
     getDoc, 
     updateDoc, 
+    deleteDoc,
     collection, 
     query, 
     where, 
@@ -223,6 +226,14 @@ window.applyCitizenChanges = async function() {
         return;
     }
     const originalName = `${citizenEditSnapshot.fName} ${citizenEditSnapshot.lName}`.trim() || currentOpenedDocId;
+
+    // Ask first — the info popup is swapped for the confirmation dialog
+    const parent = document.getElementById("infoCitizens");
+    if (!(await confirmChanges("user", parent))) {
+        cancelCitizenEdit(); // Cancelled: back to the normal viewing state
+        return;
+    }
+    if (parent) parent.style.display = "flex"; // Confirmed: bring the popup back to show the save progress
 
     const btn = document.getElementById("btn-apply-changes");
     btn.textContent = "Saving...";
@@ -497,4 +508,37 @@ document.addEventListener("click", async function (e) {
             btn.disabled = false;
         }
     }
+});
+
+// ------------------------------------------------------------
+// Remove User
+// ------------------------------------------------------------
+async function removeCitizen() {
+    if (!currentOpenedDocId) return;
+
+    const parent = document.getElementById("infoCitizens");
+    const idToRemove = currentOpenedDocId;
+    const name = `${document.getElementById("pop-fName")?.value || ""} ${document.getElementById("pop-lName")?.value || ""}`.trim() || idToRemove;
+
+    if (!(await confirmDelete({ id: idToRemove, name, type: "Citizens", parent }))) return;
+
+    try {
+        await deleteDoc(doc(firestore, "Info_User", idToRemove));
+        writeLog("Delete", "Removed Citizen", idToRemove, `Removed ${name}`);
+
+        currentOpenedDocId = null;
+        citizenEditSnapshot = null;
+        if (window.refreshCitizensTable) window.refreshCitizensTable();
+        showToast("User removed.");
+    } catch (error) {
+        console.error("Error removing citizen:", error);
+        if (parent) parent.style.display = "flex";
+        showToast("Couldn't remove user.", "error");
+    }
+}
+
+// The Remove User button lives in the injected popup, so listen at the document level
+document.addEventListener("click", (e) => {
+    const btn = e.target.closest && e.target.closest("#infoCitizens .buttons.col .button.delete");
+    if (btn) removeCitizen();
 });

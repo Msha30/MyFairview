@@ -16,7 +16,7 @@ export async function initCardMap(containerId, center, zoom = 15, markers = []) 
 
         // Officially supported asynchronous library imports
         const { Map } = await google.maps.importLibrary("maps");
-        const { AdvancedMarkerElement } = await google.maps.importLibrary("marker");
+        const { AdvancedMarkerElement, PinElement } = await google.maps.importLibrary("marker");
 
         const map = new Map(container, {
             center: center,
@@ -29,11 +29,20 @@ export async function initCardMap(containerId, center, zoom = 15, markers = []) 
 
         // Add pins using AdvancedMarkerElement
         markers.forEach(markerData => {
-            const marker = new AdvancedMarkerElement({
+            const markerOptions = {
                 position: { lat: markerData.lat, lng: markerData.lng },
                 map: map,
                 title: markerData.title || ""
-            });
+            };
+            // Optional custom pin color (used by the Reports map: blue = Flood, red = Fire)
+            if (markerData.color) {
+                markerOptions.content = new PinElement({
+                    background: markerData.color,
+                    borderColor: markerData.borderColor || markerData.color,
+                    glyphColor: "#FFFFFF"
+                }).element;
+            }
+            const marker = new AdvancedMarkerElement(markerOptions);
 
             if (markerData.snippet) {
                 const infoWindow = new google.maps.InfoWindow({

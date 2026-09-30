@@ -4,6 +4,7 @@ import { collection, getDocs, getDoc, setDoc, doc, deleteDoc, updateDoc, query, 
 import { ref, uploadBytes, getDownloadURL, deleteObject } from "https://www.gstatic.com/firebasejs/12.17.0/firebase-storage.js";
 import { writeLog } from "./logging.js";
 import { getChanges, describeChanges, setSaveEnabled } from "./edit-tracker.js";
+import { confirmChanges, confirmDelete, runWithLoading } from "./dialogs.js";
 
 let currentStaffId = "BFVS-26-00000"; // Default fallback staff ID
 let uploadedFiles = []; // Holds actual JS File objects
@@ -227,8 +228,9 @@ async function loadAnnouncements() {
             btn.addEventListener("click", async (e) => {
                 const docId = e.currentTarget.getAttribute("data-id");
                 const photosStr = e.currentTarget.getAttribute("data-photos");
+                const annTitle = e.currentTarget.closest(".announce-item")?.querySelector(".title")?.textContent || docId;
 
-                if (confirm("Are you sure you want to delete this announcement?")) {
+                if (await confirmDelete({ id: docId, name: annTitle, type: "Announcements" })) {
                     try {
                         // Delete associated image files from Firebase Storage if present
                         if (photosStr) {
@@ -295,6 +297,11 @@ async function handlePublishAnnouncement() {
         publishBtn.disabled = true;
         publishBtn.textContent = "Publishing...";
 
+        const outcome = await runWithLoading({
+            loadingAction: "Posting Announcement",
+            loadingDescription: "post your announcement",
+            successAction: "Announcement Posted",
+            task: async () => {
         // 1. Generate unique sequential custom ID like AN26-0001
         const querySnapshot = await getDocs(collection(firestore, "Announcement"));
         let nextNum = querySnapshot.size + 1;
@@ -335,9 +342,12 @@ async function handlePublishAnnouncement() {
         uploadedFiles = [];
         renderMediaList();
 
-        alert(`Announcement published successfully under ID: ${annID}`);
         writeLog("Add", "New Announcement", annID, `Published "${title}"`);
         await loadAnnouncements();
+        return `${title} Announcement has been posted successfully`;
+            }
+        });
+        if (!outcome.ok) throw outcome.error;
     } catch (err) {
         console.error("Error publishing announcement:", err);
         alert("Failed to publish announcement: " + err.message);
@@ -390,6 +400,9 @@ function initEditModalLogic() {
             return;
         }
 
+        // Ask first — the edit popup is swapped for the confirmation dialog
+        if (!(await confirmChanges("announcement", modal))) return;
+
         try {
             saveBtn.textContent = "Saving...";
             saveBtn.disabled = true;
@@ -410,6 +423,7 @@ function initEditModalLogic() {
             alert("Announcement updated successfully.");
         } catch (err) {
             console.error("Error updating announcement:", err);
+            modal.style.display = "flex";
             saveBtn.textContent = "Save";
             saveBtn.disabled = false;
             alert("Failed to update announcement.");

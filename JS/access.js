@@ -4,6 +4,7 @@ import { getAuth, createUserWithEmailAndPassword } from "https://www.gstatic.com
 import { collection, doc, setDoc, getDocs, getDoc, updateDoc, deleteDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/12.17.0/firebase-firestore.js";
 import { writeLog } from "./logging.js";
 import { getChanges, describeChanges, setApplyState } from "./edit-tracker.js";
+import { confirmChanges, confirmDelete, runWithLoading } from "./dialogs.js";
 
 // 1. Initialize a Secondary App for Secure Account Creation
 // Prevents the Super Admin from being logged out when creating a new staff member.
@@ -126,6 +127,12 @@ async function submitNewStaff() {
     }
     
     try {
+        const outcome = await runWithLoading({
+            loadingAction: "Adding Staff Member",
+            loadingDescription: "add the new staff member",
+            successAction: "Staff Member Added",
+            parent: document.getElementById("addStaff"),
+            task: async () => {
         // Create user on the SECONDARY auth instance
         const userCred = await createUserWithEmailAndPassword(secondaryAuth, email, password);
         const newUser = userCred.user;
@@ -161,10 +168,13 @@ async function submitNewStaff() {
         // Sign out the secondary instance to clean up
         await secondaryAuth.signOut();
 
-        alert("Staff member successfully added!");
         writeLog("Add", "New Staff Member", newStaffID, `Added ${staffData.fName} ${staffData.lName} (${staffData.role})`);
         closeModal();
         loadStaffTable(); // Refresh the table automatically
+        return `${staffData.fName} ${staffData.lName} has been added as staff successfully`.replace(/\s+/g, " ");
+            }
+        });
+        if (!outcome.ok) throw outcome.error;
     } catch (error) {
         console.error("Error creating staff:", error);
         alert("Error: " + error.message);
@@ -368,11 +378,17 @@ async function openStaffModal(staffID, isEditMode = false) {
                 input.addEventListener("change", refreshApplyBtn);
             });
 
-            applyBtn.addEventListener("click", () => {
+            applyBtn.addEventListener("click", async () => {
                 const changes = staffChanges();
                 if (changes.length === 0) {
                     // Cancel: back to the normal viewing mode
                     openStaffModal(staffID, false);
+                    return;
+                }
+                // Ask first — the info popup is swapped for the confirmation dialog
+                const parent = document.getElementById("staffModal");
+                if (!(await confirmChanges("staff member", parent))) {
+                    openStaffModal(staffID, false); // Cancelled: back to the normal viewing state
                     return;
                 }
                 saveStaffChanges(staffID, originalValues, changes);
@@ -437,13 +453,17 @@ async function saveStaffChanges(staffID, originalValues, changes) {
         loadStaffTable(); // Refresh table automatically
     } catch (error) {
         console.error("Error updating staff:", error);
+        const parent = document.getElementById("staffModal");
+        if (parent) parent.style.display = "flex";
         alert("Failed to update staff.");
     }
 }
 
 // 10. Remove Staff
 async function removeStaff(staffID) {
-    if(!confirm("Are you sure you want to permanently remove this staff member's access?")) return;
+    const parent = document.getElementById("staffModal");
+    const staffName = `${document.getElementById("edit-fName")?.value || ""} ${document.getElementById("edit-lName")?.value || ""}`.trim() || staffID;
+    if (!(await confirmDelete({ id: staffID, name: staffName, type: "Staff", parent }))) return;
     try {
         await deleteDoc(doc(firestore, "Info_Staff", staffID));
         alert("Staff member removed successfully.");
@@ -452,6 +472,7 @@ async function removeStaff(staffID) {
         loadStaffTable();
     } catch (error) {
         console.error("Error deleting staff:", error);
+        if (parent) parent.style.display = "flex";
         alert("Failed to delete staff.");
     }
 }

@@ -21,6 +21,7 @@ import {
 } from "./map-helper.js";
 
 import { showToast } from "./toast.js";
+import { confirmChanges, confirmDelete, runWithLoading } from "./dialogs.js";
 import { writeLog } from "./logging.js";
 import {
     getChanges,
@@ -524,7 +525,12 @@ function setupAddEvacCenter() {
                     );
                 }
 
-                try {
+                const outcome = await runWithLoading({
+                    loadingAction: "Adding Evacuation Center",
+                    loadingDescription: "add the new evacuation center",
+                    successAction: "Evacuation Center Added",
+                    parent: modal,
+                    task: async () => {
                     const newId =
                         await nextEvacId();
 
@@ -552,23 +558,24 @@ function setupAddEvacCenter() {
                         }
                     );
 
-                    modal.style.display =
-                        "none";
-
-                    showToast(
-                        "Evacuation center added."
-                    );
-
                     writeLog(
                         "Add",
                         "New Evacuation Center",
                         newId,
                         `Added ${name}`
                     );
-                } catch (err) {
+
+                    return `${name} has been added to evacuation centers successfully`;
+                    }
+                });
+
+                if (outcome.ok) {
+                    modal.style.display =
+                        "none";
+                } else {
                     console.error(
                         "Failed to add evacuation center:",
-                        err
+                        outcome.error
                     );
 
                     showToast(
@@ -949,9 +956,12 @@ async function openEvacInfo(v, id) {
         deleteBtn.onclick =
             async () => {
                 if (
-                    !confirm(
-                        `Remove ${v.placeName}?`
-                    )
+                    !(await confirmDelete({
+                        id: v.evacID || id,
+                        name: v.placeName,
+                        type: "Evacuation Centers",
+                        parent: modal
+                    }))
                 ) {
                     return;
                 }
@@ -984,6 +994,9 @@ async function openEvacInfo(v, id) {
                         err
                     );
 
+                    modal.style.display =
+                        "flex";
+
                     showToast(
                         "Couldn't remove evacuation center.",
                         "error"
@@ -1002,6 +1015,17 @@ async function openEvacInfo(v, id) {
                     changes.length === 0
                 ) {
                     exitEvacEdit();
+                    return;
+                }
+
+                // Ask first — the info popup is swapped for the confirmation dialog
+                if (
+                    !(await confirmChanges(
+                        "evacuation center",
+                        modal
+                    ))
+                ) {
+                    exitEvacEdit(); // Cancelled: back to the normal viewing state
                     return;
                 }
 
@@ -1060,6 +1084,9 @@ async function openEvacInfo(v, id) {
                         "Failed to update evacuation center:",
                         err
                     );
+
+                    modal.style.display =
+                        "flex";
 
                     showToast(
                         "Couldn't save changes.",

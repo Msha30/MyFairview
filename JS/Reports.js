@@ -11,6 +11,7 @@ import {
 
 import { initCardMap } from "./gmapComponent.js";
 import { writeLog } from "./logging.js";
+import { confirmExport, runWithLoading, downloadCSV, todayStamp } from "./dialogs.js";
 
 let reportsData = [];
 
@@ -41,6 +42,7 @@ document.addEventListener('DOMContentLoaded', init);
 async function init() {
     await fetchReports();
     setupEventListeners();
+    setupExport();
     applyFilters();
     updateStats('Unresolved');
 }
@@ -1123,10 +1125,15 @@ async function openMapModal() {
         const reportMarkers =
             reportsData
 
-                .filter(report =>
-                    report.status !== 'Resolved' &&
-                    report.category !== 'Feedback'
-                )
+                .filter(report => {
+                    if (report.status === 'Resolved' || report.category === 'Feedback') return false;
+
+                    // Only pins from the last 7 days
+                    const created = report.createdOn && typeof report.createdOn.toDate === 'function'
+                        ? report.createdOn.toDate()
+                        : null;
+                    return created && (Date.now() - created.getTime()) <= 7 * 24 * 60 * 60 * 1000;
+                })
 
                 .map(report => {
 
@@ -1179,7 +1186,14 @@ async function openMapModal() {
                                 `${report.reportID || 'ID'} | ${report.type || 'Type'}`,
 
                             snippet:
-                                `Status: ${report.status || 'Unknown'}`
+                                `Status: ${report.status || 'Unknown'}`,
+
+                            // Flood = blue pin, Fire = red pin
+                            ...(String(report.type || '').trim().toLowerCase() === 'flood'
+                                ? { color: '#1A73E8', borderColor: '#0B4EA2' }
+                                : String(report.type || '').trim().toLowerCase() === 'fire'
+                                    ? { color: '#EA4335', borderColor: '#B31412' }
+                                    : {})
                         };
                     }
 
@@ -1542,4 +1556,53 @@ async function openResolvePopup(report) {
             error
         );
     }
+}
+
+
+// ------------------------------------------------------------
+// Export CSV (only records matching the Category + Status dropdowns)
+// ------------------------------------------------------------
+function setupExport() {
+    document.querySelector('.btn.export')?.addEventListener('click', async (e) => {
+        e.preventDefault();
+
+        const categoryFilter = categorySelect?.value || 'All Reports';
+        const statusFilter = statusSelect?.value || 'All';
+
+        if (!(await confirmExport({ type: 'Reports', filters: [categoryFilter, statusFilter] }))) return;
+
+        const matching = reportsData.filter(r => {
+            const matchesCategory = categoryFilter === 'All Reports' || r.category === categoryFilter;
+            let matchesStatus;
+            if (statusFilter === 'All') matchesStatus = true;
+            else if (statusFilter === 'Feedback') matchesStatus = r.category === 'Feedback';
+            else matchesStatus = r.status === statusFilter;
+            return matchesCategory && matchesStatus;
+        });
+
+        const rows = matching.map(r => {
+            const d = r.createdOn && typeof r.createdOn.toDate === 'function' ? r.createdOn.toDate() : null;
+            return [
+                r.reportID || '', r.category || '', r.type || '', r.status || '',
+                d ? d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) : '',
+                d ? d.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' }) : '',
+                r.location || '', r.description || '',
+                r.userName || '', r.userContact || '', r.userAddress || ''
+            ];
+        });
+
+        await runWithLoading({
+            loadingAction: 'Exporting Reports',
+            loadingDescription: 'generate your CSV file',
+            successAction: 'Export Successful',
+            task: async () => {
+                downloadCSV(
+                    `reports_${todayStamp()}.csv`,
+                    ['Report ID', 'Category', 'Type', 'Status', 'Date', 'Time', 'Location', 'Description', 'Reported By', 'Contact', 'Address'],
+                    rows
+                );
+                return `${rows.length} report${rows.length === 1 ? '' : 's'} exported successfully`;
+            }
+        });
+    });
 }
