@@ -21,6 +21,7 @@ let dynamicThresholds = {
 };
 
 const currentElement = document.getElementById("currentWaterLevel");
+const currentUpdatedElement = document.getElementById("currentWaterLevelLabel");
 const highestElement = document.getElementById("highestWaterLevel");
 const lowestElement = document.getElementById("lowestWaterLevel");
 const historyElement = document.getElementById("waterHistory");
@@ -284,6 +285,86 @@ function formatMeters(value) {
 }
 
 // ============================================================
+// CURRENT WATER LEVEL TIMESTAMP
+// ============================================================
+
+// Firebase stores the sensor timestamp as Unix time in milliseconds.
+// If a seconds-based Unix timestamp is ever received, normalize it as well.
+function normalizeTimestamp(timestamp) {
+    const value = Number(timestamp);
+    if (!Number.isFinite(value) || value <= 0) return null;
+
+    // Unix seconds are currently ~10 digits; milliseconds are ~13 digits.
+    return value < 1e12 ? value * 1000 : value;
+}
+
+function formatLastUpdated(timestamp) {
+    const milliseconds = normalizeTimestamp(timestamp);
+
+    if (milliseconds === null) {
+        return "Last Updated: --";
+    }
+
+    const updatedAt = new Date(milliseconds);
+    if (Number.isNaN(updatedAt.getTime())) {
+        return "Last Updated: --";
+    }
+
+    const now = new Date();
+    const elapsedMs = Math.max(0, now.getTime() - updatedAt.getTime());
+    const elapsedMinutes = Math.floor(elapsedMs / 60000);
+
+    // Keep the wording relative while the reading is recent.
+    if (elapsedMs < 60000) {
+        return "Updated Just Now";
+    }
+
+    if (elapsedMinutes < 60) {
+        return `Updated ${elapsedMinutes} Minute${elapsedMinutes === 1 ? "" : "s"} Ago`;
+    }
+
+    const time = updatedAt.toLocaleTimeString("en-US", {
+        hour: "numeric",
+        minute: "2-digit",
+        hour12: true
+    });
+
+    const sameDay =
+        updatedAt.getFullYear() === now.getFullYear() &&
+        updatedAt.getMonth() === now.getMonth() &&
+        updatedAt.getDate() === now.getDate();
+
+    if (sameDay) {
+        return `Last Updated: ${time}`;
+    }
+
+    const date = updatedAt.toLocaleDateString("en-US", {
+        month: "2-digit",
+        day: "2-digit",
+        year: "2-digit"
+    });
+
+    return `Last Updated: ${date} - ${time}`;
+}
+
+function updateLastUpdatedLabel(timestamp) {
+    if (currentUpdatedElement) {
+        currentUpdatedElement.textContent = formatLastUpdated(timestamp);
+    }
+}
+
+// Refresh the relative text even when Firebase has not sent a new reading.
+let latestSensorTimestamp = null;
+
+function refreshLastUpdatedLabel() {
+    if (latestSensorTimestamp !== null) {
+        updateLastUpdatedLabel(latestSensorTimestamp);
+    }
+}
+
+setInterval(refreshLastUpdatedLabel, 30000);
+
+// ============================================================
 // CURRENT WATER LEVEL
 // ============================================================
 const currentRef = ref(database, CURRENT_PATH);
@@ -296,6 +377,9 @@ onValue(currentRef, snapshot => {
 
     const levelMeters = Number(data.level);
     if (currentElement) currentElement.textContent = formatMeters(levelMeters);
+
+    latestSensorTimestamp = normalizeTimestamp(data.timestamp);
+    updateLastUpdatedLabel(data.timestamp);
 
     currentReading = {
         average: levelMeters,
