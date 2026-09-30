@@ -34,33 +34,43 @@ let lastDailyData = null;
 // ============================================================
 function loadThresholds() {
     const statuses = ["Safe", "Monitor", "Warning", "Critical"];
+
     statuses.forEach(status => {
         const docRef = doc(firestore, "WaterLevel_Threshold", status);
+
         onSnapshot(docRef, (docSnap) => {
             if (docSnap.exists()) {
                 const data = docSnap.data();
+
                 dynamicThresholds[status] = {
                     min: data.thresholdMin || 0,
                     max: data.thresholdMax || 0,
                     msg: data.message || "",
                     status: data.status || status
                 };
+
                 updateThresholdTable();
             }
         });
     });
 }
-// Initialize fetching
+
 loadThresholds();
 
-// Updates the HTML table in WaterLevel.html
+// ============================================================
+// UPDATE THRESHOLD TABLE
+// ============================================================
 function updateThresholdTable() {
-    ['safe', 'monitor', 'warning', 'critical'].forEach(type => {
+    ["safe", "monitor", "warning", "critical"].forEach(type => {
         const row = document.querySelector(`.tableRow.${type}`);
+
         if (row) {
-            const capitalized = type.charAt(0).toUpperCase() + type.slice(1);
+            const capitalized =
+                type.charAt(0).toUpperCase() + type.slice(1);
+
             const t = dynamicThresholds[capitalized];
             const cells = row.querySelectorAll("td");
+
             if (cells.length >= 3) {
                 cells[1].textContent = `${t.min}m - ${t.max}m`;
                 cells[2].textContent = t.msg || "—";
@@ -74,32 +84,51 @@ function updateThresholdTable() {
 // ============================================================
 async function ensureModalLoaded() {
     let modal = document.getElementById("editWaterThreshold");
+
     if (!modal) {
         try {
             const response = await fetch("../Popups/Edit_WaterThreshold.html");
-            if (!response.ok) throw new Error("Failed to load modal HTML");
+
+            if (!response.ok) {
+                throw new Error("Failed to load modal HTML");
+            }
+
             const htmlText = await response.text();
-            document.body.insertAdjacentHTML("beforeend", htmlText);
+
+            document.body.insertAdjacentHTML(
+                "beforeend",
+                htmlText
+            );
+
             modal = document.getElementById("editWaterThreshold");
         } catch (err) {
             console.error("Error fetching external modal:", err);
             alert("Could not load external edit modal.");
         }
     }
+
     return modal;
 }
 
 // ============================================================
 // MODAL: EDIT THRESHOLDS
 // ============================================================
-const THRESHOLD_TYPES = ['safe', 'monitor', 'warning', 'critical'];
-const MAX_LEVEL_LIMIT = 10; // Highest allowed value for Critical's max threshold
+const THRESHOLD_TYPES = [
+    "safe",
+    "monitor",
+    "warning",
+    "critical"
+];
 
-// Swaps a number <input> for a <select> (once), keeping the same classes so styling is unchanged
+const MAX_LEVEL_LIMIT = 10;
+
 function toSelect(el) {
-    if (el.tagName === "SELECT") return el;
+    if (el.tagName === "SELECT") {
+        return el;
+    }
 
     const sel = document.createElement("select");
+
     sel.className = el.className;
 
     sel.style.appearance = "none";
@@ -107,169 +136,421 @@ function toSelect(el) {
     sel.style.mozAppearance = "none";
 
     el.replaceWith(sel);
+
     return sel;
 }
 
-// Fills a dropdown with 1..maxVal. A stored value outside that range is still listed so it
-// stays visible (and will be rejected on Save).
 function fillSelect(sel, maxVal, current) {
     const cur = parseFloat(current);
     const opts = [];
-    for (let i = 1; i <= maxVal; i++) opts.push(i);
-    if (!isNaN(cur) && cur !== 0 && !opts.includes(cur)) opts.push(cur);
+
+    for (let i = 1; i <= maxVal; i++) {
+        opts.push(i);
+    }
+
+    if (
+        !isNaN(cur) &&
+        cur !== 0 &&
+        !opts.includes(cur)
+    ) {
+        opts.push(cur);
+    }
+
     opts.sort((a, b) => a - b);
-    sel.innerHTML = opts.map(n => `<option value="${n}">${n}</option>`).join("");
-    sel.value = String(!isNaN(cur) && opts.includes(cur) ? cur : opts[0]);
+
+    sel.innerHTML = opts
+        .map(n => `<option value="${n}">${n}</option>`)
+        .join("");
+
+    sel.value = String(
+        !isNaN(cur) && opts.includes(cur)
+            ? cur
+            : opts[0]
+    );
 }
 
-// (Re)builds every threshold dropdown based on Critical's max
 function setupThresholdDropdowns(modal, values) {
-    const get = (type, idx) => toSelect(modal.querySelectorAll(`.item.${type} .thres-item .form-input`)[idx]);
-    const critMax = get("critical", 1);
-    const others = [get("safe", 1), get("monitor", 0), get("monitor", 1), get("warning", 0), get("warning", 1), get("critical", 0)];
+    const get = (type, idx) =>
+        toSelect(
+            modal.querySelectorAll(
+                `.item.${type} .thres-item .form-input`
+            )[idx]
+        );
 
-    // Safe minimum is always 0 and not editable
+    const critMax = get("critical", 1);
+
+    const others = [
+        get("safe", 1),
+        get("monitor", 0),
+        get("monitor", 1),
+        get("warning", 0),
+        get("warning", 1),
+        get("critical", 0)
+    ];
+
+    // Safe minimum is always 0
     const safeMin = get("safe", 0);
-    safeMin.innerHTML = `<option value="0">0</option>`;
+
+    safeMin.innerHTML =
+        `<option value="0">0</option>`;
+
     safeMin.value = "0";
     safeMin.disabled = true;
 
-    if (values) fillSelect(critMax, MAX_LEVEL_LIMIT, values.criticalMax);
-    const rebuildOthers = (vals) => {
-        const max = parseFloat(critMax.value) || MAX_LEVEL_LIMIT;
-        others.forEach((sel, i) => fillSelect(sel, max, vals ? vals[i] : sel.value));
-    };
-    if (values) rebuildOthers([values.safeMax, values.monitorMin, values.monitorMax, values.warningMin, values.warningMax, values.criticalMin]);
+    if (values) {
+        fillSelect(
+            critMax,
+            MAX_LEVEL_LIMIT,
+            values.criticalMax
+        );
+    }
 
-    critMax.onchange = () => { rebuildOthers(null); refreshThresholdSaveState(); };
+    const rebuildOthers = (vals) => {
+        const max =
+            parseFloat(critMax.value) ||
+            MAX_LEVEL_LIMIT;
+
+        others.forEach((sel, i) => {
+            fillSelect(
+                sel,
+                max,
+                vals ? vals[i] : sel.value
+            );
+        });
+    };
+
+    if (values) {
+        rebuildOthers([
+            values.safeMax,
+            values.monitorMin,
+            values.monitorMax,
+            values.warningMin,
+            values.warningMax,
+            values.criticalMin
+        ]);
+    }
+
+    critMax.onchange = () => {
+        rebuildOthers(null);
+        refreshThresholdSaveState();
+    };
 }
+
 let thresholdOriginal = {};
 
-// Reads the popup's current values and the human labels for each field
 function readThresholdModal(modal) {
     const values = {};
     const labels = {};
+
     THRESHOLD_TYPES.forEach(type => {
-        const cap = type.charAt(0).toUpperCase() + type.slice(1);
-        const item = modal.querySelector(`.item.${type}`);
-        if (!item) return;
-        const inputs = item.querySelectorAll(".thres-item .form-input");
-        const msgInput = item.querySelector(".message");
-        if (inputs.length >= 2) {
-            values[`${type}Min`] = String(parseFloat(inputs[0].value) || 0);
-            values[`${type}Max`] = String(parseFloat(inputs[1].value) || 0);
-            labels[`${type}Min`] = `${cap} minimum threshold`;
-            labels[`${type}Max`] = `${cap} maximum threshold`;
+        const cap =
+            type.charAt(0).toUpperCase() +
+            type.slice(1);
+
+        const item =
+            modal.querySelector(`.item.${type}`);
+
+        if (!item) {
+            return;
         }
+
+        const inputs =
+            item.querySelectorAll(
+                ".thres-item .form-input"
+            );
+
+        const msgInput =
+            item.querySelector(".message");
+
+        if (inputs.length >= 2) {
+            values[`${type}Min`] =
+                String(
+                    parseFloat(inputs[0].value) || 0
+                );
+
+            values[`${type}Max`] =
+                String(
+                    parseFloat(inputs[1].value) || 0
+                );
+
+            labels[`${type}Min`] =
+                `${cap} minimum threshold`;
+
+            labels[`${type}Max`] =
+                `${cap} maximum threshold`;
+        }
+
         if (msgInput) {
-            values[`${type}Msg`] = msgInput.value;
-            labels[`${type}Msg`] = `${cap} bridge message`;
+            values[`${type}Msg`] =
+                msgInput.value;
+
+            labels[`${type}Msg`] =
+                `${cap} bridge message`;
         }
     });
-    return { values, labels };
+
+    return {
+        values,
+        labels
+    };
 }
 
 function refreshThresholdSaveState() {
-    const modal = document.getElementById("editWaterThreshold");
-    if (!modal) return;
-    const { values, labels } = readThresholdModal(modal);
-    setSaveEnabled(modal.querySelector(".button.confirm"), getChanges(thresholdOriginal, values, labels).length > 0);
+    const modal =
+        document.getElementById(
+            "editWaterThreshold"
+        );
+
+    if (!modal) {
+        return;
+    }
+
+    const {
+        values,
+        labels
+    } = readThresholdModal(modal);
+
+    setSaveEnabled(
+        modal.querySelector(".button.confirm"),
+        getChanges(
+            thresholdOriginal,
+            values,
+            labels
+        ).length > 0
+    );
 }
 
+// ============================================================
+// DOM EVENTS
+// ============================================================
 document.addEventListener("DOMContentLoaded", () => {
-    // Save stays grey/inactive until a threshold or message actually changes
+
     document.addEventListener("input", (e) => {
-        if (e.target.closest && e.target.closest("#editWaterThreshold")) refreshThresholdSaveState();
+        if (
+            e.target.closest &&
+            e.target.closest("#editWaterThreshold")
+        ) {
+            refreshThresholdSaveState();
+        }
     });
 
     document.addEventListener("click", async (e) => {
-        
-        // 1. OPEN MODAL
+
+        // ====================================================
+        // OPEN MODAL
+        // ====================================================
         if (e.target.closest(".btn.edit")) {
             e.preventDefault();
-            const modal = await ensureModalLoaded();
-            if (!modal) return;
-            
-            // Populate modal with current Firestore data
-            ['safe', 'monitor', 'warning', 'critical'].forEach(type => {
-                const capitalized = type.charAt(0).toUpperCase() + type.slice(1);
-                const t = dynamicThresholds[capitalized];
-                const item = modal.querySelector(`.item.${type}`);
-                if (item) {
-                    const inputs = item.querySelectorAll(".thres-item .form-input");
-                    const msgInput = item.querySelector(".message");
-                    if (msgInput) msgInput.value = t.msg;
-                }
-            });
-            setupThresholdDropdowns(modal, {
-                safeMax: dynamicThresholds.Safe.max,
-                monitorMin: dynamicThresholds.Monitor.min, monitorMax: dynamicThresholds.Monitor.max,
-                warningMin: dynamicThresholds.Warning.min, warningMax: dynamicThresholds.Warning.max,
-                criticalMin: dynamicThresholds.Critical.min, criticalMax: dynamicThresholds.Critical.max
-            });
-            thresholdOriginal = readThresholdModal(modal).values;
-            refreshThresholdSaveState();
-            modal.style.display = "flex";
-        }
 
-        // 2. CLOSE MODAL
-        if (e.target.closest(".button.delete") || (e.target.id === "editWaterThreshold" && e.target.classList.contains("modal-overlay"))) {
-            const modal = document.getElementById("editWaterThreshold");
-            if (modal) modal.style.display = "none";
-        }
+            const modal =
+                await ensureModalLoaded();
 
-        // 3. SAVE MODAL TO FIRESTORE
-        if (e.target.closest(".button.confirm") && e.target.closest("#editWaterThreshold")) {
-            const saveBtn = e.target.closest(".button.confirm");
-            const modal = document.getElementById("editWaterThreshold");
-            const { values: currentValues, labels: thresholdLabels } = readThresholdModal(modal);
-            const thresholdChanges = getChanges(thresholdOriginal, currentValues, thresholdLabels);
-            if (thresholdChanges.length === 0) return; // Nothing changed: nothing to save or log
-
-            // Every threshold must be within the highest (Critical max) level
-            const highest = parseFloat(currentValues.criticalMax);
-            const tooHigh = Object.keys(currentValues).filter(k => /(Min|Max)$/.test(k) && parseFloat(currentValues[k]) > highest);
-            if (tooHigh.length > 0) {
-                alert(`Thresholds can't be higher than the highest level (${highest}). Please fix the dropdowns that exceed it.`);
+            if (!modal) {
                 return;
             }
 
-            // Ask first — the threshold popup is swapped for the confirmation dialog
-            if (!(await confirmChanges("water level threshold", modal))) return;
+            [
+                "safe",
+                "monitor",
+                "warning",
+                "critical"
+            ].forEach(type => {
 
-            saveBtn.textContent = "Saving...";
-            saveBtn.disabled = true;
-            
-            const batch = writeBatch(firestore);
+                const capitalized =
+                    type.charAt(0).toUpperCase() +
+                    type.slice(1);
 
-            ['safe', 'monitor', 'warning', 'critical'].forEach(type => {
-                const capitalized = type.charAt(0).toUpperCase() + type.slice(1);
-                const item = modal.querySelector(`.item.${type}`);
+                const t =
+                    dynamicThresholds[capitalized];
+
+                const item =
+                    modal.querySelector(
+                        `.item.${type}`
+                    );
+
                 if (item) {
-                    const inputs = item.querySelectorAll(".thres-item .form-input");
-                    const msgInput = item.querySelector(".message");
-                    
-                    if (inputs.length >= 2 && msgInput) {
-                        const docRef = doc(firestore, "WaterLevel_Threshold", capitalized);
-                        batch.update(docRef, {
-                            thresholdMin: parseFloat(inputs[0].value) || 0,
-                            thresholdMax: parseFloat(inputs[1].value) || 0,
-                            message: msgInput.value.trim()
-                        });
+                    const msgInput =
+                        item.querySelector(".message");
+
+                    if (msgInput) {
+                        msgInput.value = t.msg;
                     }
                 }
             });
 
-            try {
-                await batch.commit();
-                writeLog("Edit", "Edited Water Level Threshold", "WaterLevel_Threshold", describeChanges("water level", thresholdChanges));
+            setupThresholdDropdowns(
+                modal,
+                {
+                    safeMax:
+                        dynamicThresholds.Safe.max,
+
+                    monitorMin:
+                        dynamicThresholds.Monitor.min,
+
+                    monitorMax:
+                        dynamicThresholds.Monitor.max,
+
+                    warningMin:
+                        dynamicThresholds.Warning.min,
+
+                    warningMax:
+                        dynamicThresholds.Warning.max,
+
+                    criticalMin:
+                        dynamicThresholds.Critical.min,
+
+                    criticalMax:
+                        dynamicThresholds.Critical.max
+                }
+            );
+
+            thresholdOriginal =
+                readThresholdModal(modal).values;
+
+            refreshThresholdSaveState();
+
+            modal.style.display = "flex";
+        }
+
+        // ====================================================
+        // CLOSE MODAL
+        // ====================================================
+        if (
+            e.target.closest(".button.delete") ||
+            (
+                e.target.id === "editWaterThreshold" &&
+                e.target.classList.contains("modal-overlay")
+            )
+        ) {
+            const modal =
+                document.getElementById(
+                    "editWaterThreshold"
+                );
+
+            if (modal) {
                 modal.style.display = "none";
+            }
+        }
+
+        // ====================================================
+        // SAVE MODAL
+        // ====================================================
+        if (
+            e.target.closest(".button.confirm") &&
+            e.target.closest("#editWaterThreshold")
+        ) {
+            const saveBtn =
+                e.target.closest(".button.confirm");
+
+            const modal =
+                document.getElementById(
+                    "editWaterThreshold"
+                );
+
+            const {
+                values: currentValues,
+                labels: thresholdLabels
+            } =
+                readThresholdModal(modal);
+
+            const thresholdChanges =
+                getChanges(
+                    thresholdOriginal,
+                    currentValues,
+                    thresholdLabels
+                );
+
+            if (thresholdChanges.length === 0) {
+                return;
+            }
+
+            const description =
+                describeChanges(
+                    thresholdChanges
+                );
+
+            const confirmed =
+                await confirmChanges(
+                    description
+                );
+
+            if (!confirmed) {
+                return;
+            }
+
+            saveBtn.disabled = true;
+
+            try {
+                const batch =
+                    writeBatch(firestore);
+
+                THRESHOLD_TYPES.forEach(type => {
+                    const cap =
+                        type.charAt(0).toUpperCase() +
+                        type.slice(1);
+
+                    const docRef =
+                        doc(
+                            firestore,
+                            "WaterLevel_Threshold",
+                            cap
+                        );
+
+                    batch.set(
+                        docRef,
+                        {
+                            thresholdMin:
+                                parseFloat(
+                                    currentValues[
+                                        `${type}Min`
+                                    ]
+                                ) || 0,
+
+                            thresholdMax:
+                                parseFloat(
+                                    currentValues[
+                                        `${type}Max`
+                                    ]
+                                ) || 0,
+
+                            message:
+                                currentValues[
+                                    `${type}Msg`
+                                ] || "",
+
+                            status: cap
+                        },
+                        {
+                            merge: true
+                        }
+                    );
+                });
+
+                await batch.commit();
+
+                await writeLog(
+                    "Water Level Threshold",
+                    "Updated threshold settings",
+                    description
+                );
+
+                thresholdOriginal =
+                    currentValues;
+
+                refreshThresholdSaveState();
+
+                modal.style.display = "none";
+
             } catch (err) {
-                console.error("Error updating thresholds:", err);
-                modal.style.display = "flex";
-                alert("Failed to save thresholds. Check console.");
-            } finally {
-                saveBtn.textContent = "Save";
+                console.error(
+                    "Error saving thresholds:",
+                    err
+                );
+
+                alert(
+                    "Failed to save threshold settings."
+                );
+
                 saveBtn.disabled = false;
             }
         }
@@ -277,44 +558,73 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 // ============================================================
-// FORMAT METERS
+// FORMAT HELPERS
 // ============================================================
 function formatMeters(value) {
-    if (value === null || value === undefined || isNaN(value)) return "-- m";
+    if (
+        value === null ||
+        value === undefined ||
+        isNaN(value)
+    ) {
+        return "-- m";
+    }
+
     return Number(value).toFixed(2) + " m";
 }
 
 // ============================================================
-// CURRENT WATER LEVEL TIMESTAMP
+// TIMESTAMP HELPERS
 // ============================================================
-
-// Firebase stores the sensor timestamp as Unix time in milliseconds.
-// If a seconds-based Unix timestamp is ever received, normalize it as well.
 function normalizeTimestamp(timestamp) {
     const value = Number(timestamp);
-    if (!Number.isFinite(value) || value <= 0) return null;
 
-    // Unix seconds are currently ~10 digits; milliseconds are ~13 digits.
-    return value < 1e12 ? value * 1000 : value;
+    if (
+        !Number.isFinite(value) ||
+        value <= 0
+    ) {
+        return null;
+    }
+
+    // Unix seconds are ~10 digits.
+    // Unix milliseconds are ~13 digits.
+    return value < 1e12
+        ? value * 1000
+        : value;
 }
 
 function formatLastUpdated(timestamp) {
-    const milliseconds = normalizeTimestamp(timestamp);
+    const milliseconds =
+        normalizeTimestamp(timestamp);
 
     if (milliseconds === null) {
         return "Last Updated: --";
     }
 
-    const updatedAt = new Date(milliseconds);
-    if (Number.isNaN(updatedAt.getTime())) {
+    const updatedAt =
+        new Date(milliseconds);
+
+    if (
+        Number.isNaN(
+            updatedAt.getTime()
+        )
+    ) {
         return "Last Updated: --";
     }
 
     const now = new Date();
-    const elapsedMs = Math.max(0, now.getTime() - updatedAt.getTime());
-    const elapsedMinutes = Math.floor(elapsedMs / 60000);
 
-    // Keep the wording relative while the reading is recent.
+    const elapsedMs =
+        Math.max(
+            0,
+            now.getTime() -
+            updatedAt.getTime()
+        );
+
+    const elapsedMinutes =
+        Math.floor(
+            elapsedMs / 60000
+        );
+
     if (elapsedMs < 60000) {
         return "Updated Just Now";
     }
@@ -323,63 +633,155 @@ function formatLastUpdated(timestamp) {
         return `Updated ${elapsedMinutes} Minute${elapsedMinutes === 1 ? "" : "s"} Ago`;
     }
 
-    const time = updatedAt.toLocaleTimeString("en-US", {
-        hour: "numeric",
-        minute: "2-digit",
-        hour12: true
-    });
+    const time =
+        updatedAt.toLocaleTimeString(
+            "en-US",
+            {
+                hour: "numeric",
+                minute: "2-digit",
+                hour12: true
+            }
+        );
 
     const sameDay =
-        updatedAt.getFullYear() === now.getFullYear() &&
-        updatedAt.getMonth() === now.getMonth() &&
-        updatedAt.getDate() === now.getDate();
+        updatedAt.getFullYear() ===
+            now.getFullYear() &&
+
+        updatedAt.getMonth() ===
+            now.getMonth() &&
+
+        updatedAt.getDate() ===
+            now.getDate();
 
     if (sameDay) {
         return `Last Updated: ${time}`;
     }
 
-    const date = updatedAt.toLocaleDateString("en-US", {
-        month: "2-digit",
-        day: "2-digit",
-        year: "2-digit"
-    });
+    const date =
+        updatedAt.toLocaleDateString(
+            "en-US",
+            {
+                month: "2-digit",
+                day: "2-digit",
+                year: "2-digit"
+            }
+        );
 
     return `Last Updated: ${date} - ${time}`;
 }
 
 function updateLastUpdatedLabel(timestamp) {
     if (currentUpdatedElement) {
-        currentUpdatedElement.textContent = formatLastUpdated(timestamp);
+        currentUpdatedElement.textContent =
+            formatLastUpdated(timestamp);
     }
 }
 
-// Refresh the relative text even when Firebase has not sent a new reading.
+// ============================================================
+// SENSOR ONLINE / OFFLINE DETECTION
+// ============================================================
+//
+// The sensor normally uploads a reading every 5 seconds.
+//
+// If the timestamp becomes older than 15 seconds,
+// the sensor is considered OFFLINE.
+//
+// This handles:
+//
+// 1. Sensor powered OFF
+// 2. Sensor disconnected
+// 3. Sensor stops sending data
+// 4. Network connection is lost
+// 5. Sensor firmware stops updating Firebase
+//
+// IMPORTANT:
+//
+// Old Firebase data is NOT deleted.
+//
+// Historical data remains available.
+//
+// Only the CURRENT reading is hidden when
+// the sensor becomes stale/offline.
+// ============================================================
+
+const SENSOR_OFFLINE_TIMEOUT_MS = 15000;
+
 let latestSensorTimestamp = null;
+let sensorOnline = false;
 
-function refreshLastUpdatedLabel() {
-    if (latestSensorTimestamp !== null) {
-        updateLastUpdatedLabel(latestSensorTimestamp);
+// ============================================================
+// SHOW SENSOR OFFLINE
+// ============================================================
+function showSensorOffline() {
+
+    sensorOnline = false;
+
+    latestSensorTimestamp = null;
+
+    currentReading = null;
+
+    if (currentElement) {
+        currentElement.textContent = "--";
+    }
+
+    if (currentUpdatedElement) {
+        currentUpdatedElement.textContent =
+            "Sensor Offline";
     }
 }
 
-setInterval(refreshLastUpdatedLabel, 30000);
+// ============================================================
+// SHOW CURRENT SENSOR READING
+// ============================================================
+function showCurrentSensorReading(data) {
 
-// ============================================================
-// CURRENT WATER LEVEL
-// ============================================================
-const currentRef = ref(database, CURRENT_PATH);
-onValue(currentRef, snapshot => {
-    const data = snapshot.val();
-    if (!data) {
-        if (currentElement) currentElement.textContent = "-- m";
+    const timestamp =
+        normalizeTimestamp(
+            data.timestamp
+        );
+
+    const levelMeters =
+        Number(data.level);
+
+    // Reading must have a valid
+    // timestamp and water level.
+    if (
+        timestamp === null ||
+        !Number.isFinite(levelMeters)
+    ) {
+        showSensorOffline();
         return;
     }
 
-    const levelMeters = Number(data.level);
-    if (currentElement) currentElement.textContent = formatMeters(levelMeters);
+    const age =
+        Date.now() - timestamp;
 
-    latestSensorTimestamp = normalizeTimestamp(data.timestamp);
-    updateLastUpdatedLabel(data.timestamp);
+    // Reject stale readings.
+    //
+    // Reject timestamps that are more than
+    // 60 seconds into the future as invalid.
+    if (
+        age > SENSOR_OFFLINE_TIMEOUT_MS ||
+        age < -60000
+    ) {
+        showSensorOffline();
+        return;
+    }
+
+    // Sensor is actively reporting.
+    sensorOnline = true;
+
+    latestSensorTimestamp =
+        timestamp;
+
+    if (currentElement) {
+        currentElement.textContent =
+            formatMeters(levelMeters);
+    }
+
+    updateLastUpdatedLabel(
+        timestamp
+    );
 
     currentReading = {
         average: levelMeters,
@@ -388,127 +790,507 @@ onValue(currentRef, snapshot => {
         date: getTodayDate()
     };
 
-    if (lastDailyData) renderHistory(lastDailyData);
-});
+    if (lastDailyData) {
+        renderHistory(
+            lastDailyData
+        );
+    }
+}
+
+// ============================================================
+// FIREBASE CURRENT SENSOR LISTENER
+// ============================================================
+const currentRef =
+    ref(
+        database,
+        CURRENT_PATH
+    );
+
+onValue(
+    currentRef,
+    snapshot => {
+
+        const data =
+            snapshot.val();
+
+        // No current Firebase data.
+        if (!data) {
+            showSensorOffline();
+            return;
+        }
+
+        showCurrentSensorReading(
+            data
+        );
+    }
+);
+
+// ============================================================
+// PERIODICALLY CHECK FOR STALE SENSOR DATA
+// ============================================================
+//
+// Firebase does not necessarily fire another
+// onValue event when the physical sensor is
+// switched OFF.
+//
+// This timer checks the last known timestamp.
+//
+// Every 5 seconds:
+//
+// If timestamp is older than 15 seconds:
+//      Sensor Offline
+//
+// Otherwise:
+//      Sensor Online
+// ============================================================
+setInterval(() => {
+
+    if (!latestSensorTimestamp) {
+        showSensorOffline();
+        return;
+    }
+
+    const age =
+        Date.now() -
+        latestSensorTimestamp;
+
+    if (
+        age >
+        SENSOR_OFFLINE_TIMEOUT_MS
+    ) {
+        showSensorOffline();
+
+    } else if (sensorOnline) {
+
+        updateLastUpdatedLabel(
+            latestSensorTimestamp
+        );
+    }
+
+}, 5000);
 
 // ============================================================
 // STATUS HELPER
 // ============================================================
 function getStatus(level) {
-    if (level >= dynamicThresholds.Critical.min) return "Critical";
-    if (level >= dynamicThresholds.Warning.min) return "Warning";
-    if (level >= dynamicThresholds.Monitor.min) return "Monitor";
+
+    if (
+        level >=
+        dynamicThresholds.Critical.min
+    ) {
+        return "Critical";
+    }
+
+    if (
+        level >=
+        dynamicThresholds.Warning.min
+    ) {
+        return "Warning";
+    }
+
+    if (
+        level >=
+        dynamicThresholds.Monitor.min
+    ) {
+        return "Monitor";
+    }
+
     return "Safe";
 }
 
 // ============================================================
 // HISTORY FETCHING & RENDERING
 // ============================================================
-const historyRef = ref(database, HISTORY_PATH);
-onValue(historyRef, snapshot => {
-    const data = snapshot.val();
-    if (!data) {
-        if (historyElement) historyElement.innerHTML = "<div>No water level history available.</div>";
-        return;
+const historyRef =
+    ref(
+        database,
+        HISTORY_PATH
+    );
+
+onValue(
+    historyRef,
+    snapshot => {
+
+        const data =
+            snapshot.val();
+
+        if (!data) {
+
+            if (historyElement) {
+                historyElement.innerHTML =
+                    "<div>No water level history available.</div>";
+            }
+
+            return;
+        }
+
+        const dailyData =
+            processHistory(data);
+
+        lastDailyData =
+            dailyData;
+
+        updateTodayStatistics(
+            dailyData
+        );
+
+        renderHistory(
+            dailyData
+        );
     }
-    const dailyData = processHistory(data);
-    lastDailyData = dailyData;
-    updateTodayStatistics(dailyData);
-    renderHistory(dailyData);
-});
+);
 
+// ============================================================
+// PROCESS HISTORY
+// ============================================================
 function processHistory(data) {
-    const dailyData = {};
-    Object.entries(data).forEach(([date, readings]) => {
-        if (!readings) return;
-        const values = [];
-        Object.values(readings).forEach(reading => {
-            if (!reading || reading.level === undefined) return;
-            values.push({ level: Number(reading.level), timestamp: Number(reading.timestamp) });
-        });
-        if (values.length === 0) return;
-        const validValues = values.filter(item => item.level > 0);
-        if (validValues.length === 0) return;
 
-        const levels = validValues.map(item => item.level);
-        dailyData[date] = {
-            average: levels.reduce((sum, value) => sum + value, 0) / levels.length,
-            highest: Math.max(...levels),
-            lowest: Math.min(...levels),
-            readings: validValues
-        };
-    });
+    const dailyData = {};
+
+    Object.entries(data).forEach(
+        ([date, readings]) => {
+
+            if (!readings) {
+                return;
+            }
+
+            const values = [];
+
+            Object.values(readings)
+                .forEach(reading => {
+
+                    if (
+                        !reading ||
+                        reading.level === undefined
+                    ) {
+                        return;
+                    }
+
+                    values.push({
+                        level:
+                            Number(
+                                reading.level
+                            ),
+
+                        timestamp:
+                            Number(
+                                reading.timestamp
+                            )
+                    });
+                });
+
+            if (
+                values.length === 0
+            ) {
+                return;
+            }
+
+            const validValues =
+                values.filter(
+                    item =>
+                        item.level > 0
+                );
+
+            if (
+                validValues.length === 0
+            ) {
+                return;
+            }
+
+            const levels =
+                validValues.map(
+                    item =>
+                        item.level
+                );
+
+            dailyData[date] = {
+                average:
+                    levels.reduce(
+                        (sum, value) =>
+                            sum + value,
+                        0
+                    ) /
+                    levels.length,
+
+                highest:
+                    Math.max(...levels),
+
+                lowest:
+                    Math.min(...levels),
+
+                readings:
+                    validValues
+            };
+        }
+    );
+
     return dailyData;
 }
 
-function updateTodayStatistics(dailyData) {
-    const todayData = dailyData[getTodayDate()];
+// ============================================================
+// TODAY STATISTICS
+// ============================================================
+function updateTodayStatistics(
+    dailyData
+) {
+
+    const todayData =
+        dailyData[
+            getTodayDate()
+        ];
+
     if (!todayData) {
-        if (highestElement) highestElement.textContent = "-- m";
-        if (lowestElement) lowestElement.textContent = "-- m";
+
+        if (highestElement) {
+            highestElement.textContent =
+                "-- m";
+        }
+
+        if (lowestElement) {
+            lowestElement.textContent =
+                "-- m";
+        }
+
         return;
     }
-    if (highestElement) highestElement.textContent = formatMeters(todayData.highest);
-    if (lowestElement) lowestElement.textContent = formatMeters(todayData.lowest);
+
+    if (highestElement) {
+        highestElement.textContent =
+            formatMeters(
+                todayData.highest
+            );
+    }
+
+    if (lowestElement) {
+        lowestElement.textContent =
+            formatMeters(
+                todayData.lowest
+            );
+    }
 }
 
+// ============================================================
+// GET TODAY DATE
+// ============================================================
 function getTodayDate() {
-    const now = new Date();
-    const year = now.getFullYear();
-    const month = String(now.getMonth() + 1).padStart(2, "0");
-    const day = String(now.getDate()).padStart(2, "0");
+
+    const now =
+        new Date();
+
+    const year =
+        now.getFullYear();
+
+    const month =
+        String(
+            now.getMonth() + 1
+        ).padStart(2, "0");
+
+    const day =
+        String(
+            now.getDate()
+        ).padStart(2, "0");
+
     return `${year}-${month}-${day}`;
 }
 
-function renderHistory(dailyData) {
-    if (!historyElement) return;
+// ============================================================
+// RENDER HISTORY
+// ============================================================
+function renderHistory(
+    dailyData
+) {
+
+    if (!historyElement) {
+        return;
+    }
+
     historyElement.innerHTML = "";
 
-    if (currentReading && !dailyData[currentReading.date]) {
-        dailyData[currentReading.date] = {
-            average: currentReading.average, highest: currentReading.highest,
-            lowest: currentReading.lowest, readings: []
+    // ========================================================
+    // IMPORTANT:
+    //
+    // Only add current reading if the sensor
+    // is actually online.
+    //
+    // A stale/offline reading will NEVER be
+    // inserted as a new current history value.
+    // ========================================================
+    if (
+        sensorOnline &&
+        currentReading &&
+        !dailyData[
+            currentReading.date
+        ]
+    ) {
+
+        dailyData[
+            currentReading.date
+        ] = {
+
+            average:
+                currentReading.average,
+
+            highest:
+                currentReading.highest,
+
+            lowest:
+                currentReading.lowest,
+
+            readings: []
         };
     }
 
-    // Only the last 30 days (today + the 29 days before it)
-    const cutoff = new Date();
-    cutoff.setHours(0, 0, 0, 0);
-    cutoff.setDate(cutoff.getDate() - 29);
-    const cutoffStr = `${cutoff.getFullYear()}-${String(cutoff.getMonth() + 1).padStart(2, "0")}-${String(cutoff.getDate()).padStart(2, "0")}`;
-    const dates = Object.keys(dailyData).filter(d => d >= cutoffStr).sort().reverse();
-    if (dates.length === 0) return historyElement.innerHTML = "<div>No history available.</div>";
+    // ========================================================
+    // LAST 30 DAYS
+    // ========================================================
+    const cutoff =
+        new Date();
 
-    dates.forEach(date => {
-        const data = dailyData[date];
-        const status = getStatus(data.average);
-        const icon = getStatusIcon(status);
-        const formattedDate = new Date(date + "T00:00:00").toLocaleDateString("en-US", { month: "long", day: "numeric" });
-        
-        const item = document.createElement("div");
-        item.className = "level-item";
-        item.innerHTML = `
-            <div class="history-icon"><img src="${icon}" class="svg" alt="${status}"></div>
-            <div class="content1">
-                <div class="status">${status}</div>
-                <div class="date">${formattedDate}</div>
-            </div>
-            <div class="ave"><strong>${data.average.toFixed(2)}</strong><span>m</span></div>
-            <div class="content2">
-                <div class="desc">Highest : ${data.highest.toFixed(2)} m</div>
-                <div class="desc">Lowest : ${data.lowest.toFixed(2)} m</div>
-            </div>
-        `;
-        historyElement.appendChild(item);
-    });
+    cutoff.setHours(
+        0,
+        0,
+        0,
+        0
+    );
+
+    cutoff.setDate(
+        cutoff.getDate() - 29
+    );
+
+    const cutoffStr =
+        `${cutoff.getFullYear()}-${String(
+            cutoff.getMonth() + 1
+        ).padStart(2, "0")}-${String(
+            cutoff.getDate()
+        ).padStart(2, "0")}`;
+
+    const dates =
+        Object.keys(
+            dailyData
+        )
+            .filter(
+                d => d >= cutoffStr
+            )
+            .sort()
+            .reverse();
+
+    if (
+        dates.length === 0
+    ) {
+
+        historyElement.innerHTML =
+            "<div>No history available.</div>";
+
+        return;
+    }
+
+    // ========================================================
+    // CREATE HISTORY ITEMS
+    // ========================================================
+    dates.forEach(
+        date => {
+
+            const data =
+                dailyData[date];
+
+            const status =
+                getStatus(
+                    data.average
+                );
+
+            const icon =
+                getStatusIcon(
+                    status
+                );
+
+            const formattedDate =
+                new Date(
+                    date +
+                    "T00:00:00"
+                ).toLocaleDateString(
+                    "en-US",
+                    {
+                        month: "long",
+                        day: "numeric"
+                    }
+                );
+
+            const item =
+                document.createElement(
+                    "div"
+                );
+
+            item.className =
+                "level-item";
+
+            item.innerHTML = `
+                <div class="history-icon">
+                    <img
+                        src="${icon}"
+                        class="svg"
+                        alt="${status}"
+                    >
+                </div>
+
+                <div class="content1">
+                    <div class="status">
+                        ${status}
+                    </div>
+
+                    <div class="date">
+                        ${formattedDate}
+                    </div>
+                </div>
+
+                <div class="ave">
+                    <strong>
+                        ${data.average.toFixed(2)}
+                    </strong>
+                    <span>m</span>
+                </div>
+
+                <div class="content2">
+                    <div class="desc">
+                        Highest :
+                        ${data.highest.toFixed(2)} m
+                    </div>
+
+                    <div class="desc">
+                        Lowest :
+                        ${data.lowest.toFixed(2)} m
+                    </div>
+                </div>
+            `;
+
+            historyElement.appendChild(
+                item
+            );
+        }
+    );
 }
 
-function getStatusIcon(status) {
+// ============================================================
+// STATUS ICON
+// ============================================================
+function getStatusIcon(
+    status
+) {
+
     switch (status) {
-        case "Safe": return "../Icons/ic_water_1.svg";
-        case "Monitor": return "../Icons/ic_water_2.svg";
-        case "Warning": return "../Icons/ic_water_3.svg";
-        case "Critical": return "../Icons/ic_water_4.svg";
-        default: return "../Icons/ic_water_1.svg";
+
+        case "Safe":
+            return "../Icons/ic_water_1.svg";
+
+        case "Monitor":
+            return "../Icons/ic_water_2.svg";
+
+        case "Warning":
+            return "../Icons/ic_water_3.svg";
+
+        case "Critical":
+            return "../Icons/ic_water_4.svg";
+
+        default:
+            return "../Icons/ic_water_1.svg";
     }
 }
