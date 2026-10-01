@@ -69,9 +69,12 @@ async function loadStaffTable() {
             const fInitial = fName ? fName.charAt(0) : "";
             const lInitial = lName ? lName.charAt(0) : "";
 
+            // Super Admin is never editable and their info is never opened
+            const isSuperAdmin = isSuperAdminRole(staff.role);
+
             // Added data-id to the tr and an inline pointer cursor for UX
             const row = `
-                <tr class="tableRow" data-id="${staff.staffID}" style="cursor: pointer;">
+                <tr class="tableRow" data-id="${staff.staffID}" data-super="${isSuperAdmin}"${isSuperAdmin ? "" : ' style="cursor: pointer;"'}>
                     <td class="user-section">
                         <div class="user-avatar ${staff.role === 'Super Admin' ? 'super' : (staff.role ? 'admin' : 'none')}">
                             ${fInitial}${lInitial}
@@ -83,7 +86,7 @@ async function loadStaffTable() {
                     </td>
                     <td>${staff.staffID}</td>
                     <td>${staff.p_access || "No Access"}</td>
-                    <td><a class="btn edit" href="#" data-id="${staff.staffID}">Edit</a></td>
+                    <td>${isSuperAdmin ? "" : `<a class="btn edit" href="#" data-id="${staff.staffID}">Edit</a>`}</td>
                 </tr>
             `;
             tbody.insertAdjacentHTML("beforeend", row);
@@ -94,6 +97,7 @@ async function loadStaffTable() {
         rows.forEach(row => {
             row.addEventListener("click", (e) => {
                 if (e.target.classList.contains("edit")) return;
+                if (row.getAttribute("data-super") === "true") return; // Super Admin info is never shown
                 
                 const staffID = row.getAttribute("data-id");
                 openStaffModal(staffID, false);
@@ -116,6 +120,11 @@ async function loadStaffTable() {
     }
 }
 
+// "Super Admin" can't be handed out as a position
+function isSuperAdminRole(role) {
+    return String(role || "").trim().replace(/\s+/g, " ").toLowerCase() === "super admin";
+}
+
 // 5. Secure Staff Creation Logic
 async function submitNewStaff() {
     const email = document.getElementById("add-email").value;
@@ -123,6 +132,11 @@ async function submitNewStaff() {
     
     if (!email || !password) {
         alert("Email and password are required.");
+        return;
+    }
+
+    if (isSuperAdminRole(document.getElementById("add-position").value)) {
+        alert("Super Admin can't be used as a position for a new staff member.");
         return;
     }
     
@@ -319,6 +333,12 @@ async function openStaffModal(staffID, isEditMode = false) {
             alert("Staff member not found.");
             return;
         }
+
+        // Super Admin information is never shown
+        if (isSuperAdminRole(staffDoc.data().role)) {
+            closeModal();
+            return;
+        }
         
         const staff = staffDoc.data();
 
@@ -385,6 +405,11 @@ async function openStaffModal(staffID, isEditMode = false) {
                     openStaffModal(staffID, false);
                     return;
                 }
+                if (isSuperAdminRole(document.getElementById("edit-position").value)) {
+                    alert("Super Admin can't be used as a position.");
+                    return;
+                }
+
                 // Ask first — the info popup is swapped for the confirmation dialog
                 const parent = document.getElementById("staffModal");
                 if (!(await confirmChanges("staff member", parent))) {

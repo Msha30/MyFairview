@@ -35,6 +35,14 @@ onAuthStateChanged(auth, async (user) => {
     const fullName = `${userData.fName || ""} ${userData.lName || ""}`.trim() || "Administrator";
 
     if (userNameEl) userNameEl.textContent = fullName;
+
+    // Avatar initials follow the displayed name: "Administrator" -> A, "Mickey Santos" -> MS
+    const avatarEl = document.querySelector("#userSection .user-avatar");
+    if (avatarEl) {
+        const first = (userData.fName || "").trim().charAt(0);
+        const last = (userData.lName || "").trim().charAt(0);
+        avatarEl.textContent = (first + last).toUpperCase() || fullName.charAt(0).toUpperCase();
+    }
     if (userRoleEl) userRoleEl.textContent = userData.role || "Staff";
 });
 
