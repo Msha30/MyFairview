@@ -35,8 +35,8 @@ body {
 }
 
 .card.blue {
-    border: 3px solid var(--blue);
-    background: var(--bluefaded);
+    border: 3px solid white;
+    background: white;
     border-radius: var(--rad);
     padding: var(--cardpadding);
     height: 100%;
