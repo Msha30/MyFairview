@@ -4,6 +4,7 @@ import { getFirestore, collection, query, where, getDocs } from "https://www.gst
 import { getDatabase } from "https://www.gstatic.com/firebasejs/12.17.0/firebase-database.js";
 import { getAnalytics } from "https://www.gstatic.com/firebasejs/12.17.0/firebase-analytics.js";
 import { getStorage } from "https://www.gstatic.com/firebasejs/12.17.0/firebase-storage.js";
+import { showMessage, showSuccess } from "./dialog.js";
 
 export const firebaseConfig = {
     apiKey: "AIzaSyADZ7D4nZfcHsWo1MDXgyjBU15xmuKMnIQ",
@@ -32,7 +33,31 @@ export async function getStaffProfile(uid) {
     return { id: snap.docs[0].id, ...snap.docs[0].data() };
 }
 
+// login.js watches auth state too. While loginUser() is running it owns the
+// redirect/sign-out decisions, so the success dialog isn't cut short.
+export const loginState = { busy: false };
+
+function loginErrorMessage(err) {
+    switch (err.code) {
+        case "auth/wrong-password":
+        case "auth/invalid-credential":
+        case "auth/invalid-email":
+            return "Incorrect email or password. Please try again.";
+        case "auth/user-not-found":
+            return "No account found with this email. Please check and try again.";
+        case "auth/user-disabled":
+            return "This account has been disabled. Please contact a Super Admin.";
+        case "auth/too-many-requests":
+            return "Too many failed attempts. Please wait a few minutes and try again.";
+        case "auth/network-request-failed":
+            return "Couldn't reach the server. Please check your internet connection.";
+        default:
+            return "We couldn't sign you in right now. Please try again.";
+    }
+}
+
 export async function loginUser(email, password) {
+    loginState.busy = true;
     try {
         const userCred = await signInWithEmailAndPassword(auth, email, password);
         const user = userCred.user;
@@ -49,25 +74,35 @@ export async function loginUser(email, password) {
         if (!staffData) {
             await signOut(auth);
             sessionStorage.clear();
-            alert("This account isn't registered as barangay staff, so it can't access this system.");
+            loginState.busy = false;
+            await showMessage({
+                title: "Access Denied",
+                type: "error",
+                message: "This account isn't registered as barangay staff, so it can't access this system."
+            });
             return;
         }
 
         sessionStorage.setItem("userData", JSON.stringify(staffData));
-        alert("Login successful!");
+
+        const name = [staffData.fName, staffData.lName].filter(Boolean).join(" ").trim();
+        await showSuccess({
+            action: "Login Successful",
+            description: name ? `Welcome back, ${name}` : "Welcome back",
+            seconds: 2,
+            countdownText: (n) => `Taking you to the dashboard in ${n}`,
+            keepOpen: true // stay on screen until the page changes
+        });
         window.location.href = "MainLayout.html";
 
     } catch (err) {
-        if (err.code === "auth/wrong-password" || err.code === "auth/invalid-email") {
-            alert("Incorrect password or email. Please try again.");
-        } 
-        else if (err.code === "auth/user-not-found") {
-            alert("No account found with this email. Please check and try again.");
-        } 
-        else {
-            alert(err.message);
-            console.error("Login error:", err);
-        }
+        loginState.busy = false;
+        console.error("Login error:", err);
+        await showMessage({
+            title: "Login Failed",
+            type: "error",
+            message: loginErrorMessage(err)
+        });
     }
 }
 

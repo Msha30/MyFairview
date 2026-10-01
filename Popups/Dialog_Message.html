@@ -1,0 +1,38 @@
+<link rel="stylesheet" href="../CSS/Components.css">
+<link rel="stylesheet" href="../CSS/Popups.css">
+
+<!-- Generic one-button notice. Replaces alert(). Filled in by showMessage() in dialogs.js -->
+<div id="dialogMessage" class="modal-overlay" data-type="info">
+    <div class="contentadd">
+        <div class="diatitle mid">{Title}</div>
+        <div class="form-row dia mid">
+            <label class="form-label dia1">{message}</label>
+            <label class="form-label dia2"></label>
+        </div>
+        <div class="buttons dia">
+            <button class="button confirm">OK</button>
+        </div>
+    </div>
+</div>
+<style>
+    @import url("../Styles/Fonts.css");
+    @import url("../Styles/Variables.css");
+    @import url("../CSS/Popups.css");
+
+    #dialogMessage .contentadd {
+        width: 400px;
+        max-width: 90vw;
+    }
+
+    #dialogMessage[data-type="error"] .diatitle {
+        color: var(--red, #D93025);
+    }
+
+    #dialogMessage[data-type="success"] .diatitle {
+        color: var(--green, #1E8E3E);
+    }
+
+    #dialogMessage .dia2:empty {
+        display: none;
+    }
+</style>

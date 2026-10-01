@@ -3,8 +3,8 @@ import { getFirestore, doc, onSnapshot, writeBatch } from "https://www.gstatic.c
 import { database, app } from "./auth.js";
 import { writeLog } from "./logging.js";
 import { getChanges, describeChanges, setSaveEnabled } from "./edit-tracker.js";
-import { confirmChanges } from "./dialogs.js";
-import { sendAppNotification } from "./notifications.js";
+import { confirmChanges } from "./dialog.js";
+import { sendAppNotification } from "./notification.js";
 
 // ============================================================
 // CONFIGURATION & SETUP
