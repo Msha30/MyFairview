@@ -2,6 +2,8 @@ import { auth, logout, getStaffProfile, database, app } from "./auth.js";
 import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.17.0/firebase-auth.js";
 import { ref, onValue } from "https://www.gstatic.com/firebasejs/12.17.0/firebase-database.js";
 import { getFirestore, doc, onSnapshot } from "https://www.gstatic.com/firebasejs/12.17.0/firebase-firestore.js";
+import { watchAccess, NAV_MODULE } from "./permissions.js";
+import { showMessage } from "./dialog.js";
 
 const userSection = document.getElementById("userSection");
 const userDropdown = document.getElementById("userDropdown");
@@ -44,7 +46,70 @@ onAuthStateChanged(auth, async (user) => {
         avatarEl.textContent = (first + last).toUpperCase() || fullName.charAt(0).toUpperCase();
     }
     if (userRoleEl) userRoleEl.textContent = userData.role || "Staff";
+
+    startAccessWatch();
 });
+
+// ------------------------------------------------------------
+// Access control: sidebar follows this staff member's permissions, live.
+// (The page itself is also guarded inside the iframe by subpage_guard.js.)
+// ------------------------------------------------------------
+let accessWatchStarted = false;
+let lastAccessSignature = null;
+let seenStaffDoc = false;
+
+function applyNavAccess(access) {
+    Object.entries(NAV_MODULE).forEach(([file, moduleKey]) => {
+        const allowed = access.can(moduleKey, "view");
+        // Matches links/buttons that point at the page (href, data-page, data-src, data-target)
+        const sel = ["href", "data-page", "data-src", "data-target", "data-href"]
+            .map(attr => `[${attr}*="${file}" i]`).join(",");
+        document.querySelectorAll(sel).forEach(el => {
+            const item = el.closest("li") || el;
+            item.style.display = allowed ? "" : "none";
+        });
+    });
+}
+
+function startAccessWatch() {
+    if (accessWatchStarted) return;
+    accessWatchStarted = true;
+
+    watchAccess(async (access) => {
+        if (!access.isStaff) {
+            // Staff record was removed while signed in
+            if (!seenStaffDoc) return; // ignore a transient empty first snapshot
+            await showMessage({
+                title: "Access Removed",
+                type: "error",
+                message: "Your staff account has been removed. You will now be signed out."
+            });
+            await logout();
+            return;
+        }
+        seenStaffDoc = true;
+
+        const p = access.profile;
+        const signature = JSON.stringify([p.role, p.p_announcement, p.p_citizens, p.p_vehicles,
+            p.p_reports, p.p_waterLevel, p.p_evacPlan, p.p_access]);
+
+        applyNavAccess(access);
+
+        if (lastAccessSignature !== null && signature !== lastAccessSignature) {
+            // Refresh the sign-in token too, so server-side rules that read the
+            // staff's custom claims (see Security/SECURITY_GUIDE.md) see the change.
+            auth.currentUser?.getIdToken(true).catch(() => {});
+            // Permissions changed while they were working: reload the open page so
+            // its buttons/guard use the new permissions, and tell them why.
+            document.getElementById("contentFrame")?.contentWindow?.location.reload();
+            showMessage({
+                title: "Permissions Updated",
+                message: "A Super Admin changed your access. The page has been refreshed to match."
+            });
+        }
+        lastAccessSignature = signature;
+    });
+}
 
 // 2. Parse URL parameters for iframe navigation
 const urlParams = new URLSearchParams(window.location.search);
