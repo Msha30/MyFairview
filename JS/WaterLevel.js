@@ -64,13 +64,25 @@ function lastKnownLevel() {
 function updateCurrentCardColor() {
     const card = document.querySelector(".card.blue");
     if (!card) return;
+
+    // IF SENSOR IS OFFLINE: Make it white with no color
+    if (!sensorOnline) {
+        card.style.borderColor = "var(--border, #e0e0e0)";
+        card.style.background = "#ffffff";
+        
+        const icon = card.querySelector(".iconpic");
+        if (icon) icon.style.filter = "none"; // Resets icon to default color
+        return;
+    }
+
+    // IF SENSOR IS ONLINE: Color it based on the current level (Green, Orange, Red, etc.)
     const level = lastKnownLevel();
     if (level === null) return;
+    
     const colors = CARD_COLORS[getStatus(level)];
     card.style.borderColor = colors.border;
     card.style.background = colors.bg;
 
-    // The drop icon takes the same color as the border
     const icon = card.querySelector(".iconpic");
     if (icon) icon.style.filter = colors.icon;
 }
