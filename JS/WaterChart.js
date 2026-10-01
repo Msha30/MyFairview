@@ -62,18 +62,18 @@ onSnapshot(collection(firestore, "WaterLevel_Threshold"), (snap) => {
 // "line" is the darker shade of the card's background, used for the graph line, dots and labels.
 function getStatusInfo(level) {
     if (level === null || level === undefined) {
-        return { text: "Safe", color: "var(--green)", line: "var(--greendark)", gradBottom: "white" };
+        return { text: "Safe", color: "var(--green)", line: "var(--green)", gradBottom: "white" };
     }
     if (level >= thresholds.Critical.min) {
-        return { text: "Critical", color: "var(--bluedark)", line: "var(--bluedark)", gradBottom: "#90caf9" };
+        return { text: "Critical", color: "var(--bluedark)", line: "var(--bluedark)", gradBottom: "var(--bluefaded)" };
     }
     if (level >= thresholds.Warning.min) {
-        return { text: "Warning", color: "var(--red)", line: "#8a0000", gradBottom: "#ffcdd2" };
+        return { text: "Warning", color: "var(--red)", line: "var(--red)", gradBottom: "var(--redfaded)" };
     }
     if (level >= thresholds.Monitor.min) {
-        return { text: "Monitor", color: "var(--orange)", line: "#b8460f", gradBottom: "#ffe0b2" };
+        return { text: "Monitor", color: "var(--orange)", line: "var(--orange)", gradBottom: "var(--orangefaded)" };
     }
-    return { text: "Safe", color: "var(--green)", line: "var(--greendark)", gradBottom: "#c8e6cf" };
+    return { text: "Safe", color: "var(--green)", line: "var(--green)", gradBottom: "var(--greenfaded)" };
 }
 
 // The level the colors follow: the live reading, or — if the sensor is offline — the last level on record
