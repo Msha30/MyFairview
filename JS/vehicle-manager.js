@@ -7,7 +7,7 @@ import { isValidLatLng, dropPin, computeAndDrawRoute, fitMapToPositions } from "
 import { showToast } from "./toast.js";
 import { writeLog } from "./logging.js";
 import { getChanges, describeChanges, setApplyState } from "./edit-tracker.js";
-import { confirmChanges, confirmDelete } from "./dialogs.js";
+import { confirmChanges, confirmDelete, confirmAction } from "./dialogs.js";
 
 const db = database;
 const firestore = getFirestore(app);
@@ -565,10 +565,24 @@ function setupDeployVehicle() {
 
     document.getElementById("confirmDeployBtn")?.addEventListener("click", async () => {
         const vId = document.getElementById("deployVehicleSelect").value;
-        if (!vId) return showToast("Select a vehicle first.", "error");
+        
+        // 1. Validate Vehicle Selection
+        if (!vId) {
+            return showToast("Please select a vehicle first.", "error");
+        }
 
+        // 2. Validate Destination / Map Pin
+        if (!selectedDestLoc || !isValidLatLng(selectedDestLoc)) {
+            return showToast("Please set a valid destination on the map.", "error");
+        }
+
+        // 3. Validate Contact Person
         const callerInputElem = document.getElementById("callerInput");
-        const contactToSave = callerInputElem?.dataset.userid || callerInputElem?.value || "";
+        const contactToSave = callerInputElem?.dataset.userid || callerInputElem?.value.trim() || "";
+        
+        if (!contactToSave) {
+            return showToast("Please enter or select a contact person.", "error");
+        }
 
         try {
             await update(ref(db, `vehicles/${vId}`), {
@@ -579,7 +593,7 @@ function setupDeployVehicle() {
                 details: document.getElementById("deployDetailsInput")?.value || ""
             });
             modal.style.display = "none";
-            showToast("Vehicle deployed.");
+            showToast("Vehicle deployed successfully.");
             writeLog("Verify", "Deployed Vehicle", vId, `Deployed ${vId} to ${contactToSave}`);
         } catch (err) {
             console.error("Failed to deploy vehicle:", err);
@@ -716,7 +730,16 @@ async function openDeployedInfo(v, vId) {
     const acceptBtn = modal.querySelector(".button.accept");
     if (acceptBtn) {
         acceptBtn.onclick = async () => {
-            if (!confirm(`Recall ${v.plateNo}?`)) return;
+            // Trigger customized confirmation dialog instead of browser alert
+            const isConfirmed = await confirmAction({ 
+                title: "Recall Vehicle", 
+                message: `Are you sure you want to recall ${v.plateNo}?`, 
+                confirmText: "Recall", 
+                parent: modal 
+            });
+            
+            if (!isConfirmed) return;
+
             try {
                 await update(ref(db, `vehicles/${vId}`), { 
                     deployed: false, 
