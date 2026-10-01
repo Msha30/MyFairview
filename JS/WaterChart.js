@@ -23,7 +23,7 @@ const ENABLE_TEST_CYCLE = false; // <-- CHANGE TO TRUE TO DEBUG & CYCLE THROUGH 
 const firestore = getFirestore(app);
 const HISTORY_PATH = "history/UL800";
 const CURRENT_PATH = "sensors/UL800";
-const MAX_POINTS = 12;
+const MAX_POINTS = 30; // Show the last 30 records (one per date)
 
 // ============================================================
 // STATE & THRESHOLDS
@@ -51,23 +51,43 @@ onSnapshot(collection(firestore, "WaterLevel_Threshold"), (snap) => {
     if (!ENABLE_TEST_CYCLE) {
         updateCardBackground(currentReading);
     }
+
+    // Thresholds decide the status color, so redraw the graph with the right one
+    if (lastProcessedData && typeof renderChart === "function") {
+        renderChart(lastProcessedData);
+    }
 });
 
 // Helper to determine status and color gradients (Original light blue top, status color bottom)
+// "line" is the darker shade of the card's background, used for the graph line, dots and labels.
 function getStatusInfo(level) {
     if (level === null || level === undefined) {
-        return { text: "Safe", color: "var(--blue)", gradBottom: "#e3f2fd" }; 
+        return { text: "Safe", color: "var(--green)", line: "var(--greendark)", gradBottom: "white" };
     }
     if (level >= thresholds.Critical.min) {
-        return { text: "Critical", color: "var(--bluedark)", gradBottom: "#90caf9" }; 
+        return { text: "Critical", color: "var(--bluedark)", line: "var(--bluedark)", gradBottom: "#90caf9" };
     }
     if (level >= thresholds.Warning.min) {
-        return { text: "Warning", color: "var(--red)", gradBottom: "#ffcdd2" }; 
+        return { text: "Warning", color: "var(--red)", line: "#8a0000", gradBottom: "#ffcdd2" };
     }
     if (level >= thresholds.Monitor.min) {
-        return { text: "Monitor", color: "var(--orange)", gradBottom: "#ffe0b2" }; 
+        return { text: "Monitor", color: "var(--orange)", line: "#b8460f", gradBottom: "#ffe0b2" };
     }
-    return { text: "Safe", color: "var(--blue)", gradBottom: "#e3f2fd" }; 
+    return { text: "Safe", color: "var(--green)", line: "var(--greendark)", gradBottom: "#c8e6cf" };
+}
+
+// The level the colors follow: the live reading, or — if the sensor is offline — the last level on record
+let chartColor = "var(--blue)";
+
+function lastHistoryLevel() {
+    if (!lastProcessedData) return null;
+    const dates = Object.keys(lastProcessedData).sort();
+    return dates.length ? lastProcessedData[dates[dates.length - 1]].average : null;
+}
+
+function effectiveLevel(level) {
+    if (level !== null && level !== undefined) return level;
+    return lastHistoryLevel();
 }
 
 // ============================================================
@@ -104,7 +124,7 @@ function updateCardBackground(level) {
     const waterCard = document.querySelector(".card.water");
     if (!waterCard) return;
 
-    const status = getStatusInfo(level);
+    const status = getStatusInfo(effectiveLevel(level));
     
     waterCard.style.transition = "background-image 0.5s ease-in-out";
     
@@ -196,20 +216,28 @@ function processHistory(data) {
     Object.entries(data).forEach(([date, readings]) => {
         if (!readings) return;
 
-        const values = [];
+        // The latest record of the date (highest timestamp; if none, the last one stored)
+        let latest = null;
+        let latestTime = -Infinity;
+
         Object.values(readings).forEach(reading => {
             if (!reading || reading.level === undefined) return;
-            
+
             const meters = Number(reading.level);
-            if (meters > 0) {
-                values.push(meters);
+            if (!(meters > 0)) return;
+
+            const time = Number(reading.timestamp);
+            const hasTime = Number.isFinite(time);
+
+            if (latest === null || (hasTime && time >= latestTime) || (!hasTime && latestTime === -Infinity)) {
+                latest = meters;
+                if (hasTime) latestTime = time;
             }
         });
 
-        if (values.length === 0) return;
+        if (latest === null) return;
 
-        const maxLevel = Math.max(...values);
-        dailyData[date] = { average: maxLevel };
+        dailyData[date] = { average: latest };
     });
 
     return dailyData;
@@ -257,7 +285,7 @@ function renderYAxis(yMax) {
         const t = document.createElementNS(NS, "text");
         t.setAttribute("x", 30);
         t.setAttribute("y", y + 4);
-        t.setAttribute("fill", "var(--blue)");
+        t.setAttribute("fill", chartColor);
         t.setAttribute("font-size", "9px");
         t.setAttribute("text-anchor", "end");
         t.textContent = val + " m";
@@ -272,23 +300,12 @@ function renderYAxis(yMax) {
 
 function renderChart(dailyData, isSample) {
     clearChart();
+    chartColor = getStatusInfo(effectiveLevel(currentReading)).line;
     const dates = Object.keys(dailyData).sort().slice(-MAX_POINTS);
 
-    // INSUFFICIENT DATA — SHOW SAMPLE + CURRENT READING
-    if (dates.length < MAX_POINTS && !isSample) {
-        const pastDates = getLastNDates(MAX_POINTS - 1);
-        const todayDate = getCurrentDate();
-        const sampleData = {};
-
-        pastDates.forEach((date, i) => {
-            sampleData[date] = { average: SAMPLE_VALUES[i] };
-        });
-
-        if (currentReading !== null) {
-            sampleData[todayDate] = { average: currentReading };
-        }
-
-        renderChart(sampleData, true);
+    // No records yet: just draw the empty axis
+    if (dates.length === 0) {
+        renderYAxis(10);
         return;
     }
 
@@ -309,7 +326,7 @@ function renderChart(dailyData, isSample) {
     const polyline = document.createElementNS(NS, "polyline");
     polyline.setAttribute("points", points.map(p => p.join(",")).join(" "));
     polyline.setAttribute("fill", "none");
-    polyline.setAttribute("stroke", "var(--blue)");
+    polyline.setAttribute("stroke", chartColor);
     polyline.setAttribute("stroke-width", "3");
     polyline.setAttribute("stroke-linejoin", "round");
     svg.appendChild(polyline);
@@ -324,7 +341,7 @@ function renderChart(dailyData, isSample) {
         circle.setAttribute("cx", p[0]);
         circle.setAttribute("cy", p[1]);
         circle.setAttribute("r", "4");
-        circle.setAttribute("fill", "var(--blue)");
+        circle.setAttribute("fill", chartColor);
         circle.style.cursor = "pointer";
         circle.style.transition = "r 0.2s ease";
 
@@ -354,12 +371,16 @@ function renderChart(dailyData, isSample) {
         svg.appendChild(circle);
     });
 
+    // With many records, label every few dates so the labels don't overlap (the latest is always labelled)
+    const labelStep = dates.length > 12 ? Math.ceil(dates.length / 12) : 1;
+
     dates.forEach((date, i) => {
+        if ((dates.length - 1 - i) % labelStep !== 0) return;
         const t = document.createElementNS(NS, "text");
         t.setAttribute("x", points[i][0]);
         t.setAttribute("y", 115);
         t.setAttribute("text-anchor", "middle");
-        t.setAttribute("fill", "var(--blue)");
+        t.setAttribute("fill", chartColor);
         t.setAttribute("font-size", "9px");
         t.textContent = formatDate(date);
         svg.appendChild(t);
@@ -378,6 +399,7 @@ onValue(historyRef, snapshot => {
         return;
     }
     lastProcessedData = processHistory(data);
+    if (!ENABLE_TEST_CYCLE) updateCardBackground(currentReading);
     renderChart(lastProcessedData);
 });
 

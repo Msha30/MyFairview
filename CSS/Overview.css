@@ -240,7 +240,7 @@ body {
 
 .card.water {
     grid-column: span 3;
-    background: var(--gradblue);
+    background: white;
 }
 
 .watercard {

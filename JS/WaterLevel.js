@@ -29,7 +29,45 @@ const historyElement = document.getElementById("waterHistory");
 
 let currentReading = null;
 let lastDailyData = null;
-let lastNotifiedStatus = "Safe";
+
+// ============================================================
+// CURRENT WATER LEVEL CARD COLOR (follows the last known level)
+// Safe = green, Monitor = orange, Warning = red, Critical = dark blue
+// ============================================================
+const CARD_COLORS = {
+    Safe: { border: "var(--green)", bg: "var(--greenfaded)" },
+    Monitor: { border: "var(--orange)", bg: "var(--orangefaded)" },
+    Warning: { border: "var(--red)", bg: "var(--redfaded)" },
+    Critical: { border: "var(--bluedark)", bg: "var(--bluefaded)" }
+};
+
+function lastKnownLevel() {
+    // Live reading while the sensor is online
+    if (sensorOnline && currentReading) return currentReading.average;
+
+    // Offline: the most recent level on record
+    if (!lastDailyData) return null;
+    const dates = Object.keys(lastDailyData).sort();
+    for (let i = dates.length - 1; i >= 0; i--) {
+        const day = lastDailyData[dates[i]];
+        const readings = (day.readings || []).filter(r => Number.isFinite(r.level));
+        if (readings.length) {
+            return readings.reduce((a, b) => (b.timestamp > a.timestamp ? b : a)).level;
+        }
+        if (Number.isFinite(day.average)) return day.average;
+    }
+    return null;
+}
+
+function updateCurrentCardColor() {
+    const card = document.querySelector(".card.blue");
+    if (!card) return;
+    const level = lastKnownLevel();
+    if (level === null) return;
+    const colors = CARD_COLORS[getStatus(level)];
+    card.style.borderColor = colors.border;
+    card.style.background = colors.bg;
+}
 
 // ============================================================
 // FIRESTORE: LOAD THRESHOLDS
@@ -79,6 +117,7 @@ function updateThresholdTable() {
             }
         }
     });
+    updateCurrentCardColor();
 }
 
 // ============================================================
@@ -730,58 +769,63 @@ function showSensorOffline() {
         currentUpdatedElement.textContent =
             "Sensor Offline";
     }
+
+    // Keep the card colored by the last known level
+    updateCurrentCardColor();
 }
 
 // ============================================================
 // SHOW CURRENT SENSOR READING
 // ============================================================
 function showCurrentSensorReading(data) {
-    const timestamp = normalizeTimestamp(data.timestamp);
-    const levelMeters = Number(data.level);
 
-    if (timestamp === null || !Number.isFinite(levelMeters)) {
+    const timestamp =
+        normalizeTimestamp(
+            data.timestamp
+        );
+
+    const levelMeters =
+        Number(data.level);
+
+    // Reading must have a valid
+    // timestamp and water level.
+    if (
+        timestamp === null ||
+        !Number.isFinite(levelMeters)
+    ) {
         showSensorOffline();
         return;
     }
 
-    const age = Date.now() - timestamp;
-    if (age > SENSOR_OFFLINE_TIMEOUT_MS || age < -60000) {
+    const age =
+        Date.now() - timestamp;
+
+    // Reject stale readings.
+    //
+    // Reject timestamps that are more than
+    // 60 seconds into the future as invalid.
+    if (
+        age > SENSOR_OFFLINE_TIMEOUT_MS ||
+        age < -60000
+    ) {
         showSensorOffline();
         return;
     }
 
+    // Sensor is actively reporting.
     sensorOnline = true;
-    latestSensorTimestamp = timestamp;
+
+    latestSensorTimestamp =
+        timestamp;
 
     if (currentElement) {
-        currentElement.textContent = formatMeters(levelMeters);
+        currentElement.textContent =
+            formatMeters(levelMeters);
     }
-    updateLastUpdatedLabel(timestamp);
 
-    // ============================================================
-    // NEW: AUTOMATED NOTIFICATION TRIGGER
-    // ============================================================
-    const currentStatus = getStatus(levelMeters); 
-
-    // Only trigger if the status has worsened to prevent spamming
-    if (currentStatus !== lastNotifiedStatus) {
-        if (currentStatus === "Critical") {
-            sendAppNotification(
-                "CRITICAL WATER LEVEL",
-                `Paltok Creek has reached ${levelMeters.toFixed(2)}m. Bridge flooded, do not cross!`,
-                "water_level" 
-            );
-        } else if (currentStatus === "Warning") {
-            sendAppNotification(
-                "Water Level Advisory",
-                `Paltok Creek has risen to ${levelMeters.toFixed(2)}m. Please exercise caution.`,
-                "water_level"
-            );
-        }
-        // Save the current status so it only alerts once per stage
-        lastNotifiedStatus = currentStatus; 
-    }
-    // ============================================================
+    updateLastUpdatedLabel(
+        timestamp
+    );
 
     currentReading = {
         average: levelMeters,
@@ -790,8 +834,12 @@ function showCurrentSensorReading(data) {
         date: getTodayDate()
     };
 
+    updateCurrentCardColor();
+
     if (lastDailyData) {
-        renderHistory(lastDailyData);
+        renderHistory(
+            lastDailyData
+        );
     }
 }
 
@@ -927,6 +975,8 @@ onValue(
 
         lastDailyData =
             dailyData;
+
+        updateCurrentCardColor();
 
         updateTodayStatistics(
             dailyData
