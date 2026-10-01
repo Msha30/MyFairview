@@ -7,7 +7,8 @@ import { isValidLatLng, dropPin, computeAndDrawRoute, fitMapToPositions } from "
 import { showToast } from "./toast.js";
 import { writeLog } from "./logging.js";
 import { getChanges, describeChanges, setApplyState } from "./edit-tracker.js";
-import { confirmChanges, confirmDelete, confirmAction } from "./dialog.js";
+import { confirmAction } from "./dialog.js";
+import { confirmChanges, confirmDelete } from "./dialogs.js";
 
 const db = database;
 const firestore = getFirestore(app);
