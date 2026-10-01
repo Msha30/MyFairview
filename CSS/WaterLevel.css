@@ -208,7 +208,7 @@ body {
 /* ════════════════════════════════════════════════════════════ */
 
 .card.water {
-    background: var(--gradblue);
+    background: white;
 }
 
 .watercard {

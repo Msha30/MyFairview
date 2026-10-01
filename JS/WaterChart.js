@@ -23,7 +23,7 @@ const ENABLE_TEST_CYCLE = false; // <-- CHANGE TO TRUE TO DEBUG & CYCLE THROUGH 
 const firestore = getFirestore(app);
 const HISTORY_PATH = "history/UL800";
 const CURRENT_PATH = "sensors/UL800";
-const MAX_POINTS = 12;
+const MAX_POINTS = 30; // Show the last 30 records (one per date)
 
 // ============================================================
 // STATE & THRESHOLDS
@@ -216,20 +216,28 @@ function processHistory(data) {
     Object.entries(data).forEach(([date, readings]) => {
         if (!readings) return;
 
-        const values = [];
+        // The latest record of the date (highest timestamp; if none, the last one stored)
+        let latest = null;
+        let latestTime = -Infinity;
+
         Object.values(readings).forEach(reading => {
             if (!reading || reading.level === undefined) return;
-            
+
             const meters = Number(reading.level);
-            if (meters > 0) {
-                values.push(meters);
+            if (!(meters > 0)) return;
+
+            const time = Number(reading.timestamp);
+            const hasTime = Number.isFinite(time);
+
+            if (latest === null || (hasTime && time >= latestTime) || (!hasTime && latestTime === -Infinity)) {
+                latest = meters;
+                if (hasTime) latestTime = time;
             }
         });
 
-        if (values.length === 0) return;
+        if (latest === null) return;
 
-        const maxLevel = Math.max(...values);
-        dailyData[date] = { average: maxLevel };
+        dailyData[date] = { average: latest };
     });
 
     return dailyData;
@@ -295,21 +303,9 @@ function renderChart(dailyData, isSample) {
     chartColor = getStatusInfo(effectiveLevel(currentReading)).line;
     const dates = Object.keys(dailyData).sort().slice(-MAX_POINTS);
 
-    // INSUFFICIENT DATA — SHOW SAMPLE + CURRENT READING
-    if (dates.length < MAX_POINTS && !isSample) {
-        const pastDates = getLastNDates(MAX_POINTS - 1);
-        const todayDate = getCurrentDate();
-        const sampleData = {};
-
-        pastDates.forEach((date, i) => {
-            sampleData[date] = { average: SAMPLE_VALUES[i] };
-        });
-
-        if (currentReading !== null) {
-            sampleData[todayDate] = { average: currentReading };
-        }
-
-        renderChart(sampleData, true);
+    // No records yet: just draw the empty axis
+    if (dates.length === 0) {
+        renderYAxis(10);
         return;
     }
 
@@ -375,7 +371,11 @@ function renderChart(dailyData, isSample) {
         svg.appendChild(circle);
     });
 
+    // With many records, label every few dates so the labels don't overlap (the latest is always labelled)
+    const labelStep = dates.length > 12 ? Math.ceil(dates.length / 12) : 1;
+
     dates.forEach((date, i) => {
+        if ((dates.length - 1 - i) % labelStep !== 0) return;
         const t = document.createElementNS(NS, "text");
         t.setAttribute("x", points[i][0]);
         t.setAttribute("y", 115);
