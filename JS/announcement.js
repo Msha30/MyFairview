@@ -5,6 +5,7 @@ import { ref, uploadBytes, getDownloadURL, deleteObject } from "https://www.gsta
 import { writeLog } from "./logging.js";
 import { getChanges, describeChanges, setSaveEnabled } from "./edit-tracker.js";
 import { confirmChanges, confirmDelete, runWithLoading } from "./dialogs.js";
+import { sendAppNotification } from "./notification.js";
 
 let currentStaffId = "BFVS-26-00000"; // Default fallback staff ID
 let uploadedFiles = []; // Holds actual JS File objects
@@ -415,6 +416,23 @@ async function handlePublishAnnouncement() {
             photos: downloadUrls,
             title: title
         });
+
+        // ============================================================
+        // 4. TRIGGER APP NOTIFICATION
+        // Map the dropdown category to the exact Flutter topic key
+        // ============================================================
+        const topicMap = {
+            "General": "general",
+            "Community Events": "community_event",
+            "Health & Safety": "health_safety",
+            "Flood Advisory": "flood_advisory",
+            "Emergency": "emergency"
+        };
+        
+        // Find the matching key, or fallback to a safe lowercase format
+        const topicKey = topicMap[category] || category.toLowerCase().replace(/[^a-z0-9]/g, '_');
+        await sendAppNotification(title, message, topicKey);
+        // ============================================================
 
         // Reset form inputs
         titleInput.value = "";
