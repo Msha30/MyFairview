@@ -68,17 +68,23 @@ async function fetchVerifiedUsers() {
 // --- RTDB Listeners & Main Vehicle Map ---
 let vehicleMapFitted = false;
 
+let liveVehicleMarkers = {};
+let liveDestMarkers = {};
+let livePolylines = {};
+let lastTargetCoords = {};
+
 function listenToVehicles() {
     onValue(ref(db, "vehicles"), async (snapshot) => {
         const listContainer = document.querySelector(".vehicle-list");
         if (!listContainer) return;
-        listContainer.innerHTML = "";
-        clearMapMarkers();
 
         if (!snapshot.exists()) {
             allVehiclesData = {};
+            listContainer.innerHTML = "";
+            clearMapMarkers();
             return;
         }
+        
         allVehiclesData = snapshot.val();
         const maps = await loadGoogleMaps();
         const markerLib = await maps.importLibrary("marker");
@@ -94,82 +100,167 @@ function listenToVehicles() {
         });
 
         const allPinPositions = [];
+        const currentVehicleIds = new Set();
 
         for (const [vKey, v] of sortedEntries) {
+            currentVehicleIds.add(vKey);
             const isDep = v.deployed;
             if (isValidLatLng(v.currentLoc)) allPinPositions.push(v.currentLoc);
             if (isDep && isValidLatLng(v.targetLocCoords)) allPinPositions.push(v.targetLocCoords);
 
-            // Render Sidebar Item
-            const item = document.createElement("div");
-            item.className = `vehicle ${isDep ? "deployed" : "available"}`;
-            item.setAttribute("data-id", vKey);
-            item.innerHTML = `
-                <div class="line"></div>
-                <div class="content">
-                    <div class="title">${escapeHTML(v.plateNo)} — ${escapeHTML(v.vehicleModel)}</div>
-                    ${v.details ? `<div class="desc">${escapeHTML(v.details)}</div>` : ""}
-                    <div class="meta">
-                        <span class="badge">${isDep ? "◉ Deployed" : "● Available"}</span>
-                        <span>${escapeHTML(v.vehicleColor)}</span>
-                    </div>
-                </div>
+            // ============================================================
+            // 1. UPDATE LIST (Without Flashing)
+            // ============================================================
+            let item = listContainer.querySelector(`.vehicle[data-id='${vKey}']`);
+            const statusHtml = `
+                <span class="badge">${isDep ? "◉ Deployed" : "● Available"}</span>
+                <span>${escapeHTML(v.vehicleColor)}</span>
             `;
-            listContainer.appendChild(item);
 
-            // Render Current Vehicle Pins on Main Map
-            if (isValidLatLng(v.currentLoc)) {
-                const pinColor = isDep ? "#FF6D00" : "#34A853";
-                const pinBorder = isDep ? "#B34A00" : "#1E7E34";
-
-                const marker = dropPin(markerLib, vehicleMap, v.currentLoc, pinColor, pinBorder);
-                if (marker) {
-                    const infoWindow = new google.maps.InfoWindow({
-                        content: `
-                            <div style="font-family: 'Inter', sans-serif; padding: 4px; color: #1a1a1a;">
-                                <strong style="font-size: 14px;">${escapeHTML(v.plateNo)} (${escapeHTML(v.vehicleModel)})</strong><br/>
-                                <span style="font-size: 12px; color: #666;">Color: ${escapeHTML(v.vehicleColor)}</span><br/>
-                                ${v.targetLoc ? `<span style="font-size: 12px; color: #666;">Target: ${escapeHTML(v.targetLoc)}</span><br/>` : ''}
-                                <span style="font-size: 12px; font-weight: bold; color: ${isDep ? '#d32f2f' : '#2e7d32'};">
-                                    ${isDep ? '◉ Deployed' : '● Available'}
-                                </span>
-                            </div>
-                        `
-                    });
-
-                    marker.addListener("click", () => {
-                        infoWindow.open({ anchor: marker, map: vehicleMap });
-                    });
-
-                    activeMarkers.push(marker);
+            if (!item) {
+                // Build it for the first time
+                item = document.createElement("div");
+                item.className = `vehicle ${isDep ? "deployed" : "available"}`;
+                item.setAttribute("data-id", vKey);
+                item.innerHTML = `
+                    <div class="line"></div>
+                    <div class="content">
+                        <div class="title">${escapeHTML(v.plateNo)} — ${escapeHTML(v.vehicleModel)}</div>
+                        ${v.details ? `<div class="desc">${escapeHTML(v.details)}</div>` : ""}
+                        <div class="meta">${statusHtml}</div>
+                    </div>
+                `;
+                listContainer.appendChild(item);
+            } else {
+                // Only update what changed to prevent UI flashing
+                item.className = `vehicle ${isDep ? "deployed" : "available"}`;
+                const metaDiv = item.querySelector(".meta");
+                if (metaDiv.innerHTML !== statusHtml) metaDiv.innerHTML = statusHtml;
+                
+                let descDiv = item.querySelector(".desc");
+                if (v.details) {
+                    if (!descDiv) {
+                        item.querySelector(".content").insertAdjacentHTML('beforeend', `<div class="desc">${escapeHTML(v.details)}</div>`);
+                    } else if (descDiv.textContent !== v.details) {
+                        descDiv.textContent = v.details;
+                    }
+                } else if (descDiv) {
+                    descDiv.remove();
                 }
             }
 
-            // Render Ongoing Routes & Destination Pins for Deployed Vehicles
-            if (isDep && isValidLatLng(v.targetLocCoords)) {
-                const destMarker = dropPin(markerLib, vehicleMap, v.targetLocCoords, "#EA4335", "#B31412");
-                if (destMarker) {
-                    const destInfoWindow = new google.maps.InfoWindow({
-                        content: `<div style="font-family: sans-serif; padding: 4px;"><strong>Target: ${escapeHTML(v.plateNo)}</strong><br/><span style="font-size:12px; color:#555;">${escapeHTML(v.targetLoc || '')}</span></div>`
-                    });
-                    
-                    // Fixed: gmp-click replaced with marker listener
-                    destMarker.addListener("click", () => {
-                        destInfoWindow.open({ anchor: destMarker, map: vehicleMap });
-                    });
-                    activeMarkers.push(destMarker);
-                }
-
-                if (isValidLatLng(v.currentLoc)) {
-                    const polylines = await computeAndDrawRoute(routeLib, vehicleMap, v.currentLoc, v.targetLocCoords);
-                    if (polylines && polylines.length > 0) {
-                        activePolylines.push(...polylines);
+            // ============================================================
+            // 2. UPDATE VEHICLE PINS
+            // ============================================================
+            if (isValidLatLng(v.currentLoc)) {
+                if (liveVehicleMarkers[vKey]) {
+                    // Update location smoothly instead of recreating
+                    liveVehicleMarkers[vKey].position = v.currentLoc;
+                } else {
+                    const pinColor = isDep ? "#FF6D00" : "#34A853";
+                    const pinBorder = isDep ? "#B34A00" : "#1E7E34";
+                    const marker = dropPin(markerLib, vehicleMap, v.currentLoc, pinColor, pinBorder);
+                    if (marker) {
+                        const infoWindow = new google.maps.InfoWindow({
+                            content: `
+                                <div style="font-family: 'Inter', sans-serif; padding: 6px; color: #1a1a1a; min-width: 180px;">
+                                    <strong style="font-size: 14px;">${escapeHTML(v.plateNo)}</strong><br/>
+                                    <span style="font-size: 12px; color: #555;">${escapeHTML(v.vehicleModel)} • ${escapeHTML(v.vehicleColor)}</span><br/>
+                                    <span style="font-size: 12px; color: #555;">Capacity: ${v.capacity}</span><br/>
+                                    <div style="margin-top: 6px; padding-top: 6px; border-top: 1px solid #eee; font-size: 12px;">
+                                        <span style="font-weight: bold; color: ${isDep ? '#d32f2f' : '#2e7d32'};">
+                                            ${isDep ? '◉ Deployed' : '● Available'}
+                                        </span>
+                                        ${isDep && v.contactPerson ? `<br/><b>Contact:</b> ${escapeHTML(v.contactPerson)}` : ''}
+                                        ${isDep && v.targetLoc ? `<br/><b>To:</b> ${escapeHTML(v.targetLoc)}` : ''}
+                                    </div>
+                                </div>
+                            `
+                        });
+                        marker.addListener("click", () => { infoWindow.open({ anchor: marker, map: vehicleMap }); });
+                        liveVehicleMarkers[vKey] = marker;
                     }
                 }
             }
+
+            // ============================================================
+            // 3. UPDATE DESTINATION PINS (Circles) & ROUTES
+            // ============================================================
+            if (isDep && isValidLatLng(v.targetLocCoords)) {
+                // Only create/recalculate if the target location actually changed
+                if (!lastTargetCoords[vKey] || JSON.stringify(lastTargetCoords[vKey]) !== JSON.stringify(v.targetLocCoords)) {
+                    lastTargetCoords[vKey] = v.targetLocCoords;
+                    
+                    // Clear old target and route
+                    if (liveDestMarkers[vKey]) liveDestMarkers[vKey].map = null;
+                    if (livePolylines[vKey]) livePolylines[vKey].forEach(p => p.setMap(null));
+
+                    // Make a circle instead of a vehicle pin
+                    const circleDiv = document.createElement("div");
+                    circleDiv.style.cssText = "width: 16px; height: 16px; background-color: #EA4335; border: 2px solid #B31412; border-radius: 50%; box-shadow: 0 2px 4px rgba(0,0,0,0.3);";
+                    
+                    const destMarker = new markerLib.AdvancedMarkerElement({
+                        map: vehicleMap,
+                        position: v.targetLocCoords,
+                        content: circleDiv,
+                        title: `Target: ${v.plateNo}`
+                    });
+                    destMarker.addListener("click", () => {
+                        const info = new google.maps.InfoWindow({ 
+                            content: `
+                                <div style="font-family: 'Inter', sans-serif; padding: 6px; color: #1a1a1a; min-width: 160px;">
+                                    <strong style="font-size: 14px; color: #d32f2f;">📍 Destination</strong><br/>
+                                    <div style="font-size: 12px; margin-top: 4px;">
+                                        <b>Vehicle:</b> ${escapeHTML(v.plateNo)}<br/>
+                                        <b>Address:</b> ${escapeHTML(v.targetLoc || 'Map Pin Location')}<br/>
+                                        ${v.contactPerson ? `<b>Contact:</b> ${escapeHTML(v.contactPerson)}<br/>` : ''}
+                                        ${v.details ? `<div style="margin-top:4px; padding-top:4px; border-top:1px solid #eee; color:#666;"><i>"${escapeHTML(v.details)}"</i></div>` : ''}
+                                    </div>
+                                </div>
+                            ` 
+                        });
+                        info.open({ anchor: destMarker, map: vehicleMap });
+                    });
+                    
+                    liveDestMarkers[vKey] = destMarker;
+
+                    // Compute route
+                    if (isValidLatLng(v.currentLoc)) {
+                        const polylines = await computeAndDrawRoute(routeLib, vehicleMap, v.currentLoc, v.targetLocCoords);
+                        if (polylines) livePolylines[vKey] = polylines;
+                    }
+                }
+            } else {
+                // Not deployed - wipe its target and route
+                if (liveDestMarkers[vKey]) { liveDestMarkers[vKey].map = null; delete liveDestMarkers[vKey]; }
+                if (livePolylines[vKey]) { livePolylines[vKey].forEach(p => p.setMap(null)); delete livePolylines[vKey]; }
+                delete lastTargetCoords[vKey];
+            }
         }
 
-        // Show every pin on the first load (not on later live updates, so the map doesn't jump around)
+        // ============================================================
+        // 4. CLEANUP REMOVED VEHICLES AND MAINTAIN SORT ORDER
+        // ============================================================
+        Array.from(listContainer.children).forEach(child => {
+            const id = child.getAttribute("data-id");
+            if (!currentVehicleIds.has(id)) child.remove(); // Remove UI element
+        });
+        
+        Object.keys(liveVehicleMarkers).forEach(id => {
+            if (!currentVehicleIds.has(id)) { // Remove map elements
+                liveVehicleMarkers[id].map = null; delete liveVehicleMarkers[id];
+                if (liveDestMarkers[id]) { liveDestMarkers[id].map = null; delete liveDestMarkers[id]; }
+                if (livePolylines[id]) { livePolylines[id].forEach(p => p.setMap(null)); delete livePolylines[id]; }
+                delete lastTargetCoords[id];
+            }
+        });
+
+        // Re-append existing elements to smoothly force the correct sort order
+        sortedEntries.forEach(([vKey, _]) => {
+            const item = listContainer.querySelector(`.vehicle[data-id='${vKey}']`);
+            if (item) listContainer.appendChild(item);
+        });
+
         if (!vehicleMapFitted && allPinPositions.length > 0) {
             fitMapToPositions(vehicleMap, allPinPositions);
             vehicleMapFitted = true;
@@ -178,11 +269,10 @@ function listenToVehicles() {
 }
 
 function clearMapMarkers() { 
-    activeMarkers.forEach((m) => { if (m) m.map = null; }); 
-    activeMarkers = []; 
-
-    activePolylines.forEach((p) => { if (p) p.setMap(null); });
-    activePolylines = [];
+    Object.values(liveVehicleMarkers).forEach(m => { if(m) m.map = null; });
+    Object.values(liveDestMarkers).forEach(m => { if(m) m.map = null; });
+    Object.values(livePolylines).forEach(polys => polys.forEach(p => p.setMap(null)));
+    liveVehicleMarkers = {}; liveDestMarkers = {}; livePolylines = {}; lastTargetCoords = {};
 }
 
 // --- Popup Interactions ---
@@ -353,7 +443,6 @@ function setupDeployVehicle() {
                               </div>`
                 });
 
-                // Fixed: gmp-click replaced with marker listener
                 vehicleMarker.addListener("click", () => {
                     infoWindow.open({ anchor: vehicleMarker, map: deployMap });
                 });
@@ -390,18 +479,27 @@ function setupDeployVehicle() {
         selectedDestLoc = loc;
         if (destMarker) destMarker.map = null;
 
-        // Render Red Target/Destination Pin
-        destMarker = dropPin(markerLib, deployMap, loc, "#EA4335", "#B31412");
-        if (destMarker) {
-            const infoWindow = new google.maps.InfoWindow({
-                content: `<div style="font-family: sans-serif; padding: 4px;"><strong>Target Destination</strong></div>`
+        // NEW: Render Red Target Circle
+        const circleDiv = document.createElement("div");
+        circleDiv.style.cssText = "width: 16px; height: 16px; background-color: #EA4335; border: 2px solid #B31412; border-radius: 50%; box-shadow: 0 2px 4px rgba(0,0,0,0.3);";
+        destMarker = new markerLib.AdvancedMarkerElement({
+            map: deployMap,
+            position: loc,
+            content: circleDiv
+        });
+        destMarker.addListener("click", () => {
+            const info = new google.maps.InfoWindow({ 
+                content: `
+                    <div style="font-family: 'Inter', sans-serif; padding: 6px; color: #1a1a1a; min-width: 140px;">
+                        <strong style="font-size: 14px; color: #d32f2f;">📍 Target Area</strong><br/>
+                        <div style="font-size: 12px; margin-top: 4px;">
+                            <b>Address:</b> ${escapeHTML(selectedAddress || 'Custom Map Pin')}
+                        </div>
+                    </div>
+                ` 
             });
-
-            // Fixed: gmp-click replaced with marker listener
-            destMarker.addListener("click", () => {
-                infoWindow.open({ anchor: destMarker, map: deployMap });
-            });
-        }
+            info.open({ anchor: destMarker, map: deployMap });
+        });
 
         clearRoute();
         computeAndDrawRoute(routeLib, deployMap, selectedVehicleLoc, loc).then(p => routePolylines = p || []);
@@ -679,7 +777,35 @@ async function drawDeployedMap(v, recenter) {
     }
 
     if (isValidLatLng(v.targetLocCoords)) {
-        deployedInfoMarkers.push(dropPin(markerLib, deployedInfoMap, v.targetLocCoords, "#EA4335", "#B31412"));
+        // NEW: Render Red Target Circle
+        const circleDiv = document.createElement("div");
+        circleDiv.style.cssText = "width: 16px; height: 16px; background-color: #EA4335; border: 2px solid #B31412; border-radius: 50%; box-shadow: 0 2px 4px rgba(0,0,0,0.3);";
+        
+        const targetPin = new markerLib.AdvancedMarkerElement({
+            map: deployedInfoMap,
+            position: v.targetLocCoords,
+            content: circleDiv
+        });
+        
+        // This is the missing listener!
+        targetPin.addListener("click", () => {
+            const info = new google.maps.InfoWindow({ 
+                content: `
+                    <div style="font-family: 'Inter', sans-serif; padding: 6px; color: #1a1a1a; min-width: 160px;">
+                        <strong style="font-size: 14px; color: #d32f2f;">📍 Destination</strong><br/>
+                        <div style="font-size: 12px; margin-top: 4px;">
+                            <b>Address:</b> ${escapeHTML(v.targetLoc || 'Map Pin Location')}<br/>
+                            ${v.contactPerson ? `<b>Contact:</b> ${escapeHTML(v.contactPerson)}<br/>` : ''}
+                            ${v.details ? `<div style="margin-top:4px; padding-top:4px; border-top:1px solid #eee; color:#666;"><i>"${escapeHTML(v.details)}"</i></div>` : ''}
+                        </div>
+                    </div>
+                ` 
+            });
+            info.open({ anchor: targetPin, map: deployedInfoMap });
+        });
+        
+        deployedInfoMarkers.push(targetPin);
+        
         deployedInfoPolylines = await computeAndDrawRoute(routeLib, deployedInfoMap, currentLoc, v.targetLocCoords) || [];
     }
 }
