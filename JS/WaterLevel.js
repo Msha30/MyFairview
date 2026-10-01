@@ -167,121 +167,49 @@ const THRESHOLD_TYPES = [
     "critical"
 ];
 
-const MAX_LEVEL_LIMIT = 10;
-
-function toSelect(el) {
-    if (el.tagName === "SELECT") {
-        return el;
-    }
-
-    const sel = document.createElement("select");
-
-    sel.className = el.className;
-
-    sel.style.appearance = "none";
-    sel.style.webkitAppearance = "none";
-    sel.style.mozAppearance = "none";
-
-    el.replaceWith(sel);
-
-    return sel;
-}
-
-function fillSelect(sel, maxVal, current) {
-    const cur = parseFloat(current);
-    const opts = [];
-
-    for (let i = 1; i <= maxVal; i++) {
-        opts.push(i);
-    }
-
-    if (
-        !isNaN(cur) &&
-        cur !== 0 &&
-        !opts.includes(cur)
-    ) {
-        opts.push(cur);
-    }
-
-    opts.sort((a, b) => a - b);
-
-    sel.innerHTML = opts
-        .map(n => `<option value="${n}">${n}</option>`)
-        .join("");
-
-    sel.value = String(
-        !isNaN(cur) && opts.includes(cur)
-            ? cur
-            : opts[0]
-    );
-}
-
-function setupThresholdDropdowns(modal, values) {
+// Thresholds are typed in manually, in meters with 2 decimals (e.g. 5.25).
+// The Safe minimum is always 0 and can't be edited.
+function setupThresholdInputs(modal, values) {
     const get = (type, idx) =>
-        toSelect(
-            modal.querySelectorAll(
-                `.item.${type} .thres-item .form-input`
-            )[idx]
-        );
+        modal.querySelectorAll(
+            `.item.${type} .thres-item .form-input`
+        )[idx];
 
-    const critMax = get("critical", 1);
-
-    const others = [
-        get("safe", 1),
-        get("monitor", 0),
-        get("monitor", 1),
-        get("warning", 0),
-        get("warning", 1),
-        get("critical", 0)
+    const fields = [
+        [get("safe", 0), 0],
+        [get("safe", 1), values.safeMax],
+        [get("monitor", 0), values.monitorMin],
+        [get("monitor", 1), values.monitorMax],
+        [get("warning", 0), values.warningMin],
+        [get("warning", 1), values.warningMax],
+        [get("critical", 0), values.criticalMin],
+        [get("critical", 1), values.criticalMax]
     ];
 
-    // Safe minimum is always 0
-    const safeMin = get("safe", 0);
+    fields.forEach(([input, value]) => {
+        if (!input) return;
+        input.type = "number";
+        input.step = "0.01";
+        input.min = "0";
+        input.value = (parseFloat(value) || 0).toFixed(2);
+    });
 
-    safeMin.innerHTML =
-        `<option value="0">0</option>`;
-
-    safeMin.value = "0";
-    safeMin.disabled = true;
-
-    if (values) {
-        fillSelect(
-            critMax,
-            MAX_LEVEL_LIMIT,
-            values.criticalMax
-        );
-    }
-
-    const rebuildOthers = (vals) => {
-        const max =
-            parseFloat(critMax.value) ||
-            MAX_LEVEL_LIMIT;
-
-        others.forEach((sel, i) => {
-            fillSelect(
-                sel,
-                max,
-                vals ? vals[i] : sel.value
-            );
-        });
-    };
-
-    if (values) {
-        rebuildOthers([
-            values.safeMax,
-            values.monitorMin,
-            values.monitorMax,
-            values.warningMin,
-            values.warningMax,
-            values.criticalMin
-        ]);
-    }
-
-    critMax.onchange = () => {
-        rebuildOthers(null);
-        refreshThresholdSaveState();
-    };
+    // Lowest threshold (Safe minimum) is fixed
+    if (fields[0][0]) fields[0][0].disabled = true;
 }
+
+// Keep the typed numbers in the 0.00 format
+document.addEventListener("focusout", (e) => {
+    const input = e.target;
+    if (
+        input.matches &&
+        input.matches("#editWaterThreshold .thres-item .form-input") &&
+        !input.disabled &&
+        input.value !== ""
+    ) {
+        input.value = (parseFloat(input.value) || 0).toFixed(2);
+    }
+});
 
 let thresholdOriginal = {};
 
@@ -425,7 +353,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 }
             });
 
-            setupThresholdDropdowns(
+            setupThresholdInputs(
                 modal,
                 {
                     safeMax:
@@ -513,12 +441,15 @@ document.addEventListener("DOMContentLoaded", () => {
 
             const description =
                 describeChanges(
+                    "water level",
                     thresholdChanges
                 );
 
+            // Ask first: the threshold popup is swapped for the confirmation dialog
             const confirmed =
                 await confirmChanges(
-                    description
+                    "water level threshold",
+                    modal
                 );
 
             if (!confirmed) {
@@ -575,9 +506,10 @@ document.addEventListener("DOMContentLoaded", () => {
 
                 await batch.commit();
 
-                await writeLog(
-                    "Water Level Threshold",
-                    "Updated threshold settings",
+                writeLog(
+                    "Edit",
+                    "Edited Water Level Threshold",
+                    "WaterLevel_Threshold",
                     description
                 );
 
@@ -593,6 +525,8 @@ document.addEventListener("DOMContentLoaded", () => {
                     "Error saving thresholds:",
                     err
                 );
+
+                modal.style.display = "flex";
 
                 alert(
                     "Failed to save threshold settings."
