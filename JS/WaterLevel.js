@@ -33,11 +33,13 @@ let lastDailyData = null;
 // CURRENT WATER LEVEL CARD COLOR (follows the last known level)
 // Safe = green, Monitor = orange, Warning = red, Critical = dark blue
 // ============================================================
+// "icon" recolors the (black) drop icon to the same color as the border
+const BLACK_TO = "brightness(0) saturate(100%) ";
 const CARD_COLORS = {
-    Safe: { border: "var(--green)", bg: "var(--greenfaded)" },
-    Monitor: { border: "var(--orange)", bg: "var(--orangefaded)" },
-    Warning: { border: "var(--red)", bg: "var(--redfaded)" },
-    Critical: { border: "var(--bluedark)", bg: "var(--bluefaded)" }
+    Safe: { border: "var(--green)", bg: "var(--greenfaded)", icon: BLACK_TO + "invert(35%) sepia(27%) saturate(1077%) hue-rotate(84deg) brightness(99%) contrast(100%)" },
+    Monitor: { border: "var(--orange)", bg: "var(--orangefaded)", icon: BLACK_TO + "invert(46%) sepia(16%) saturate(3063%) hue-rotate(339deg) brightness(100%) contrast(100%)" },
+    Warning: { border: "var(--red)", bg: "var(--redfaded)", icon: BLACK_TO + "invert(11%) sepia(62%) saturate(7262%) hue-rotate(364deg) brightness(99%) contrast(101%)" },
+    Critical: { border: "var(--bluedark)", bg: "var(--bluefaded)", icon: BLACK_TO + "invert(12%) sepia(34%) saturate(2943%) hue-rotate(179deg) brightness(100%) contrast(102%)" }
 };
 
 function lastKnownLevel() {
@@ -66,6 +68,10 @@ function updateCurrentCardColor() {
     const colors = CARD_COLORS[getStatus(level)];
     card.style.borderColor = colors.border;
     card.style.background = colors.bg;
+
+    // The drop icon takes the same color as the border
+    const icon = card.querySelector(".iconpic");
+    if (icon) icon.style.filter = colors.icon;
 }
 
 // ============================================================
