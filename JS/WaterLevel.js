@@ -30,6 +30,60 @@ let currentReading = null;
 let lastDailyData = null;
 
 // ============================================================
+// CURRENT WATER LEVEL CARD COLOR (follows the last known level)
+// Safe = green, Monitor = orange, Warning = red, Critical = dark blue
+// ============================================================
+const CARD_COLORS = {
+    Safe: { border: "var(--green)", bg: "var(--greenfaded)" },
+    Monitor: { border: "var(--orange)", bg: "var(--orangefaded)" },
+    Warning: { border: "var(--red)", bg: "var(--redfaded)" },
+    Critical: { border: "var(--bluedark)", bg: "var(--bluefaded)" }
+};
+
+function lastKnownLevel() {
+    // Live reading while the sensor is online
+    if (sensorOnline && currentReading) return currentReading.average;
+
+    // Offline: the most recent level on record
+    if (!lastDailyData) return null;
+    const dates = Object.keys(lastDailyData).sort();
+    for (let i = dates.length - 1; i >= 0; i--) {
+        const day = lastDailyData[dates[i]];
+        const readings = (day.readings || []).filter(r => Number.isFinite(r.level));
+        if (readings.length) {
+            return readings.reduce((a, b) => (b.timestamp > a.timestamp ? b : a)).level;
+        }
+        if (Number.isFinite(day.average)) return day.average;
+    }
+    return null;
+}
+
+function updateCurrentCardColor() {
+    const card = document.querySelector(".card.blue");
+    if (!card) return;
+    const level = lastKnownLevel();
+    if (level === null) return;
+    const colors = CARD_COLORS[getStatus(level)];
+    card.style.borderColor = colors.border;
+    card.style.background = colors.bg;
+
+    // The drop icon takes the same color as the border. It's a black SVG, so it is
+    // drawn as a color-filled mask instead of the fixed blue filter it had before.
+    let icon = card.querySelector(".iconpic");
+    if (icon && icon.tagName === "IMG") {
+        const maskIcon = document.createElement("span");
+        maskIcon.className = "iconpic";
+        maskIcon.style.filter = "none";
+        maskIcon.style.display = "block";
+        maskIcon.style.webkitMask = `url("${icon.getAttribute("src")}") center / contain no-repeat`;
+        maskIcon.style.mask = `url("${icon.getAttribute("src")}") center / contain no-repeat`;
+        icon.replaceWith(maskIcon);
+        icon = maskIcon;
+    }
+    if (icon) icon.style.backgroundColor = colors.border;
+}
+
+// ============================================================
 // FIRESTORE: LOAD THRESHOLDS
 // ============================================================
 function loadThresholds() {
@@ -77,6 +131,7 @@ function updateThresholdTable() {
             }
         }
     });
+    updateCurrentCardColor();
 }
 
 // ============================================================
@@ -728,6 +783,9 @@ function showSensorOffline() {
         currentUpdatedElement.textContent =
             "Sensor Offline";
     }
+
+    // Keep the card colored by the last known level
+    updateCurrentCardColor();
 }
 
 // ============================================================
@@ -789,6 +847,8 @@ function showCurrentSensorReading(data) {
         lowest: levelMeters,
         date: getTodayDate()
     };
+
+    updateCurrentCardColor();
 
     if (lastDailyData) {
         renderHistory(
@@ -929,6 +989,8 @@ onValue(
 
         lastDailyData =
             dailyData;
+
+        updateCurrentCardColor();
 
         updateTodayStatistics(
             dailyData
