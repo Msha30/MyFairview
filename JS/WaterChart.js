@@ -216,7 +216,6 @@ function processHistory(data) {
     Object.entries(data).forEach(([date, readings]) => {
         if (!readings) return;
 
-        // The latest record of the date (highest timestamp; if none, the last one stored)
         let latest = null;
         let latestTime = -Infinity;
 
@@ -237,7 +236,8 @@ function processHistory(data) {
 
         if (latest === null) return;
 
-        dailyData[date] = { average: latest };
+        // NEW: We are now saving the exact timestamp to be used by the graph tooltip
+        dailyData[date] = { average: latest, timestamp: latestTime };
     });
 
     return dailyData;
@@ -301,15 +301,39 @@ function renderYAxis(yMax) {
 function renderChart(dailyData, isSample) {
     clearChart();
     chartColor = getStatusInfo(effectiveLevel(currentReading)).line;
-    const dates = Object.keys(dailyData).sort().slice(-MAX_POINTS);
+    
+    const chartData = { ...dailyData };
 
-    // No records yet: just draw the empty axis
+    if (currentReading !== null && currentTimestamp !== null) {
+        const ms = currentTimestamp < 1e12 ? currentTimestamp * 1000 : currentTimestamp;
+        const readingDate = new Date(ms);
+        
+        // Ensure it's a valid date before injecting
+        if (!Number.isNaN(readingDate.getTime())) {
+            const year = readingDate.getFullYear();
+            const month = String(readingDate.getMonth() + 1).padStart(2, "0");
+            const day = String(readingDate.getDate()).padStart(2, "0");
+            const targetDateStr = `${year}-${month}-${day}`;
+
+            // If history doesn't have this date, OR the live data is newer than the history data
+            if (!chartData[targetDateStr] || chartData[targetDateStr].timestamp < currentTimestamp) {
+                chartData[targetDateStr] = { 
+                    average: currentReading, 
+                    timestamp: currentTimestamp 
+                };
+            }
+        }
+    }
+
+    const dates = Object.keys(chartData).sort().slice(-MAX_POINTS);
+
+    // No records yet: gracefully draw the empty axis instead of breaking
     if (dates.length === 0) {
         renderYAxis(10);
         return;
     }
 
-    const averages = dates.map(d => dailyData[d].average);
+    const averages = dates.map(d => chartData[d].average);
     const maxVal = Math.max(...averages);
 
     // DYNAMIC Y-AXIS MAX FOR METERS
@@ -333,9 +357,18 @@ function renderChart(dailyData, isSample) {
 
     // Create the points and attach hover tooltips
     points.forEach((p, i) => {
-        const val = averages[i];
         const dateStr = dates[i];
+        const pointData = chartData[dateStr];
+        const val = pointData.average;
         const status = getStatusInfo(val);
+
+        // 2. Format the specific time from the timestamp
+        let timeStr = "";
+        if (pointData.timestamp && pointData.timestamp !== -Infinity) {
+            // Ensure milliseconds
+            const ms = pointData.timestamp < 1e12 ? pointData.timestamp * 1000 : pointData.timestamp;
+            timeStr = " at " + new Date(ms).toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit", hour12: true });
+        }
 
         const circle = document.createElementNS(NS, "circle");
         circle.setAttribute("cx", p[0]);
@@ -345,12 +378,12 @@ function renderChart(dailyData, isSample) {
         circle.style.cursor = "pointer";
         circle.style.transition = "r 0.2s ease";
 
-        // Show Tooltip
+        // Show Tooltip with injected timeStr
         circle.addEventListener("mouseover", () => {
             circle.setAttribute("r", "7");
             tooltip.style.opacity = "1";
             tooltip.innerHTML = `
-                <div style="font-weight: bold; margin-bottom: 4px; font-size: 13px;">${formatDate(dateStr)}</div>
+                <div style="font-weight: bold; margin-bottom: 4px; font-size: 13px;">${formatDate(dateStr)}${timeStr}</div>
                 <div style="color: var(--grey);">Level: <strong style="color: var(--black);">${val.toFixed(2)} m</strong></div>
                 <div style="color: var(--grey);">Status: <strong style="color: ${status.color};">${status.text}</strong></div>
             `;
@@ -371,7 +404,6 @@ function renderChart(dailyData, isSample) {
         svg.appendChild(circle);
     });
 
-    // With many records, label every few dates so the labels don't overlap (the latest is always labelled)
     const labelStep = dates.length > 12 ? Math.ceil(dates.length / 12) : 1;
 
     dates.forEach((date, i) => {
@@ -406,15 +438,17 @@ onValue(historyRef, snapshot => {
 // ============================================================
 // FIREBASE LISTENER — CURRENT SENSOR
 // ============================================================
-
+let currentTimestamp = null;
 const currentRef = ref(database, CURRENT_PATH);
 onValue(currentRef, snapshot => {
     const data = snapshot.val();
     
     if (!data || data.level === undefined) {
         currentReading = null;
+        currentTimestamp = null;
     } else {
         currentReading = Number(data.level);
+        currentTimestamp = Number(data.timestamp); // <-- CAPTURE REAL TIME
     }
     
     if (!ENABLE_TEST_CYCLE) {

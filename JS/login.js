@@ -1,6 +1,6 @@
 import { loginUser, auth, logout, getStaffProfile, loginState } from "./auth.js";
-import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.17.0/firebase-auth.js";
-import { showMessage } from "./dialog.js";
+import { onAuthStateChanged, sendPasswordResetEmail } from "https://www.gstatic.com/firebasejs/12.17.0/firebase-auth.js";
+import { showMessage, runWithLoading } from "./dialogs.js";
 
 const loginCard = document.getElementById("ITLogIn");
 
@@ -62,3 +62,79 @@ if (loginForm) {
         }
     });
 }
+
+// ------------------------------------------------------------
+// Forgot password — real reset email (replaces the old fake alert()s)
+// ------------------------------------------------------------
+const resetCard = document.getElementById("ITResetPassword");
+const resetForm = document.getElementById("resetForm");
+const resetEmailInput = document.getElementById("resetEmail");
+
+function showCard(which) {
+    loginCard?.classList.toggle("hidden", which !== "login");
+    resetCard?.classList.toggle("hidden", which !== "reset");
+}
+
+document.getElementById("forgotLink")?.addEventListener("click", (e) => {
+    e.preventDefault();
+    if (resetEmailInput) {
+        resetEmailInput.value = emailInput?.value.trim() || ""; // carry over what they already typed
+        resetEmailInput.focus();
+    }
+    showCard("reset");
+});
+
+document.getElementById("backToSignInBtn")?.addEventListener("click", () => showCard("login"));
+
+function resetErrorMessage(err) {
+    switch (err?.code) {
+        case "auth/invalid-email":
+            return "That email address doesn't look valid.";
+        case "auth/too-many-requests":
+            return "Too many requests. Please wait a few minutes and try again.";
+        case "auth/network-request-failed":
+            return "Couldn't reach the server. Please check your internet connection.";
+        default:
+            return "We couldn't send the reset email right now. Please try again.";
+    }
+}
+
+let lastResetSentAt = 0;
+
+async function sendReset() {
+    const email = resetEmailInput?.value.trim() || "";
+    if (!email) {
+        await showMessage({ title: "Missing Email", type: "error", message: "Please enter your email address first." });
+        return;
+    }
+    if (Date.now() - lastResetSentAt < 30000) {
+        await showMessage({ title: "Please Wait", message: "A reset email was just sent. Check your inbox (and spam folder), or try again in a few seconds." });
+        return;
+    }
+
+    const outcome = await runWithLoading({
+        loadingAction: "Sending Reset Email",
+        loadingDescription: "send the reset email",
+        successAction: "Reset Email Sent",
+        // Deliberately neutral: don't reveal whether the address has an account
+        successDescription: `If ${email} has an account, a password reset link is on its way`,
+        task: () => sendPasswordResetEmail(auth, email)
+    });
+
+    if (!outcome.ok) {
+        console.error("Password reset error:", outcome.error);
+        await showMessage({ title: "Couldn't Send Email", type: "error", message: resetErrorMessage(outcome.error) });
+        return;
+    }
+    lastResetSentAt = Date.now();
+}
+
+resetForm?.addEventListener("submit", (e) => {
+    e.preventDefault();
+    sendReset();
+});
+
+document.getElementById("resendLink")?.addEventListener("click", (e) => {
+    e.preventDefault();
+    sendReset();
+});

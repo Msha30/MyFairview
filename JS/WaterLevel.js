@@ -3,8 +3,9 @@ import { getFirestore, doc, onSnapshot, writeBatch } from "https://www.gstatic.c
 import { database, app } from "./auth.js";
 import { writeLog } from "./logging.js";
 import { getChanges, describeChanges, setSaveEnabled } from "./edit-tracker.js";
-import { confirmChanges } from "./dialog.js";
-import { sendAppNotification } from "./notification.js";
+import { confirmChanges, showError } from "./dialogs.js";
+// Water-level push notifications are sent by the waterLevelAlert Cloud Function
+// (functions/index.js), not from this page, so they fire even when nobody has it open.
 
 // ============================================================
 // CONFIGURATION & SETUP
@@ -162,7 +163,7 @@ async function ensureModalLoaded() {
             modal = document.getElementById("editWaterThreshold");
         } catch (err) {
             console.error("Error fetching external modal:", err);
-            alert("Could not load external edit modal.");
+            showError("The threshold editor couldn't be loaded. Please try again.");
         }
     }
 
@@ -540,9 +541,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
                 modal.style.display = "flex";
 
-                alert(
-                    "Failed to save threshold settings."
-                );
+                showError("The threshold settings couldn't be saved. Please try again.");
 
                 saveBtn.disabled = false;
             }
@@ -586,80 +585,25 @@ function normalizeTimestamp(timestamp) {
 }
 
 function formatLastUpdated(timestamp) {
-    const milliseconds =
-        normalizeTimestamp(timestamp);
+    const milliseconds = normalizeTimestamp(timestamp);
+    if (milliseconds === null) return "Last Updated: --";
 
-    if (milliseconds === null) {
-        return "Last Updated: --";
-    }
-
-    const updatedAt =
-        new Date(milliseconds);
-
-    if (
-        Number.isNaN(
-            updatedAt.getTime()
-        )
-    ) {
-        return "Last Updated: --";
-    }
+    const updatedAt = new Date(milliseconds);
+    if (Number.isNaN(updatedAt.getTime())) return "Last Updated: --";
 
     const now = new Date();
+    const time = updatedAt.toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit", hour12: true });
 
-    const elapsedMs =
-        Math.max(
-            0,
-            now.getTime() -
-            updatedAt.getTime()
-        );
-
-    const elapsedMinutes =
-        Math.floor(
-            elapsedMs / 60000
-        );
-
-    if (elapsedMs < 60000) {
-        return "Updated Just Now";
-    }
-
-    if (elapsedMinutes < 60) {
-        return `Updated ${elapsedMinutes} Minute${elapsedMinutes === 1 ? "" : "s"} Ago`;
-    }
-
-    const time =
-        updatedAt.toLocaleTimeString(
-            "en-US",
-            {
-                hour: "numeric",
-                minute: "2-digit",
-                hour12: true
-            }
-        );
-
-    const sameDay =
-        updatedAt.getFullYear() ===
-            now.getFullYear() &&
-
-        updatedAt.getMonth() ===
-            now.getMonth() &&
-
-        updatedAt.getDate() ===
-            now.getDate();
+    // Check if the reading happened today
+    const sameDay = updatedAt.getFullYear() === now.getFullYear() &&
+                    updatedAt.getMonth() === now.getMonth() &&
+                    updatedAt.getDate() === now.getDate();
 
     if (sameDay) {
         return `Last Updated: ${time}`;
     }
 
-    const date =
-        updatedAt.toLocaleDateString(
-            "en-US",
-            {
-                month: "2-digit",
-                day: "2-digit",
-                year: "2-digit"
-            }
-        );
-
+    const date = updatedAt.toLocaleDateString("en-US", { month: "2-digit", day: "2-digit", year: "2-digit" });
     return `Last Updated: ${date} - ${time}`;
 }
 

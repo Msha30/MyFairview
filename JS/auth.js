@@ -4,7 +4,7 @@ import { getFirestore, collection, query, where, getDocs } from "https://www.gst
 import { getDatabase } from "https://www.gstatic.com/firebasejs/12.17.0/firebase-database.js";
 import { getAnalytics } from "https://www.gstatic.com/firebasejs/12.17.0/firebase-analytics.js";
 import { getStorage } from "https://www.gstatic.com/firebasejs/12.17.0/firebase-storage.js";
-import { showMessage, showSuccess } from "./dialog.js";
+import { showMessage, showSuccess } from "./dialogs.js";
 
 export const firebaseConfig = {
     apiKey: "AIzaSyADZ7D4nZfcHsWo1MDXgyjBU15xmuKMnIQ",

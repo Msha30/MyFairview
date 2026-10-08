@@ -13,7 +13,7 @@
 
 import { auth, firestore, getStaffProfile } from "./auth.js";
 import { collection, query, where, onSnapshot } from "https://www.gstatic.com/firebasejs/12.17.0/firebase-firestore.js";
-import { showMessage } from "./dialog.js";
+import { showMessage } from "./dialogs.js";
 
 // ------------------------------------------------------------
 // Module catalogue (matches the checkbox ids in Add_Staff / Info_Staff)

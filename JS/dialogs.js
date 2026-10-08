@@ -66,9 +66,71 @@ function askChoice(dialog, confirmSelector, parent) {
 /** @returns {Promise<boolean>} true = confirmed (parent stays hidden), false = cancelled (parent shown again) */
 export async function confirmChanges(itemType, parent = null) {
     const dialog = await ensureDialog("Changes");
-    setLabels(dialog, { line1: `Are you sure you want to save the changes to this ${itemType}?` });
+    setLabels(dialog, {
+        title: "Apply Changes",
+        line1: `Are you sure you want to save the changes to this ${itemType}?`,
+        line2: "Your updates will be applied once you confirm."
+    });
+    dialog.querySelector(".button.confirm").textContent = "Confirm";
+    dialog.querySelector(".button.delete").textContent = "Cancel";
     return askChoice(dialog, ".button.confirm", parent);
 }
+
+// ------------------------------------------------------------
+// Generic yes/no (replaces window.confirm)
+// ------------------------------------------------------------
+/** @returns {Promise<boolean>} */
+export async function confirmAction({ title, message, detail = "", confirmText = "Confirm", cancelText = "Cancel", parent = null }) {
+    const dialog = await ensureDialog("Changes");
+    setLabels(dialog, { title, line1: message, line2: detail });
+    dialog.querySelector(".button.confirm").textContent = confirmText;
+    dialog.querySelector(".button.delete").textContent = cancelText;
+    return askChoice(dialog, ".button.confirm", parent);
+}
+
+// ------------------------------------------------------------
+// Dialog_Message  (replaces window.alert)
+// ------------------------------------------------------------
+/**
+ * One-button notice. Resolves when the person presses OK.
+ * @param {Object} o
+ * @param {string} o.title
+ * @param {string} o.message
+ * @param {"info"|"error"|"success"} [o.type]
+ * @param {Element} [o.parent]  popup to hide while the notice is up (shown again on OK)
+ */
+export async function showMessage({ title = "Notice", message = "", detail = "", type = "info", buttonText = "OK", parent = null }) {
+    const dialog = await ensureDialog("Message");
+    dialog.dataset.type = type;
+    setLabels(dialog, { title, line1: message, line2: detail });
+    const ok = dialog.querySelector(".button.confirm");
+    ok.textContent = buttonText;
+
+    return new Promise(resolve => {
+        const finish = () => {
+            ok.onclick = null;
+            dialog.onclick = null;
+            document.removeEventListener("keydown", onKey);
+            hide(dialog);
+            show(parent);
+            resolve();
+        };
+        const onKey = (e) => { if (e.key === "Escape" || e.key === "Enter") finish(); };
+        ok.onclick = finish;
+        dialog.onclick = (e) => { if (e.target === dialog) finish(); };
+        document.addEventListener("keydown", onKey);
+
+        hide(parent);
+        show(dialog);
+        ok.focus();
+    });
+}
+
+export const showError = (message, opts = {}) =>
+    showMessage({ title: "Something went wrong", type: "error", message, ...opts });
+
+export const showWarning = (message, opts = {}) =>
+    showMessage({ title: "Please check", type: "info", message, ...opts });
 
 // ------------------------------------------------------------
 // Dialog_Delete
@@ -102,17 +164,17 @@ export async function confirmExport({ type, filters = [], parent = null }) {
 // Dialog_Loading  ->  Dialog_Confirm
 // ------------------------------------------------------------
 /** Shows the Confirm dialog with a 3-2-1 countdown, then closes it by itself. */
-export async function showSuccess({ action, description, parent = null }) {
+export async function showSuccess({ action, description, parent = null, seconds = REDIRECT_SECONDS, countdownText = (n) => `You will be redirected back in ${n}`, keepOpen = false }) {
     const dialog = await ensureDialog("Confirm");
     hide(parent);
     setLabels(dialog, { title: action, line1: `${description}.` });
     show(dialog);
 
-    for (let n = REDIRECT_SECONDS; n > 0; n--) {
-        setLabels(dialog, { line2: `You will be redirected back in ${n}` });
+    for (let n = seconds; n > 0; n--) {
+        setLabels(dialog, { line2: countdownText(n) });
         await wait(1000);
     }
-    hide(dialog);
+    if (!keepOpen) hide(dialog); // keepOpen: caller is about to navigate away
 }
 
 /**

@@ -1,9 +1,9 @@
 import { auth, logout, getStaffProfile, database, app } from "./auth.js";
 import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.17.0/firebase-auth.js";
 import { ref, onValue } from "https://www.gstatic.com/firebasejs/12.17.0/firebase-database.js";
-import { getFirestore, doc, onSnapshot } from "https://www.gstatic.com/firebasejs/12.17.0/firebase-firestore.js";
-import { watchAccess, NAV_MODULE } from "./permissions.js";
-import { showMessage } from "./dialog.js";
+import { getFirestore, doc, onSnapshot, collection, getDocs } from "https://www.gstatic.com/firebasejs/12.17.0/firebase-firestore.js";
+import { watchAccess, NAV_MODULE, loadAccess } from "./permissions.js";
+import { showMessage, confirmAction } from "./dialogs.js";
 
 const userSection = document.getElementById("userSection");
 const userDropdown = document.getElementById("userDropdown");
@@ -62,12 +62,23 @@ function applyNavAccess(access) {
     Object.entries(NAV_MODULE).forEach(([file, moduleKey]) => {
         const allowed = access.can(moduleKey, "view");
         // Matches links/buttons that point at the page (href, data-page, data-src, data-target)
-        const sel = ["href", "data-page", "data-src", "data-target", "data-href"]
+        const sel = ["onclick", "href", "data-page", "data-src", "data-target", "data-href"]
             .map(attr => `[${attr}*="${file}" i]`).join(",");
         document.querySelectorAll(sel).forEach(el => {
             const item = el.closest("li") || el;
             item.style.display = allowed ? "" : "none";
         });
+    });
+
+    // Hide a section heading (e.g. "Admin") when every item under it is hidden
+    document.querySelectorAll(".menu-title").forEach(title => {
+        let el = title.nextElementSibling;
+        let anyVisible = false;
+        while (el && !el.classList.contains("menu-title")) {
+            if (el.classList.contains("menu-item") && el.style.display !== "none") anyVisible = true;
+            el = el.nextElementSibling;
+        }
+        title.style.display = anyVisible ? "" : "none";
     });
 }
 
@@ -239,7 +250,13 @@ function loadThresholds() {
     });
 }
 
+// Thresholds start as 0 until Firestore answers; until then every level would read "Critical"
+function thresholdsReady() {
+    return dynamicThresholds.Warning.min > 0 && dynamicThresholds.Critical.min > dynamicThresholds.Warning.min;
+}
+
 function getStatus(level) {
+    if (!thresholdsReady()) return "Safe";
     if (level >= dynamicThresholds.Critical.min) return "Critical";
     if (level >= dynamicThresholds.Warning.min) return "Warning";
     if (level >= dynamicThresholds.Monitor.min) return "Monitor";
@@ -248,6 +265,8 @@ function getStatus(level) {
 
 // Update the Top Bar Alert UI
 function updateAlertUI() {
+    evaluateCriticalPopup();
+
     const alertEl = document.querySelector(".alert");
     if (!alertEl) return;
 
@@ -284,9 +303,84 @@ onValue(currentRef, snapshot => {
     const data = snapshot.val();
     if (data && data.level !== undefined) {
         currentWaterLevel = Number(data.level);
+        latestSensorTime = normalizeTimestamp(data.timestamp);
         updateAlertUI();
     }
 });
+
+// ------------------------------------------------------------
+// CRITICAL WATER LEVEL POP-UP  ->  Evacuation Plan
+// Shown once when the level reaches Critical (and again only after it has gone
+// back down). Residents get the matching push notification from the
+// waterLevelAlert Cloud Function; this is the staff-side counterpart.
+// ------------------------------------------------------------
+let latestSensorTime = null;
+let criticalPopupShown = false;
+
+function normalizeTimestamp(ts) {
+    const v = Number(ts);
+    if (!Number.isFinite(v) || v <= 0) return null;
+    return v < 1e12 ? v * 1000 : v; // seconds -> ms
+}
+
+// A reading counts as live if it is under a minute old (the sensor reports every ~5 s)
+const sensorIsLive = () => latestSensorTime !== null && Date.now() - latestSensorTime < 60000;
+
+async function evacuationCenterSummary() {
+    try {
+        const snap = await getDocs(collection(firestore, "EvacuationCenter"));
+        const names = snap.docs.map(d => d.data().placeName).filter(Boolean);
+        if (names.length === 0) return "No evacuation centers have been added to the Evacuation Plan yet.";
+        const shown = names.slice(0, 3).join(", ");
+        return `Evacuation centers: ${shown}${names.length > 3 ? ` and ${names.length - 3} more` : ""}.`;
+    } catch (err) {
+        console.error("Could not load evacuation centers:", err);
+        return "Open the Evacuation Plan to see the evacuation centers.";
+    }
+}
+
+function goToEvacuationPlan() {
+    const page = "MainPages/EvacuationPlan.html";
+    // Same approach Overview.js uses so the sidebar highlight moves too
+    const item = Array.from(document.querySelectorAll(".menu-item"))
+        .find(el => (el.getAttribute("onclick") || "").includes("EvacuationPlan.html"));
+    if (item && typeof window.loadPage === "function") {
+        window.loadPage(item, page);
+    } else {
+        const frame = document.getElementById("contentFrame");
+        if (frame) frame.src = page;
+    }
+}
+
+async function evaluateCriticalPopup() {
+    // Only act on a live reading, once thresholds are known
+    if (!thresholdsReady() || !sensorIsLive()) return;
+
+    if (getStatus(currentWaterLevel) !== "Critical") {
+        criticalPopupShown = false; // dropped back down: allow a future Critical to alert again
+        return;
+    }
+    if (criticalPopupShown) return;
+    criticalPopupShown = true;
+
+    const message = `Paltok Creek has reached ${currentWaterLevel.toFixed(2)} m and the bridge is flooded. Residents should be directed to the evacuation centers.`;
+    const detail = await evacuationCenterSummary();
+
+    const access = await loadAccess();
+    if (access?.can("evacuation", "view")) {
+        const open = await confirmAction({
+            title: "CRITICAL WATER LEVEL",
+            message,
+            detail,
+            confirmText: "View Evacuation Centers",
+            cancelText: "Dismiss"
+        });
+        if (open) goToEvacuationPlan();
+    } else {
+        // This staff member can't open the Evacuation Plan page, so just inform them
+        await showMessage({ title: "CRITICAL WATER LEVEL", type: "error", message, detail });
+    }
+}
 /*
 export async function registerUser(fullname, email, password) {
     try {

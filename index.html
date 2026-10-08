@@ -223,7 +223,7 @@
             </div>
             <button class="btn">Login</button>
             <div class="forgot">
-                <a href="#" onclick="showResetPassword()">Forgot Password?</a>
+                <a href="#" id="forgotLink">Forgot Password?</a>
             </div>
         </form>
     </div>
@@ -232,20 +232,20 @@
     <div id="ITResetPassword" class="login hidden">
         <div class="form">
             <div class="header-with-back">
-                <button class="back-btn" onclick="backToSignIn()">&lt;</button>
+                <button class="back-btn" id="backToSignInBtn" type="button">&lt;</button>
                 <h3>Reset Password</h3>
             </div>
 
-            <form onsubmit="return sendResetEmail(event)">
+            <form id="resetForm">
                 <div class="form-row title">
                     <label class="form-label">Email</label>
-                    <input class="form-input" id="resetEmail" type="email required">
+                    <input class="form-input" id="resetEmail" type="email" required>
                 </div>
 
                 <button type="submit" class="btn">Send Reset Email</button>
 
                 <div class="forgot">
-                    <a href="#" onclick="resendEmail()">Resend Email</a>
+                    <a href="#" id="resendLink">Resend Email</a>
                 </div>
             </form>
         </div>
@@ -285,22 +285,6 @@
 
                 closedEye.classList.remove("hidden");
                 openEye.classList.add("hidden");
-            }
-        }
-
-        function sendResetEmail(event) {
-            event.preventDefault();
-            const email = document.getElementById('resetEmail').value;
-            alert('A reset password link has been sent to ' + email);
-            return false;
-        }
-
-        function resendEmail() {
-            const email = document.getElementById('resetEmail').value;
-            if (email) {
-                alert('Reset email has been resent to ' + email);
-            } else {
-                alert('Please enter your email address first.');
             }
         }
 

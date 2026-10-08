@@ -4,7 +4,7 @@ import { getAuth, createUserWithEmailAndPassword, deleteUser } from "https://www
 import { collection, doc, setDoc, getDocs, getDoc, updateDoc, deleteDoc, onSnapshot, serverTimestamp } from "https://www.gstatic.com/firebasejs/12.17.0/firebase-firestore.js";
 import { writeLog } from "./logging.js";
 import { getChanges, describeChanges, setApplyState } from "./edit-tracker.js";
-import { confirmChanges, confirmDelete, runWithLoading, showMessage } from "./dialog.js";
+import { confirmChanges, confirmDelete, runWithLoading, showMessage } from "./dialogs.js";
 import { MODULES, loadAccess, parseAccess, summarizeAccess, missingGrants, isSuperAdminRole } from "./permissions.js";
 
 // Secondary app: creating a staff account signs that new account in, so it must
