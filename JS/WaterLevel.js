@@ -568,21 +568,46 @@ function formatMeters(value) {
 // TIMESTAMP HELPERS
 // ============================================================
 function normalizeTimestamp(timestamp) {
-    const value = Number(timestamp);
-
-    if (
-        !Number.isFinite(value) ||
-        value <= 0
-    ) {
+    if (timestamp === null || timestamp === undefined || timestamp === "") {
         return null;
     }
 
-    // Unix seconds are ~10 digits.
-    // Unix milliseconds are ~13 digits.
-    return value < 1e12
-        ? value * 1000
-        : value;
+    let value = Number(timestamp);
+
+    // Not a plain number: accept date strings such as "2026-10-09T15:42:11+08:00"
+    if (!Number.isFinite(value)) {
+        if (typeof timestamp !== "string") return null;
+        const parsed = Date.parse(timestamp);
+        return Number.isFinite(parsed) ? parsed : null;
+    }
+
+    if (value <= 0) {
+        return null;
+    }
+
+    // Unix seconds are ~10 digits, milliseconds ~13, microseconds ~16.
+    if (value < 1e12) return value * 1000;
+    if (value >= 1e15) return Math.round(value / 1000);
+    return value;
 }
+
+// ------------------------------------------------------------
+// The browser's clock can be wrong (or a few seconds off), which made a live
+// sensor look "offline" and a dead one look "online". Firebase reports how far
+// this browser is from the server, so compare against server time instead.
+// (Assumes the sensor's timestamps are real UTC time, e.g. from NTP.)
+// ------------------------------------------------------------
+let serverOffsetMs = 0;
+
+onValue(
+    ref(database, ".info/serverTimeOffset"),
+    snapshot => {
+        const offset = Number(snapshot.val());
+        serverOffsetMs = Number.isFinite(offset) ? offset : 0;
+    }
+);
+
+const nowMs = () => Date.now() + serverOffsetMs;
 
 function formatLastUpdated(timestamp) {
     const milliseconds = normalizeTimestamp(timestamp);
@@ -646,10 +671,19 @@ const SENSOR_OFFLINE_TIMEOUT_MS = 15000;
 let latestSensorTimestamp = null;
 let sensorOnline = false;
 
+// Last time the sensor was actually heard from (kept after it goes offline so the
+// label can still say WHEN), whether Firebase has answered yet, and which day the
+// "today" numbers were last drawn for.
+let lastSeenTimestamp = null;
+let sensorDataReceived = false;
+let renderedDay = null;
+
 // ============================================================
 // SHOW SENSOR OFFLINE
 // ============================================================
-function showSensorOffline() {
+function showSensorOffline(lastSeen = null) {
+
+    const wasOnline = sensorOnline;
 
     sensorOnline = false;
 
@@ -657,23 +691,43 @@ function showSensorOffline() {
 
     currentReading = null;
 
-    if (currentElement) {
-        currentElement.textContent = "--";
+    if (lastSeen) {
+        lastSeenTimestamp = lastSeen;
     }
 
+    if (currentElement) {
+        currentElement.textContent = "-- m";
+    }
+
+    // Say WHEN the sensor was last heard from instead of losing the time
     if (currentUpdatedElement) {
+        const seen =
+            lastSeenTimestamp
+                ? formatLastUpdated(lastSeenTimestamp)
+                : null;
+
         currentUpdatedElement.textContent =
-            "Sensor Offline";
+            seen && !seen.endsWith("--")
+                ? `Sensor Offline · ${seen}`
+                : "Sensor Offline";
     }
 
     // Keep the card colored by the last known level
     updateCurrentCardColor();
+
+    // The live "today" row (and the stats built from it) only exist while the sensor is online
+    if (wasOnline && lastDailyData) {
+        updateTodayStatistics(lastDailyData);
+        renderHistory(lastDailyData);
+    }
 }
 
 // ============================================================
 // SHOW CURRENT SENSOR READING
 // ============================================================
 function showCurrentSensorReading(data) {
+
+    sensorDataReceived = true;
 
     const timestamp =
         normalizeTimestamp(
@@ -693,8 +747,10 @@ function showCurrentSensorReading(data) {
         return;
     }
 
+    // Compared against SERVER time (see serverOffsetMs) so a wrong
+    // browser clock can't make a live sensor look offline.
     const age =
-        Date.now() - timestamp;
+        nowMs() - timestamp;
 
     // Reject stale readings.
     //
@@ -704,7 +760,8 @@ function showCurrentSensorReading(data) {
         age > SENSOR_OFFLINE_TIMEOUT_MS ||
         age < -60000
     ) {
-        showSensorOffline();
+        // A stale reading still tells us when the sensor last reported
+        showSensorOffline(age > 0 ? timestamp : null);
         return;
     }
 
@@ -712,6 +769,9 @@ function showCurrentSensorReading(data) {
     sensorOnline = true;
 
     latestSensorTimestamp =
+        timestamp;
+
+    lastSeenTimestamp =
         timestamp;
 
     if (currentElement) {
@@ -731,6 +791,10 @@ function showCurrentSensorReading(data) {
     };
 
     updateCurrentCardColor();
+
+    updateTodayStatistics(
+        lastDailyData || {}
+    );
 
     if (lastDailyData) {
         renderHistory(
@@ -757,6 +821,7 @@ onValue(
 
         // No current Firebase data.
         if (!data) {
+            sensorDataReceived = true;
             showSensorOffline();
             return;
         }
@@ -787,25 +852,38 @@ onValue(
 // ============================================================
 setInterval(() => {
 
-    if (!latestSensorTimestamp) {
-        showSensorOffline();
+    // Firebase hasn't answered yet (slow connection): the sensor isn't
+    // "offline", we just haven't heard anything. Don't flash "Sensor Offline".
+    if (!sensorDataReceived) {
         return;
     }
 
-    const age =
-        Date.now() -
-        latestSensorTimestamp;
+    if (!latestSensorTimestamp) {
 
-    if (
-        age >
-        SENSOR_OFFLINE_TIMEOUT_MS
-    ) {
         showSensorOffline();
 
-    } else if (sensorOnline) {
+    } else if (
+        nowMs() - latestSensorTimestamp >
+        SENSOR_OFFLINE_TIMEOUT_MS
+    ) {
 
-        updateLastUpdatedLabel(
+        showSensorOffline(
             latestSensorTimestamp
+        );
+    }
+
+    // A new day started with no new data: "today" must roll over by itself.
+    if (
+        lastDailyData &&
+        renderedDay &&
+        renderedDay !== getTodayDate()
+    ) {
+        updateTodayStatistics(
+            lastDailyData
+        );
+
+        renderHistory(
+            lastDailyData
         );
     }
 
@@ -858,10 +936,17 @@ onValue(
 
         if (!data) {
 
-            if (historyElement) {
-                historyElement.innerHTML =
-                    "<div>No water level history available.</div>";
-            }
+            lastDailyData = {};
+
+            updateCurrentCardColor();
+
+            updateTodayStatistics(
+                lastDailyData
+            );
+
+            renderHistory(
+                lastDailyData
+            );
 
             return;
         }
@@ -917,9 +1002,9 @@ function processHistory(data) {
                             ),
 
                         timestamp:
-                            Number(
+                            normalizeTimestamp(
                                 reading.timestamp
-                            )
+                            ) || 0
                     });
                 });
 
@@ -978,10 +1063,27 @@ function updateTodayStatistics(
     dailyData
 ) {
 
-    const todayData =
+    const today =
+        getTodayDate();
+
+    renderedDay =
+        today;
+
+    let todayData =
         dailyData[
-            getTodayDate()
+            today
         ];
+
+    // No history for today yet, but the sensor is live: use the live reading
+    // instead of showing "--" next to a card that has a value.
+    if (
+        !todayData &&
+        sensorOnline &&
+        currentReading
+    ) {
+        todayData =
+            currentReading;
+    }
 
     if (!todayData) {
 
@@ -1040,6 +1142,10 @@ function getTodayDate() {
 // ============================================================
 // RENDER HISTORY
 // ============================================================
+// What is currently drawn. If a redraw would produce the exact same list we skip it,
+// so the list doesn't flicker or jump back to the top every time the sensor reports.
+let lastHistoryHtml = null;
+
 function renderHistory(
     dailyData
 ) {
@@ -1048,26 +1154,26 @@ function renderHistory(
         return;
     }
 
-    historyElement.innerHTML = "";
+    // ========================================================
+    // Work on a COPY. The old code added the live "today" row into
+    // the stored history itself, so it stayed there (frozen, stale)
+    // even after the sensor went offline.
+    //
+    // The live row is only shown while the sensor is actually online.
+    // ========================================================
+    const days = {
+        ...dailyData
+    };
 
-    // ========================================================
-    // IMPORTANT:
-    //
-    // Only add current reading if the sensor
-    // is actually online.
-    //
-    // A stale/offline reading will NEVER be
-    // inserted as a new current history value.
-    // ========================================================
     if (
         sensorOnline &&
         currentReading &&
-        !dailyData[
+        !days[
             currentReading.date
         ]
     ) {
 
-        dailyData[
+        days[
             currentReading.date
         ] = {
 
@@ -1110,107 +1216,131 @@ function renderHistory(
 
     const dates =
         Object.keys(
-            dailyData
+            days
         )
             .filter(
-                d => d >= cutoffStr
+                d =>
+                    d >= cutoffStr &&
+                    Number.isFinite(days[d]?.average) &&
+                    Number.isFinite(days[d]?.highest) &&
+                    Number.isFinite(days[d]?.lowest)
             )
             .sort()
             .reverse();
+
+    // ========================================================
+    // BUILD THE LIST
+    // ========================================================
+    let html;
 
     if (
         dates.length === 0
     ) {
 
-        historyElement.innerHTML =
+        html =
             "<div>No history available.</div>";
 
+    } else {
+
+        html =
+            dates.map(
+                date => {
+
+                    const data =
+                        days[date];
+
+                    const status =
+                        getStatus(
+                            data.average
+                        );
+
+                    const icon =
+                        getStatusIcon(
+                            status
+                        );
+
+                    const formattedDate =
+                        new Date(
+                            date +
+                            "T00:00:00"
+                        ).toLocaleDateString(
+                            "en-US",
+                            {
+                                month: "long",
+                                day: "numeric"
+                            }
+                        );
+
+                    return `
+                <div class="level-item">
+                    <div class="history-icon">
+                        <img
+                            src="${icon}"
+                            class="svg"
+                            alt="${status}"
+                        >
+                    </div>
+
+                    <div class="content1">
+                        <div class="status">
+                            ${status}
+                        </div>
+
+                        <div class="date">
+                            ${formattedDate}
+                        </div>
+                    </div>
+
+                    <div class="ave">
+                        <strong>
+                            ${data.average.toFixed(2)}
+                        </strong>
+                        <span>m</span>
+                    </div>
+
+                    <div class="content2">
+                        <div class="desc">
+                            Highest :
+                            ${data.highest.toFixed(2)} m
+                        </div>
+
+                        <div class="desc">
+                            Lowest :
+                            ${data.lowest.toFixed(2)} m
+                        </div>
+                    </div>
+                </div>`;
+                }
+            ).join("");
+    }
+
+    if (
+        html === lastHistoryHtml
+    ) {
         return;
     }
 
-    // ========================================================
-    // CREATE HISTORY ITEMS
-    // ========================================================
-    dates.forEach(
-        date => {
+    // Keep the scroll position when the list does change
+    const scroller =
+        historyElement.closest(
+            ".card-scroll"
+        );
 
-            const data =
-                dailyData[date];
+    const scrollTop =
+        scroller
+            ? scroller.scrollTop
+            : 0;
 
-            const status =
-                getStatus(
-                    data.average
-                );
+    historyElement.innerHTML =
+        html;
 
-            const icon =
-                getStatusIcon(
-                    status
-                );
+    lastHistoryHtml =
+        html;
 
-            const formattedDate =
-                new Date(
-                    date +
-                    "T00:00:00"
-                ).toLocaleDateString(
-                    "en-US",
-                    {
-                        month: "long",
-                        day: "numeric"
-                    }
-                );
-
-            const item =
-                document.createElement(
-                    "div"
-                );
-
-            item.className =
-                "level-item";
-
-            item.innerHTML = `
-                <div class="history-icon">
-                    <img
-                        src="${icon}"
-                        class="svg"
-                        alt="${status}"
-                    >
-                </div>
-
-                <div class="content1">
-                    <div class="status">
-                        ${status}
-                    </div>
-
-                    <div class="date">
-                        ${formattedDate}
-                    </div>
-                </div>
-
-                <div class="ave">
-                    <strong>
-                        ${data.average.toFixed(2)}
-                    </strong>
-                    <span>m</span>
-                </div>
-
-                <div class="content2">
-                    <div class="desc">
-                        Highest :
-                        ${data.highest.toFixed(2)} m
-                    </div>
-
-                    <div class="desc">
-                        Lowest :
-                        ${data.lowest.toFixed(2)} m
-                    </div>
-                </div>
-            `;
-
-            historyElement.appendChild(
-                item
-            );
-        }
-    );
+    if (scroller) {
+        scroller.scrollTop =
+            scrollTop;
+    }
 }
 
 // ============================================================

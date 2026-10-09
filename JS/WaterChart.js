@@ -43,8 +43,10 @@ let thresholds = {
 onSnapshot(collection(firestore, "WaterLevel_Threshold"), (snap) => {
     snap.forEach(doc => {
         const data = doc.data();
-        if (thresholds[data.status]) {
-            thresholds[data.status].min = data.thresholdMin || 0;
+        // Key by document id (Safe/Monitor/Warning/Critical), falling back to the status field
+        const key = thresholds[doc.id] ? doc.id : data.status;
+        if (thresholds[key]) {
+            thresholds[key].min = data.thresholdMin || 0;
         }
     });
     
@@ -63,6 +65,11 @@ onSnapshot(collection(firestore, "WaterLevel_Threshold"), (snap) => {
 function getStatusInfo(level) {
     if (level === null || level === undefined) {
         return { text: "Safe", color: "var(--green)", line: "var(--green)", gradBottom: "white" };
+    }
+    // Thresholds start at 0 until Firestore answers; until then every level would
+    // read "Critical" and flash the chart blue. Treat "not loaded yet" as Safe.
+    if (!(thresholds.Warning.min > 0) || !(thresholds.Critical.min > thresholds.Warning.min)) {
+        return { text: "Safe", color: "var(--green)", line: "var(--green)", gradBottom: "var(--greenfaded)" };
     }
     if (level >= thresholds.Critical.min) {
         return { text: "Critical", color: "var(--bluedark)", line: "var(--bluedark)", gradBottom: "var(--bluefaded)" };
