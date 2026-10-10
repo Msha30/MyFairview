@@ -72,13 +72,13 @@ function getStatusInfo(level) {
         return { text: "Safe", color: "var(--green)", line: "var(--green)", gradBottom: "var(--greenfaded)" };
     }
     if (level >= thresholds.Critical.min) {
-        return { text: "Critical", color: "var(--bluedark)", line: "var(--bluedark)", gradBottom: "var(--bluefaded)" };
+        return { text: "Critical", color: "var(--red)", line: "var(--red)", gradBottom: "var(--redfaded)" };
     }
     if (level >= thresholds.Warning.min) {
-        return { text: "Warning", color: "var(--red)", line: "var(--red)", gradBottom: "var(--redfaded)" };
+        return { text: "Warning", color: "var(--orange)", line: "var(--orange)", gradBottom: "var(--orangefaded)" };
     }
     if (level >= thresholds.Monitor.min) {
-        return { text: "Monitor", color: "var(--orange)", line: "var(--orange)", gradBottom: "var(--orangefaded)" };
+        return { text: "Monitor", color: "var(--yellowdark)", line: "var(--yellowdark)", gradBottom: "var(--yellowfaded)" };
     }
     return { text: "Safe", color: "var(--green)", line: "var(--green)", gradBottom: "var(--greenfaded)" };
 }

@@ -33,15 +33,15 @@ let lastDailyData = null;
 
 // ============================================================
 // CURRENT WATER LEVEL CARD COLOR (follows the last known level)
-// Safe = green, Monitor = orange, Warning = red, Critical = dark blue
+// Safe = green, Monitor = yellowdark, Warning = orange, Critical = red
 // ============================================================
 // "icon" recolors the (black) drop icon to the same color as the border
 const BLACK_TO = "brightness(0) saturate(100%) ";
 const CARD_COLORS = {
     Safe: { border: "var(--green)", bg: "var(--greenfaded)", icon: BLACK_TO + "invert(35%) sepia(27%) saturate(1077%) hue-rotate(84deg) brightness(99%) contrast(100%)" },
-    Monitor: { border: "var(--orange)", bg: "var(--orangefaded)", icon: BLACK_TO + "invert(46%) sepia(16%) saturate(3063%) hue-rotate(339deg) brightness(100%) contrast(100%)" },
-    Warning: { border: "var(--red)", bg: "var(--redfaded)", icon: BLACK_TO + "invert(11%) sepia(62%) saturate(7262%) hue-rotate(364deg) brightness(99%) contrast(101%)" },
-    Critical: { border: "var(--bluedark)", bg: "var(--bluefaded)", icon: BLACK_TO + "invert(12%) sepia(34%) saturate(2943%) hue-rotate(179deg) brightness(100%) contrast(102%)" }
+    Monitor: { border: "var(--yellowdark)", bg: "var(--yellowfaded)", icon: BLACK_TO + "invert(100%) sepia(113%) saturate(1390%) hue-rotate(344deg) brightness(70%) contrast(105%)" },
+    Warning: { border: "var(--orange)", bg: "var(--orangefaded)", icon: BLACK_TO + "invert(46%) sepia(16%) saturate(3063%) hue-rotate(339deg) brightness(100%) contrast(100%)" },
+    Critical: { border: "var(--red)", bg: "var(--redfaded)", icon: BLACK_TO + "invert(11%) sepia(62%) saturate(7262%) hue-rotate(364deg) brightness(99%) contrast(101%)" }
 };
 
 function lastKnownLevel() {
@@ -1259,6 +1259,11 @@ function renderHistory(
                             status
                         );
 
+                    const iconFilter =
+                        getStatusIconFilter(
+                            status
+                        );
+
                     const formattedDate =
                         new Date(
                             date +
@@ -1278,6 +1283,7 @@ function renderHistory(
                             src="${icon}"
                             class="svg"
                             alt="${status}"
+                            style="filter: ${iconFilter}"
                         >
                     </div>
 
@@ -1366,5 +1372,18 @@ function getStatusIcon(
 
         default:
             return "../Icons/ic_water_1.svg";
+    }
+}
+
+// Tints the history icon to match the status color used on the current-level card.
+// Safe is left as the icon's original color.
+function getStatusIconFilter(status) {
+    switch (status) {
+        case "Monitor":
+        case "Warning":
+        case "Critical":
+            return CARD_COLORS[status].icon;
+        default:
+            return "none";
     }
 }

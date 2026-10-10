@@ -295,15 +295,15 @@ body {
 }
 
 .status.monitor.active {
-    background: var(--orange);
+    background: var(--yellowdark);
 }
 
 .status.warning.active {
-    background: var(--red);
+    background: var(--orange);
 }
 
 .status.critical.active {
-    background: var(--bluedark);
+    background: var(--red);
 }
 
 /* ═════════════════════════════════════════════════════════ */

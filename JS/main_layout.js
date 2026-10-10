@@ -279,9 +279,9 @@ function updateAlertUI() {
         alertEl.style.display = "flex";
 
         // Apply Color Based on Status
-        if (status === "Monitor") alertEl.style.background = "var(--orange)";
-        else if (status === "Warning") alertEl.style.background = "var(--red)";
-        else if (status === "Critical") alertEl.style.background = "var(--bluedark)";
+        if (status === "Monitor") alertEl.style.background = "var(--yellowdark)";
+        else if (status === "Warning") alertEl.style.background = "var(--orange)";
+        else if (status === "Critical") alertEl.style.background = "var(--red)";
 
         // Construct HTML dynamically (using Meters and Firebase Message)
         alertEl.innerHTML = `

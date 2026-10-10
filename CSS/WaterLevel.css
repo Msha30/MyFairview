@@ -163,15 +163,15 @@ body {
 }
 
 .tableRow.monitor .dot {
-    color: var(--orange);
+    color: var(--yellowdark);
 }
 
 .tableRow.warning .dot {
-    color: var(--red);
+    color: var(--orange);
 }
 
 .tableRow.critical .dot {
-    color: var(--bluedark);
+    color: var(--red);
 }
 
 .badge {
